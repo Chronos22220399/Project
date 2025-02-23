@@ -324,3 +324,5 @@ fastlane/test_output
 out/
 
 build/
+
+.idea/
