@@ -1,0 +1,21 @@
+# ninja log v6
+1	88	1740300874834388570	build.ninja	817a72bc254901d6
+9	1740	1740294439758704887	first/CMakeFiles/first.dir/src/main.cpp.o	5a2c6bac6a363d27
+1740	1801	1740294441489574976	first/first	7f9f53146045ab85
+11	1277	1740301817046102526	first/CMakeFiles/first.dir/src/main.cpp.o	5a2c6bac6a363d27
+10	1467	1740301817045068765	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+1468	4170	1740301818503036291	first/first	8821a9981f984236
+8	1282	1740301906135856073	first/CMakeFiles/first.dir/src/main.cpp.o	5a2c6bac6a363d27
+1283	1340	1740301907410700750	first/first	8821a9981f984236
+10	1512	1740303197537606912	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+11	1478	1740303400593416675	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+10	1463	1740303663931631456	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+11	1414	1740303811225069579	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+9	1411	1740303866569681244	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+8	1413	1740304235466191058	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+9	1412	1740304325426039059	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+9	1284	1740304784022063200	first/CMakeFiles/first.dir/src/main.cpp.o	5a2c6bac6a363d27
+1284	1346	1740304785297668532	first/first	8821a9981f984236
+10	1730	1740304851147266151	first/CMakeFiles/first.dir/src/main.cpp.o	5a2c6bac6a363d27
+10	1890	1740304851146843288	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	b08f4ac7c2edf1c6
+1890	1956	1740304853027262171	first/first	8821a9981f984236

@@ -1,0 +1,18 @@
+{
+  "fmt": {
+    "url": "https://github.com/fmtlib/fmt.git",
+    "options": {}
+  },
+  "sqlpp11-connector-sqlite3": {
+    "url": "https://github.com/rbock/sqlpp11-connector-sqlite3.git",
+    "options": {}
+  },
+  "sqlpp11": {
+    "url": "https://github.com/rbock/sqlpp11.git",
+    "options": {
+      "BUILD_SQLITE3_CONNECTOR": "ON",
+      "DEPENDENCY_CHECK": "OFF",
+      "BUILD_TESTING": "OFF"
+    }
+  }
+}
