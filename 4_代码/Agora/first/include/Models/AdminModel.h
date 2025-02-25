@@ -8,7 +8,15 @@
 #include <utils/database_utils.hpp>
 
 struct AdminModel : utils::ConnDefiner {
-    struct Admin;
+    struct Admin {
+        int id;
+        std::string username;
+        std::string password;
+        Admin() = default;
+        Admin(const int id_, std::string username_, std::string password_)
+            : id(id_), username(std::move(username_)),
+              password(std::move(password_)) {}
+    };
 
     explicit AdminModel(conn_pool_ptr_type conn_pool_ptr);
     explicit AdminModel(const Admin &admin) = delete;
@@ -19,10 +27,11 @@ struct AdminModel : utils::ConnDefiner {
     [[nodiscard]] std::vector<Admin> get_admin_by_id_range(int lbound,
                                                            int rbound) const;
     [[nodiscard]] std::vector<Admin> get_admin_test() const;
+    ~AdminModel();
 
-private:
+  private:
     struct AdminModelImpl;
     std::unique_ptr<AdminModelImpl> impl;
 };
 
-#endif //ADMINMODEL_H
+#endif // ADMINMODEL_H
