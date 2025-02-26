@@ -2,21 +2,25 @@
 // Created by 无铭 on 25-2-23.
 //
 #include <Models/AdminModel.h>
+#include <include/admin.h>
 #include <sqlpp11/sqlpp11.h>
 #include <utils/database_utils/database_utils.hpp>
-#include <include/admin.h>
 
 struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
-    explicit AdminModelImpl()
-        : DataBaseHelper() {}
+    explicit AdminModelImpl() : DataBaseHelper() {}
 
     // create
     [[nodiscard]] size_t create(const Admin &admin) const {
-        return DataBaseHelper::execute<size_t>([](const ConnDefiner::pooled_conn_ptr_type& conn, const Admin& admin_) {
-            Admin_::Admin _admin {};
-            (*conn)(insert_into(_admin).set(_admin.username=admin_.username, _admin.password=admin_.password));
-            return static_cast<size_t>(1);
-        }, admin);
+        return DataBaseHelper::execute<size_t>(
+            [](const ConnDefiner::pooled_conn_ptr_type &conn,
+               const Admin &admin_) {
+                Admin_::Admin _admin{};
+                (*conn)(
+                    insert_into(_admin).set(_admin.username = admin_.username,
+                                            _admin.password = admin_.password));
+                return static_cast<size_t>(1);
+            },
+            admin);
     }
 
     // read
@@ -50,8 +54,7 @@ struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
             }
             return ret_admin;
         };
-        return execute<std::vector<Admin>>(query,
-                                           std::forward<Value>(value));
+        return execute<std::vector<Admin>>(query, std::forward<Value>(value));
     }
 
     template <typename Table, typename Condition>
@@ -69,20 +72,54 @@ struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
             }
             return ret_admin;
         };
-        return execute<std::vector<Admin>>(query,
-                                           std::forward<Table>(table),
+        return execute<std::vector<Admin>>(query, std::forward<Table>(table),
                                            std::forward<Condition>(condition));
     }
 
     // ------ test ----- //
-    std::vector<Admin> get_admin_by_username_test(const std::string &name) const {
+    std::vector<Admin>
+    get_admin_by_username_test(const std::string &username) const {
         utils::database_utils::GenericDataGetter<Admin> getter;
         Admin_::Admin admin_;
-        auto res = getter.get_data<decltype(admin_)>(std::move(admin_), admin_.username == "helo");
+        auto res = getter.get_data<decltype(admin_)>(
+            std::move(admin_), admin_.username == username);
         for (const auto &item : res) {
             fmt::print("{} {}\n", item.username, item.password);
         }
         return res;
+    }
+    // ------ test ----- //
+
+    // update
+    template <typename ColumnPtr, typename CmpValue>
+    size_type update_generic(CmpValue &&cmpd_value, const Admin &admin) {
+        auto updater = [](pooled_conn_ptr_type conn, const CmpValue &cmpd_value,
+                          const Admin &admin) {
+            Admin_::Admin admin_;
+            ColumnPtr column_ptr{};
+            auto res = (*conn)(sqlpp::update(admin_)
+                                   .set(admin_.username = admin.username,
+                                        admin_.password = admin.password)
+                                   .where(admin_.*column_ptr == cmpd_value));
+            return 1;
+        };
+        return execute<size_type>(updater, cmpd_value, admin);
+    }
+
+    // remove
+    // TODO: 后续可以考虑将 remove 和 update 的返回值都改为
+    // std::vector<Admin>，其内部存放原本的值，为空表明处理失败，此外还要注意不存在的情况，此时必定失败
+    template <typename ColumnPtr, typename CmpValue>
+    size_type remove_generic(CmpValue &&cmpd_value) {
+        auto updater = [](pooled_conn_ptr_type conn,
+                          const CmpValue &cmpd_value) {
+            Admin_::Admin admin_;
+            ColumnPtr column_ptr{};
+            auto res = (*conn)(
+                remove_from(admin_).where(admin_.*column_ptr == cmpd_value));
+            return 1;
+        };
+        return execute<size_type>(updater, cmpd_value);
     }
 
     ~AdminModelImpl() = default;
@@ -127,8 +164,33 @@ AdminModel::get_admin_test() const {
     return impl->get_admin_by_generic_condition(admin, condition);
 }
 
-[[nodiscard]] std::vector<AdminModel::Admin> AdminModel::get_admin_by_username_test(const std::string& username) const {
+[[nodiscard]] std::vector<AdminModel::Admin>
+AdminModel::get_admin_by_username_test(const std::string &username) const {
     return impl->get_admin_by_username_test(username);
+}
+
+// delete
+AdminModel::size_type
+AdminModel::update_by_username(const std::string &ori_username,
+                               const Admin &admin) {
+    return impl->update_generic<decltype(&Admin_::Admin::username)>(
+        ori_username, admin);
+}
+
+AdminModel::size_type AdminModel::update_by_id(const std::string &ori_username,
+                                               const Admin &admin) {
+    return impl->update_generic<decltype(&Admin_::Admin::id)>(ori_username,
+                                                              admin);
+}
+
+// delete
+AdminModel::size_type
+AdminModel::delete_by_username(const std::string &username) const {
+    return impl->remove_generic<decltype(&Admin_::Admin::username)>(username);
+}
+
+AdminModel::size_type AdminModel::delete_by_id(size_type id) const {
+    return impl->remove_generic<decltype(&Admin_::Admin::id)>(id);
 }
 
 AdminModel::~AdminModel() = default;

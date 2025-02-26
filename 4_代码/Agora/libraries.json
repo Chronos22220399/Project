@@ -10,5 +10,14 @@
       "DEPENDENCY_CHECK": "OFF",
       "BUILD_TESTING": "OFF"
     }
+  },
+  "crow": {
+    "url": "https://github.com/CrowCpp/Crow.git",
+    "options": {
+    "CROW_BUILD_EXAMPLES": "OFF",
+    "CROW_BUILD_TESTS" : "OFF",
+    "CROW_ENABLE_SSL": "ON",
+    "CROW_ENABLE_COMPRESSION" : "ON"
+    }
   }
 }
