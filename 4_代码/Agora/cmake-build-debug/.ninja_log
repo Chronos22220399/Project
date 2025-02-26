@@ -1,4 +1,4 @@
 # ninja log v6
 2	935	1740318065439329142	first/CMakeFiles/first.dir/src/main.cpp.o	5185d229adb644ba
-1	1018	1740318065439014776	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	ae6d2061cda75c63
 1018	1055	1740318066456587460	first/first	8821a9981f984236
+1	1018	1740318065439014776	first/CMakeFiles/first.dir/src/Models/AdminModel.cpp.o	ae6d2061cda75c63

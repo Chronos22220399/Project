@@ -3,7 +3,8 @@
 #include <include/admin.h>
 #include <sqlpp11/sqlpp11.h>
 #include <thread>
-#include <utils/database_utils.hpp>
+#include <utils/database_utils/database_utils.hpp>
+#include <utils/database_utils/database_query.hpp>
 #include <utils/log.hpp>
 #include <utils/utils.hpp>
 
@@ -17,7 +18,7 @@ struct Admin {
           password(std::move(password_)) {}
 };
 
-template <typename TableRow> struct utils::DataTypeTraits<TableRow, Admin> {
+template <typename TableRow> struct utils::database_utils::DataTypeTraits<TableRow, Admin> {
     static Admin get_args(const TableRow &row) {
         return Admin(row.id, row.username, row.password);
     }
@@ -25,12 +26,7 @@ template <typename TableRow> struct utils::DataTypeTraits<TableRow, Admin> {
 
 int main() {
     auto dir = std::filesystem::current_path();
-    auto root_dir_path = utils::get_project_base_path(dir, "Agora");
-    fmt::println("Current Path: {}", root_dir_path.c_str());
-    utils::ConnDefiner::conn_pool_ptr_type pool_ptr = utils::get_conn_pool_ptr(
-        true, root_dir_path.c_str() +
-                  std::string("/first/datas/sqlite3/admin.sqlite3"));
-
+    auto pool_ptr = utils::database_utils::get_conn_pool_ptr();
     auto pooled_conn = pool_ptr->get();
 
     // Admin_::Admin admin{};

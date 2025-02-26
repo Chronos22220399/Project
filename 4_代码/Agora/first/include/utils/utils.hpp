@@ -9,7 +9,7 @@
 
 namespace utils {
 
-inline std::filesystem::path get_project_base_path(std::filesystem::path path,
+inline std::filesystem::path get_project_root_path(std::filesystem::path path,
                                                    std::string root_dir_name) {
     std::string current_path = std::string(path.c_str());
     bool in_root_dir =
