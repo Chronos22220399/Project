@@ -26,7 +26,8 @@ add_executable(${PROJECT_NAME} ${srcs}
         include/utils/database_utils/database_query.hpp
         include/Models/AdminModel.h
         src/Models/AdminModel.cpp
-        include/utils/database_utils/database_utils.hpp)
+        include/utils/database_utils/database_utils.hpp
+        include/cases/get_pooled_conn_ptr_case.hpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Sqlpp11_DIR})
 target_include_directories(${PROJECT_NAME}

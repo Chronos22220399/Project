@@ -37,7 +37,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 37,
+				"line" : 38,
 				"parent" : 0
 			},
 			{
@@ -69,13 +69,7 @@
 			{
 				"command" : 1,
 				"file" : 0,
-				"line" : 38,
-				"parent" : 0
-			},
-			{
-				"command" : 5,
-				"file" : 0,
-				"line" : 31,
+				"line" : 39,
 				"parent" : 0
 			},
 			{
@@ -87,7 +81,13 @@
 			{
 				"command" : 5,
 				"file" : 0,
-				"line" : 34,
+				"line" : 33,
+				"parent" : 0
+			},
+			{
+				"command" : 5,
+				"file" : 0,
+				"line" : 35,
 				"parent" : 0
 			}
 		]
@@ -139,8 +139,8 @@
 			},
 			"sourceIndexes" : 
 			[
-				6,
-				7
+				7,
+				8
 			]
 		}
 	],
@@ -189,15 +189,16 @@
 				3,
 				4,
 				5,
-				8
+				6,
+				9
 			]
 		},
 		{
 			"name" : "Source Files",
 			"sourceIndexes" : 
 			[
-				6,
-				7
+				7,
+				8
 			]
 		}
 	],
@@ -211,6 +212,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "first/include/Models/AdminModel.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "first/include/cases/get_pooled_conn_ptr_case.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
