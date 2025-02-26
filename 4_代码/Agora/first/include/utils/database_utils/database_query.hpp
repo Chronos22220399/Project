@@ -30,9 +30,9 @@ template <typename DataType> struct GenericDataGetter : DataBaseHelper {
     using ReturnType = std::vector<DataType>;
 
     template <typename Table, typename Condition>
-    [[nodiscard]] ReturnType get_data(const conn_pool_ptr_type &conn_pool_ptr,
-                                      Table &&table, Condition &&condition) {
-        auto query = [](const pooled_conn_ptr_type &conn_, Table &&table_,
+    [[nodiscard]] ReturnType get_data(Table &&table, Condition &&condition) {
+        auto query = [](const pooled_conn_ptr_type &conn_,
+                        Table &&table_,
                         Condition &&condition_) {
             ReturnType ret{};
             for (const auto &row :
@@ -44,7 +44,7 @@ template <typename DataType> struct GenericDataGetter : DataBaseHelper {
                               }
             return ret;
         };
-        return execute<ReturnType>(conn_pool_ptr->get(), query,
+        return execute<ReturnType>(query,
                                    std::forward<Table>(table),
                                    std::forward<Condition>(condition));
     }

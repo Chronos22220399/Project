@@ -3,12 +3,23 @@
 //
 #include <Models/AdminModel.h>
 #include <sqlpp11/sqlpp11.h>
+#include <utils/database_utils/database_utils.hpp>
+#include <include/admin.h>
 
-struct AdminModel::AdminModelImpl : utils::DataBaseHelper {
-  public:
-    explicit AdminModelImpl(conn_pool_ptr_type conn_pool_ptr)
-        : DataBaseHelper(), conn_pool_ptr(std::move(conn_pool_ptr)) {}
+struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
+    explicit AdminModelImpl()
+        : DataBaseHelper() {}
 
+    // create
+    [[nodiscard]] size_t create(const Admin &admin) const {
+        return DataBaseHelper::execute<size_t>([](const ConnDefiner::pooled_conn_ptr_type& conn, const Admin& admin_) {
+            Admin_::Admin _admin {};
+            (*conn)(insert_into(_admin).set(_admin.username=admin_.username, _admin.password=admin_.password));
+            return static_cast<size_t>(1);
+        }, admin);
+    }
+
+    // read
     [[nodiscard]] std::vector<Admin> get_all_admins() const {
         auto query = [](const pooled_conn_ptr_type &conn) {
             Admin_::Admin admin;
@@ -21,7 +32,7 @@ struct AdminModel::AdminModelImpl : utils::DataBaseHelper {
             }
             return ret;
         };
-        return execute<std::vector<Admin>>(conn_pool_ptr, query);
+        return execute<std::vector<Admin>>(query);
     }
 
     template <typename ColumnPtr, typename Value>
@@ -39,13 +50,13 @@ struct AdminModel::AdminModelImpl : utils::DataBaseHelper {
             }
             return ret_admin;
         };
-        return execute<std::vector<Admin>>(conn_pool_ptr, query,
+        return execute<std::vector<Admin>>(query,
                                            std::forward<Value>(value));
     }
 
     template <typename Table, typename Condition>
     [[nodiscard]] std::vector<Admin>
-    get_admin_by_generic_condition(Table &&table, Condition &&condition) {
+    get_admin_by_generic_condition(Table &&table, Condition &&condition) const {
         auto query = [](const pooled_conn_ptr_type &conn_, Table &&table_,
                         Condition &&condition_) {
             auto res =
@@ -58,19 +69,30 @@ struct AdminModel::AdminModelImpl : utils::DataBaseHelper {
             }
             return ret_admin;
         };
-        return execute<std::vector<Admin>>(conn_pool_ptr, query,
+        return execute<std::vector<Admin>>(query,
                                            std::forward<Table>(table),
                                            std::forward<Condition>(condition));
     }
 
-    ~AdminModelImpl() = default;
+    // ------ test ----- //
+    std::vector<Admin> get_admin_by_username_test(const std::string &name) const {
+        utils::database_utils::GenericDataGetter<Admin> getter;
+        Admin_::Admin admin_;
+        auto res = getter.get_data<decltype(admin_)>(std::move(admin_), admin_.username == "helo");
+        for (const auto &item : res) {
+            fmt::print("{} {}\n", item.username, item.password);
+        }
+        return res;
+    }
 
-  private:
-    conn_pool_ptr_type conn_pool_ptr;
+    ~AdminModelImpl() = default;
 };
 
-AdminModel::AdminModel(conn_pool_ptr_type conn_pool_ptr)
-    : impl(std::make_unique<AdminModelImpl>(std::move(conn_pool_ptr))) {}
+AdminModel::AdminModel() = default;
+
+AdminModel::size_type AdminModel::create(const Admin &admin) const {
+    return impl->create(admin);
+}
 
 [[nodiscard]] std::vector<AdminModel::Admin>
 AdminModel::get_all_admins() const {
@@ -105,4 +127,8 @@ AdminModel::get_admin_test() const {
     return impl->get_admin_by_generic_condition(admin, condition);
 }
 
-AdminModel::~AdminModel() {}
+[[nodiscard]] std::vector<AdminModel::Admin> AdminModel::get_admin_by_username_test(const std::string& username) const {
+    return impl->get_admin_by_username_test(username);
+}
+
+AdminModel::~AdminModel() = default;

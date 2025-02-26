@@ -13,10 +13,6 @@
 
 namespace utils::database_utils {
 
-/**
-* @class
-* @brief Define the offen used type obout sqlpp connection
-*/
 struct ConnDefiner {
     using conn_pool_type = sqlpp::sqlite3::connection_pool;
     using conn_pool_ptr_type = std::shared_ptr<conn_pool_type>;
@@ -24,49 +20,25 @@ struct ConnDefiner {
     using pooled_conn_ptr_type = std::shared_ptr<pooled_conn_type>;
 };
 
-/**
-* @return unique_ptr<connction_pool> return a unique_ptr which point to a
-* sqlpp::sqlite3::connection_pool
-* @author Ess
-*/
 [[nodiscard]] static auto
-get_conn_pool_ptr() {
+get_pooled_conn_ptr() {
     static sqlpp::sqlite3::connection_config config{};
     static std::once_flag flag;
     std::call_once(flag, [&]() {
         static auto root_dir_path = utils::get_project_root_path(std::filesystem::current_path(), "Agora");
         config.debug = true;
         config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-        config.path_to_database = "/first/datas/sqlite3/admin.sqlite3";
+        config.path_to_database = std::string(root_dir_path) + "/first/datas/sqlite3/admin.sqlite3";
         fmt::println("Current Path: {}", root_dir_path.c_str());
     });
     static auto config_ptr =
             std::make_shared<sqlpp::sqlite3::connection_config>(config);
-    static auto conn_pool = std::make_shared<ConnDefiner::conn_pool_type>(config_ptr, 8);
-    return conn_pool;
+    static auto conn_pool = ConnDefiner::conn_pool_type(config_ptr, 8);
+    return std::make_shared<ConnDefiner::pooled_conn_type>(conn_pool.get());
 }
 
-
-/**
-* @class ScopedTranscation
-* @brief Encapsulates database transcations using RAII to prevent data
-* inconsistency
-*
-* The class ensures that a transcation is committed or rolled back
-* automatically when the object go out a Scope,
-*
-* @note The transcation should be commited by hand, if it's not commited and
-* gou out a scope(maybe left the function, or an error ocurred), the
-* destrcuctor will be called and transcation will be rolled back
-* @author Ess
-*/
 class ScopedTranscation : ConnDefiner {
 public:
-    /**
-* @param pc_ptr A pooled_connection wrapped by shared_ptr
-* @note After parameters are initialized, the transcation will be start
-* @author Ess
-*/
     explicit ScopedTranscation(pooled_conn_ptr_type pc_ptr)
         : pc_ptr_(std::move(pc_ptr)), is_commited_(false) {
         try {
@@ -82,10 +54,6 @@ public:
         }
     }
 
-    /**
-* @brief Commit the transcation by hand
-* @author Ess
-*/
     void commit() {
         try {
             if (!is_commited_) {
@@ -99,11 +67,6 @@ public:
         }
     }
 
-    /**
-* @brief If transcation isn't committed and the transcation is active, the
-* object will roll back the transcation
-* @author Ess
-*/
     ~ScopedTranscation() {
         try {
             if (!is_commited_ || pc_ptr_->is_transaction_active()) {
@@ -133,8 +96,9 @@ private:
 */
 struct DataBaseHelper : ConnDefiner {
     template <typename RetType, typename Operation, typename... Args>
-    static auto execute(pooled_conn_ptr_type pooled_conn_ptr, Operation &&operation, Args &&...args) {
+    static auto execute(Operation &&operation, Args &&...args) {
         try {
+            pooled_conn_ptr_type pooled_conn_ptr = get_pooled_conn_ptr();
             if (!pooled_conn_ptr->is_connected()) {
                 LOG("{}", "数据库未连接");
                 return RetType{};
@@ -153,6 +117,6 @@ struct DataBaseHelper : ConnDefiner {
     }
 };
 
-    class
+    // class
 }
 #endif //DATABASE_UTILS_HPP
