@@ -6,6 +6,10 @@
 #define LOG_HPP
 #include <fmt/format.h>
 
+/**
+* @brief Provide a unified way to recurd log to facilitate subsequent changes
+* to the log method
+*/
 #define LOG(...)                                                               \
   fmt::println("[{}:{}:{}]: {}", __FILE_NAME__, __FUNCTION__, __LINE__,        \
                fmt::format(__VA_ARGS__))

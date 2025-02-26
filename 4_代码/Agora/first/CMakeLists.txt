@@ -23,9 +23,10 @@ project(first LANGUAGES CXX)
 add_executable(${PROJECT_NAME} ${srcs}
         include/utils/utils.hpp
         include/utils/log.hpp
-        include/utils/database_utils.hpp
+        include/utils/database_utils/database_query.hpp
         include/Models/AdminModel.h
-        src/Models/AdminModel.cpp)
+        src/Models/AdminModel.cpp
+        include/utils/database_utils/database_utils.hpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Sqlpp11_DIR})
 target_include_directories(${PROJECT_NAME}
