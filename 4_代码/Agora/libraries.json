@@ -1,10 +1,14 @@
 {
   "fmt": {
     "url": "https://github.com/fmtlib/fmt.git",
+    "platform": "windows",
+    "build_tool": "cmake",
     "options": {}
   },
   "sqlpp11": {
     "url": "https://github.com/rbock/sqlpp11.git",
+    "platform": "windows",
+    "build_tool": "cmake",
     "options": {
       "BUILD_SQLITE3_CONNECTOR": "ON",
       "DEPENDENCY_CHECK": "OFF",
@@ -13,6 +17,8 @@
   },
   "crow": {
     "url": "https://github.com/CrowCpp/Crow.git",
+    "platform": "windows",
+    "build_tool": "cmake",
     "options": {
     "CROW_BUILD_EXAMPLES": "OFF",
     "CROW_BUILD_TESTS" : "OFF",

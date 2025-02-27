@@ -39,24 +39,6 @@ struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
         return execute<std::vector<Admin>>(query);
     }
 
-    template <typename ColumnPtr, typename Value>
-    [[nodiscard]] std::vector<Admin> get_admin_generic_by(Value &&value) const {
-        auto query = [](const pooled_conn_ptr_type &conn, Value &&value_) {
-            Admin_::Admin admin;
-            ColumnPtr column_ptr{};
-            auto res = (*conn)(
-                select(admin.id, admin.username, admin.password)
-                    .from(admin)
-                    .where(admin.*column_ptr == std::forward<Value>(value_)));
-            std::vector<Admin> ret_admin{};
-            for (const auto &row : res) {
-                ret_admin.emplace_back(row.id, row.username, row.password);
-            }
-            return ret_admin;
-        };
-        return execute<std::vector<Admin>>(query, std::forward<Value>(value));
-    }
-
     template <typename Table, typename Condition>
     [[nodiscard]] std::vector<Admin>
     get_admin_by_generic_condition(Table &&table, Condition &&condition) const {
@@ -76,19 +58,23 @@ struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
                                            std::forward<Condition>(condition));
     }
 
-    // ------ test ----- //
-    std::vector<Admin>
-    get_admin_by_username_test(const std::string &username) const {
-        utils::database_utils::GenericDataGetter<Admin> getter;
-        Admin_::Admin admin_;
-        auto res = getter.get_data<decltype(admin_)>(
-            std::move(admin_), admin_.username == username);
-        for (const auto &item : res) {
-            fmt::print("{} {}\n", item.username, item.password);
-        }
-        return res;
+    template <typename ColumnPtr, typename Value>
+    [[nodiscard]] std::vector<Admin> get_admin_generic_by(Value &&value) const {
+        auto query = [](const pooled_conn_ptr_type &conn, Value &&value_) {
+            Admin_::Admin admin;
+            ColumnPtr column_ptr{};
+            auto res = (*conn)(
+                select(admin.id, admin.username, admin.password)
+                    .from(admin)
+                    .where(admin.*column_ptr == std::forward<Value>(value_)));
+            std::vector<Admin> ret_admin{};
+            for (const auto &row : res) {
+                ret_admin.emplace_back(row.id, row.username, row.password);
+            }
+            return ret_admin;
+        };
+        return execute<std::vector<Admin>>(query, std::forward<Value>(value));
     }
-    // ------ test ----- //
 
     // update
     template <typename ColumnPtr, typename CmpValue>
@@ -97,10 +83,11 @@ struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
                           const Admin &admin) {
             Admin_::Admin admin_;
             ColumnPtr column_ptr{};
-            auto res = (*conn)(sqlpp::update(admin_)
+            auto res = (*conn)(update(admin_)
                                    .set(admin_.username = admin.username,
                                         admin_.password = admin.password)
-                                   .where(admin_.*column_ptr == cmpd_value));
+                                   .where(admin_.*column_ptr ==
+                                          std::forward<CmpValue>(cmpd_value)));
             return 1;
         };
         return execute<size_type>(updater, cmpd_value, admin);
@@ -115,13 +102,26 @@ struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
                           const CmpValue &cmpd_value) {
             Admin_::Admin admin_;
             ColumnPtr column_ptr{};
-            auto res = (*conn)(
-                remove_from(admin_).where(admin_.*column_ptr == cmpd_value));
+            auto res = (*conn)(remove_from(admin_).where(
+                admin_.*column_ptr == std::forward<CmpValue>(cmpd_value)));
             return 1;
         };
         return execute<size_type>(updater, cmpd_value);
     }
 
+    // ------ test ----- //
+    std::vector<Admin>
+    get_admin_by_username_test(const std::string &username) const {
+        utils::database_utils::GenericDataGetter<Admin> getter;
+        Admin_::Admin admin_;
+        auto res = getter.get_data<decltype(admin_)>(
+            std::move(admin_), admin_.username == username);
+        for (const auto &item : res) {
+            fmt::print("{} {}\n", item.username, item.password);
+        }
+        return res;
+    }
+    // ------ test ----- //
     ~AdminModelImpl() = default;
 };
 
@@ -177,10 +177,9 @@ AdminModel::update_by_username(const std::string &ori_username,
         ori_username, admin);
 }
 
-AdminModel::size_type AdminModel::update_by_id(const std::string &ori_username,
+AdminModel::size_type AdminModel::update_by_id(const size_t id,
                                                const Admin &admin) {
-    return impl->update_generic<decltype(&Admin_::Admin::id)>(ori_username,
-                                                              admin);
+    return impl->update_generic<decltype(&Admin_::Admin::id)>(id, admin);
 }
 
 // delete
