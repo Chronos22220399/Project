@@ -2,10 +2,25 @@ from pathlib import Path
 import subprocess
 import json
 
-def check_and_download(library_name: str, url: str, download_dir: Path, build_dir: Path, options: dict):
+def build_by_cmake(libsrc_full_path: Path, build_dir: Path, options: dict):
+    option_list: list[str] = [] 
+    for key, value in options.items():
+        pass
+        command = '-D' + key + '=' + value
+        option_list.append(command)
+        
+    build_command = ['cmake', str(libsrc_full_path), '-B', str(libsrc_full_path / 'build'), '-DCMAKE_INSTALL_PREFIX=' + str(build_dir)]
+    build_command.extend(option_list)
+    install_commad = ['cmake', "--build", str(libsrc_full_path/'build'), '--parallel', '8', '--target', 'install']
+    print("Executing: ", " ".join(build_command))
+    print("Executing: ", " ".join(install_commad))
+    subprocess.run(build_command)
+    subprocess.run(install_commad)
+
+def check_and_download(library_name: str, url: str, download_dir: Path, build_dir: Path, build_tool: str, options: dict):
     # 检查库是否已经存在
-    libsrc_full_path = download_dir / library_name
-    libbuild_full_path = build_dir / library_name
+    libsrc_full_path = download_dir / library_name # 例如: ~/.install/third_party_src/fmt
+    libbuild_full_path = build_dir / library_name # 例如: ~/.install/
     if not Path.exists(libsrc_full_path):
         print(f"{library_name} not found. downloading to {libsrc_full_path} ...")
         # 拉取库并放入指定目录
@@ -18,31 +33,11 @@ def check_and_download(library_name: str, url: str, download_dir: Path, build_di
     # 编译库并存放到 .install 目录
     if not Path.exists(libbuild_full_path):
         print(f"Building {library_name}...")
-        option_list: list[str] = [] 
-        for key, value in options.items():
+        if build_tool == "cmake":
+            build_by_cmake(libsrc_full_path=libsrc_full_path, build_dir=build_dir, options=options)
+        elif build_tool == "bootstrap.sh":
             pass
-            command = '-D' + key + '=' + value
-            option_list.append(command)
-            
-        build_command = ['cmake', str(libsrc_full_path), '-B', str(libsrc_full_path / 'build'), '-DCMAKE_INSTALL_PREFIX=' + str(build_dir)]
-        build_command.extend(option_list)
-        install_commad = ['cmake', "--build", str(libsrc_full_path/'build'), '--parallel', '8', '--target', 'install']
-        print("Executing: ", " ".join(build_command))
-        print("Executing: ", " ".join(install_commad))
-        subprocess.run(build_command)
-        subprocess.run(install_commad)
 
-# 安装路径详情
-"""
-$HOME/
-    .install/
-        third_party_src/
-            xxx
-            yyy
-        xxx/
-        yyy/
-xxx, yyy 表示包名
-"""
 def install_packages(libraries: dict):
     # 定义库及其信息
     base_path = Path.home() / '.install'
@@ -55,10 +50,9 @@ def install_packages(libraries: dict):
     # options 存放编译选项，没有就写个空的字典占位即可
 
     for lib_name, lib_info in libraries.items():
-        check_and_download(lib_name, lib_info['url'], download_dir, build_dir, lib_info['options'])
+        check_and_download(lib_name, lib_info['url'], download_dir, build_dir, lib_info["build_tool"], lib_info['options'])
     
-
-def main():
+def config_by_libraries():
     libraries_json_file= Path.cwd() / 'libraries.json'
     if not libraries_json_file.exists():
         print(f"{libraries_json_file} 不存在，请检查其位置是否正确")
@@ -68,6 +62,10 @@ def main():
         lib_json_content = lib_json.read()
         libraries = json.loads(lib_json_content)
         install_packages(libraries=libraries)
+    
+
+def main():
+    pass
             
 
 if __name__ == "__main__":

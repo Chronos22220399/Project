@@ -40,7 +40,7 @@ struct AdminModel : utils::database_utils::ConnDefiner {
     // if update failed return 0, else return 1
     size_type update_by_username(const std::string &ori_username,
                                  const Admin &admin);
-    size_type update_by_id(const std::string &ori_username, const Admin &admin);
+    size_type update_by_id(const size_t id, const Admin &admin);
     // delete
     size_type delete_by_username(const std::string &username) const;
     size_type delete_by_id(size_type id) const;
