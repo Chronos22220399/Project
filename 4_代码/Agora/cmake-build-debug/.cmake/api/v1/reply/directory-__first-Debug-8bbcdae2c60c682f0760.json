@@ -8,7 +8,7 @@
 	"installers" : [],
 	"paths" : 
 	{
-		"build" : "first",
-		"source" : "first"
+		"build" : "__first",
+		"source" : "__first"
 	}
 }
