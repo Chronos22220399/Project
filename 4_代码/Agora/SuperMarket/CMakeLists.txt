@@ -9,8 +9,6 @@ file(
   src/*.cpp
   src/*.cc)
 
-# set(CMAKE_PREFIX_PATH "$ENV{HOME}/.install; ${CMAKE_PREFIX_PATH}")
-
 find_package(fmt REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(Sqlpp11)
@@ -18,18 +16,9 @@ find_package(Crow REQUIRED)
 
 message(STATUS "Sqlpp11_DIR: ${Sqlpp11_DIR}")
 
-project(first LANGUAGES CXX)
+project(SuperMarket LANGUAGES CXX)
 
-add_executable(
-  ${PROJECT_NAME}
-  ${srcs}
-  include/utils/utils.hpp
-  include/utils/log.hpp
-  include/utils/database_utils/database_query.hpp
-  include/Models/AdminModel.h
-  src/Models/AdminModel.cpp
-  include/utils/database_utils/database_utils.hpp
-  include/cases/get_pooled_conn_ptr_case.hpp)
+add_executable(${PROJECT_NAME} ${srcs})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${Sqlpp11_DIR})
 target_include_directories(${PROJECT_NAME}

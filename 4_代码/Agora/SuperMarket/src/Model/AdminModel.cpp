@@ -1,12 +1,12 @@
 //
 // Created by 无铭 on 25-2-23.
 //
-#include <Models/AdminModel.h>
+#include <Model/AdminModel.h>
+#include <Utils/DatabaseUtils.hpp>
 #include <include/admin.h>
 #include <sqlpp11/sqlpp11.h>
-#include <utils/database_utils/database_utils.hpp>
 
-struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
+struct AdminModel::AdminModelImpl : utils::DataBaseHelper {
     explicit AdminModelImpl() : DataBaseHelper() {}
 
     // create
@@ -109,19 +109,6 @@ struct AdminModel::AdminModelImpl : utils::database_utils::DataBaseHelper {
         return execute<size_type>(updater, cmpd_value);
     }
 
-    // ------ test ----- //
-    std::vector<Admin>
-    get_admin_by_username_test(const std::string &username) const {
-        utils::database_utils::GenericDataGetter<Admin> getter;
-        Admin_::Admin admin_;
-        auto res = getter.get_data<decltype(admin_)>(
-            std::move(admin_), admin_.username == username);
-        for (const auto &item : res) {
-            fmt::print("{} {}\n", item.username, item.password);
-        }
-        return res;
-    }
-    // ------ test ----- //
     ~AdminModelImpl() = default;
 };
 
@@ -155,18 +142,6 @@ AdminModel::get_admin_by_id_range(int lbound, int rbound) const {
     Admin_::Admin admin;
     auto condition = (admin.id >= lbound && admin.id < rbound);
     return impl->get_admin_by_generic_condition(admin, condition);
-}
-
-[[nodiscard]] std::vector<AdminModel::Admin>
-AdminModel::get_admin_test() const {
-    Admin_::Admin admin;
-    auto condition = (admin.id == 1);
-    return impl->get_admin_by_generic_condition(admin, condition);
-}
-
-[[nodiscard]] std::vector<AdminModel::Admin>
-AdminModel::get_admin_by_username_test(const std::string &username) const {
-    return impl->get_admin_by_username_test(username);
 }
 
 // delete

@@ -5,12 +5,11 @@
 #ifndef GET_POOLED_CONN_PTR_CASE_HPP
 #define GET_POOLED_CONN_PTR_CASE_HPP
 
-#include <Models/AdminModel.h>
+#include <Model/AdminModel.h>
+#include <Utils/DatabaseUtils.hpp>
 #include <future>
 #include <include/admin.h>
 #include <sqlpp11/sqlpp11.h>
-#include <utils/database_utils/database_query.hpp>
-#include <utils/database_utils/database_utils.hpp>
 
 namespace cases {
 inline auto get_pooled_conn_ptr_case() {
