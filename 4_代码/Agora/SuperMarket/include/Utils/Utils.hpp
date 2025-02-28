@@ -6,7 +6,10 @@
 #define UTILS_HPP
 
 #include <filesystem>
+#include <fmt/format.h>
+#include <functional>
 #include <future>
+#include <vector>
 
 namespace utils {
 
@@ -23,16 +26,17 @@ inline std::filesystem::path get_project_root_path(std::filesystem::path path,
     }
 }
 
-template <size_t LoopNum>
-struct ForLoop {
+template <size_t LoopNum> struct ForLoop {
     template <typename Function, typename... Args>
-    static auto run(Function && func, Args &&...args) {
+    static auto run(Function &&func, Args &&...args) {
         std::vector<std::future<void>> futures;
         futures.reserve(LoopNum);
         for (auto i = 0; i < LoopNum; ++i) {
-            futures.emplace_back(std::async(std::launch::async, [&func, &args...] {
-               std::invoke(std::forward<Function>(func), std::forward<Args>(args)...);
-            }));
+            futures.emplace_back(
+                std::async(std::launch::async, [&func, &args...] {
+                    std::invoke(std::forward<Function>(func),
+                                std::forward<Args>(args)...);
+                }));
         }
         for (auto &future : futures) {
             future.wait();

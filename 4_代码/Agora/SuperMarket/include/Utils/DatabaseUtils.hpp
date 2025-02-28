@@ -5,13 +5,13 @@
 #ifndef DATABASE_UTILS_HPP
 #define DATABASE_UTILS_HPP
 
+#include <Utils/Log.hpp>
+#include <Utils/Utils.hpp>
 #include <sqlpp11/sqlite3/connection_config.h>
 #include <sqlpp11/sqlite3/connection_pool.h>
 #include <sqlpp11/sqlite3/sqlite3.h>
-#include <utils/utils.hpp>
-#include <utils/log.hpp>
 
-namespace utils::database_utils {
+namespace utils {
 
 struct ConnDefiner {
     using conn_pool_type = sqlpp::sqlite3::connection_pool;
@@ -20,25 +20,26 @@ struct ConnDefiner {
     using pooled_conn_ptr_type = std::shared_ptr<pooled_conn_type>;
 };
 
-[[nodiscard]] static auto
-get_pooled_conn_ptr() {
+[[nodiscard]] static auto get_pooled_conn_ptr() {
     static sqlpp::sqlite3::connection_config config{};
     static std::once_flag flag;
     std::call_once(flag, [&]() {
-        static auto root_dir_path = utils::get_project_root_path(std::filesystem::current_path(), "Agora");
+        static auto root_dir_path = utils::get_project_root_path(
+            std::filesystem::current_path(), "Agora");
+        fmt::println("Current Path: {}", root_dir_path.c_str());
         config.debug = true;
         config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-        config.path_to_database = std::string(root_dir_path) + "/first/datas/sqlite3/admin.sqlite3";
-        fmt::println("Current Path: {}", root_dir_path.c_str());
+        config.path_to_database = std::string(root_dir_path) +
+                                  "/SuperMarket/datas/sqlite3/admin.sqlite3";
     });
     static auto config_ptr =
-            std::make_shared<sqlpp::sqlite3::connection_config>(config);
+        std::make_shared<sqlpp::sqlite3::connection_config>(config);
     static auto conn_pool = ConnDefiner::conn_pool_type(config_ptr, 8);
     return std::make_unique<ConnDefiner::pooled_conn_type>(conn_pool.get());
 }
 
 class ScopedTranscation : ConnDefiner {
-public:
+  public:
     explicit ScopedTranscation(pooled_conn_ptr_type pc_ptr)
         : pc_ptr_(std::move(pc_ptr)), is_commited_(false) {
         try {
@@ -79,21 +80,21 @@ public:
         }
     }
 
-private:
+  private:
     pooled_conn_ptr_type pc_ptr_;
     bool is_commited_;
 };
 
 /**
-* @class DataBaseHelper
-* @brief Offer user a convenient way to execute his/her database operation to
-* prevents writing duplicate codes
-*
-* execute accept a connection_pool pointer wrapped by shared_ptr, an Operation
-* and it's arguments
-*
-* @author Ess
-*/
+ * @class DataBaseHelper
+ * @brief Offer user a convenient way to execute his/her database operation to
+ * prevents writing duplicate codes
+ *
+ * execute accept a connection_pool pointer wrapped by shared_ptr, an Operation
+ * and it's arguments
+ *
+ * @author Ess
+ */
 struct DataBaseHelper : ConnDefiner {
     template <typename RetType, typename Operation, typename... Args>
     static auto execute(Operation &&operation, Args &&...args) {
@@ -105,7 +106,7 @@ struct DataBaseHelper : ConnDefiner {
             }
             ScopedTranscation trans{pooled_conn_ptr};
             RetType ret =
-                    operation(pooled_conn_ptr, std::forward<Args>(args)...);
+                operation(pooled_conn_ptr, std::forward<Args>(args)...);
             trans.commit();
             return ret;
         } catch (const sqlpp::exception &e) {
@@ -117,6 +118,5 @@ struct DataBaseHelper : ConnDefiner {
     }
 };
 
-    // class
-}
-#endif //DATABASE_UTILS_HPP
+} // namespace utils
+#endif // DATABASE_UTILS_HPP

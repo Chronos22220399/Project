@@ -22,4 +22,4 @@ project(
   LANGUAGES CXX
   VERSION 1.0)
 
-add_subdirectory(Agora)
+add_subdirectory(SuperMarket)

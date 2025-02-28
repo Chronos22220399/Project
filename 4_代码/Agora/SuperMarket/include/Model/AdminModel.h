@@ -4,11 +4,10 @@
 
 #ifndef ADMINMODEL_H
 #define ADMINMODEL_H
+#include <Utils/DatabaseUtils.hpp>
 #include <include/admin.h>
-#include <utils/database_utils/database_query.hpp>
-#include <utils/database_utils/database_utils.hpp>
 
-struct AdminModel : utils::database_utils::ConnDefiner {
+struct AdminModel : utils::ConnDefiner {
     struct Admin;
     using size_type = size_t;
     using data_type = std::vector<Admin>;
@@ -33,7 +32,6 @@ struct AdminModel : utils::database_utils::ConnDefiner {
     [[nodiscard]] data_type
     get_admin_by_username(const std::string &name) const;
     [[nodiscard]] data_type get_admin_by_id_range(int lbound, int rbound) const;
-    [[nodiscard]] data_type get_admin_test() const;
     [[nodiscard]] data_type
     get_admin_by_username_test(const std::string &username) const;
     // update
@@ -51,11 +49,4 @@ struct AdminModel : utils::database_utils::ConnDefiner {
     std::unique_ptr<AdminModelImpl> impl;
 };
 
-// used by GenericGetter
-template <typename TableRow>
-struct utils::database_utils::DataTypeTraits<TableRow, AdminModel::Admin> {
-    static AdminModel::Admin get_args(const TableRow &row) {
-        return AdminModel::Admin(row.id, row.username, row.password);
-    }
-};
 #endif // ADMINMODEL_H
