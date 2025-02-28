@@ -19,15 +19,15 @@
 					"source" : "."
 				},
 				{
-					"build" : "first",
-					"jsonFile" : "directory-first-Debug-999f67b8c68511442400.json",
+					"build" : "__first",
+					"jsonFile" : "directory-__first-Debug-8bbcdae2c60c682f0760.json",
 					"minimumCMakeVersion" : 
 					{
 						"string" : "3.10"
 					},
 					"parentIndex" : 0,
 					"projectIndex" : 1,
-					"source" : "first",
+					"source" : "__first",
 					"targetIndexes" : 
 					[
 						0
@@ -65,8 +65,8 @@
 			[
 				{
 					"directoryIndex" : 1,
-					"id" : "first::@5fdbf98ad6ebaca45ff0",
-					"jsonFile" : "target-first-Debug-af10611501190ed326fe.json",
+					"id" : "first::@818eb38d6dcd5dc9f7cb",
+					"jsonFile" : "target-first-Debug-dcf32e5cd613e0729265.json",
 					"name" : "first",
 					"projectIndex" : 1
 				}

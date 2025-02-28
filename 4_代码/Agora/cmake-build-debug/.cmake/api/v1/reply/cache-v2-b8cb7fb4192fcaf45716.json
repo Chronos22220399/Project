@@ -1751,7 +1751,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/first"
+			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/__first"
 		},
 		{
 			"name" : "first_IS_TOP_LEVEL",
@@ -1775,7 +1775,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/first"
+			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/__first"
 		},
 		{
 			"name" : "fmt_DIR",
