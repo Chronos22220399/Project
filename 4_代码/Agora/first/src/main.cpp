@@ -76,41 +76,43 @@
 //                                table.username = admin.password);
 //     }
 // };
+
 struct Admin {
     size_t id;
     std::string username;
     std::string password;
 };
 
-template <typename Table, typename Model>
-auto make_assignments(Table &table, const Model &model) {
-    return std::make_tuple(table.username = model.username,
-                           table.password = model.password);
+template <typename Model, typename Table>
+struct ModelReflectTable;
+
+// 特化出从模型到表的反射
+template <>
+struct ModelReflectTable<Admin, Admin_::Admin> {
+    static constexpr auto map_members = std::make_tuple(
+        std::make_pair(&Admin::id, &Admin_::Admin::id),
+        std::make_pair(&Admin::username, &Admin_::Admin::username),
+        std::make_pair(&Admin::password, &Admin_::Admin::password)
+    );
+};
+
+template <typename Reflect, typename Model, typename Table, size_t ...Is>
+auto make_assignments_impl(Model &&model, Table &&table, std::index_sequence<Is...>) {
+    return std::make_tuple(
+        (table.*std::get<Is>(Reflect::map_members).second = model.*std::get<Is>(Reflect::map_members).first)...
+    );
 }
 
-template <typename Tuple, std::size_t... Is>
-auto expand_tuple(Tuple &&t, std::index_sequence<Is...>) {
-    return insert_into(std::get<0>(t)).set(std::get<Is>(std::get<1>(t))...);
+template <typename Reflect, typename Model, typename Table>
+auto make_assignments(Model &&model, Table &&table) {
+    constexpr auto size = std::tuple_size_v<decltype(Reflect::map_members)>;
+    return make_assignments_impl<Reflect, Model, size>(model, table, std::make_index_sequence<size>{});
 }
 
-void test() {
-    Admin_::Admin admin_table{};
-    Admin admin_model{.username = "h", .password = "paas"};
-    auto conn = utils::database_utils::get_pooled_conn_ptr();
-
-    auto assignments = make_assignments(admin_table, admin_model);
-    constexpr auto size = std::tuple_size_v<decltype(assignments)>;
-
-    auto query = expand_tuple(std::make_pair(admin_table, assignments),
-                              std::make_index_sequence<size>{});
-
-    (*conn)(query);
-}
 
 int main() {
     // GenericDBOperation<Admin_::Admin, Admin> getter{};
     // Admin_::Admin ad;
-    test();
 
     // getter.generic_create(Admin{.username = "heelo", .password = "asdf"});
     // auto res =
