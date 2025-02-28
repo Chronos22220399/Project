@@ -34,7 +34,7 @@ get_pooled_conn_ptr() {
     static auto config_ptr =
             std::make_shared<sqlpp::sqlite3::connection_config>(config);
     static auto conn_pool = ConnDefiner::conn_pool_type(config_ptr, 8);
-    return std::make_shared<ConnDefiner::pooled_conn_type>(conn_pool.get());
+    return std::make_unique<ConnDefiner::pooled_conn_type>(conn_pool.get());
 }
 
 class ScopedTranscation : ConnDefiner {
