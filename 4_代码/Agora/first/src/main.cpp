@@ -11,17 +11,12 @@ struct Admin {
 };
 
 template <typename Model, typename Table>
-struct ModelReflectTable;
+struct ReflectTable;
 
-// 特化出从模型到表的反射
-template <>
-struct ModelReflectTable<Admin, Admin_::Admin> {
-    static constexpr auto map_members = std::make_tuple(
-        std::make_pair(&Admin::id, &Admin_::Admin::id),
-        std::make_pair(&Admin::username, &Admin_::Admin::username),
-        std::make_pair(&Admin::password, &Admin_::Admin::password)
-    );
-};
+template <typename Model, typename TableRow>
+struct ReflectTableRow {};
+
+
 
 namespace details {
     template <size_t N, size_t ...Is>
@@ -35,109 +30,132 @@ namespace details {
     }
 
     template <typename Reflect, typename Model, typename Table, size_t ...Is>
-    auto from_model_impl(Model &&model, Table &&table, std::index_sequence<Is...>) {
+    auto assign_table_impl(Model &&model, Table &&table, std::index_sequence<Is...>) {
+        return std::make_tuple(
+            (table.*std::get<Is>(Reflect::map_members).second = model.*std::get<Is>(Reflect::map_members).first)...
+        );
+    }
+
+    template <typename Reflect, typename Model, typename Table, size_t ...Is>
+    auto assign_table_impl(const Model &model, const Table &table, std::index_sequence<Is...>) {
         return std::make_tuple(
             (table.*std::get<Is>(Reflect::map_members).second = model.*std::get<Is>(Reflect::map_members).first)...
         );
     }
 
     template <typename Reflect, typename Model, typename Table, size_t Start = 1>
-    auto from_model(const Model &model, const Table &table) {
+    auto assign_table(Model &&model, Table &&table) {
         constexpr auto size = std::tuple_size_v<decltype(Reflect::map_members)>;
-        return from_model_impl<Reflect>(model, table, details::make_index_sequence_from<Start, size-Start>());
-    }
-
-    template <typename Reflect, typename Model, typename Table, size_t Start = 1>
-    auto from_model(Model &&model, Table &&table) {
-        constexpr auto size = std::tuple_size_v<decltype(Reflect::map_members)>;
-        return from_model_impl<Reflect>(std::forward<Model>(model), std::forward<Table>(table),
+        return assign_table_impl<Reflect>(std::forward<Model>(model), std::forward<Table>(table),
                                               details::make_index_sequence_from<Start, size - Start>());
     }
 
     template <typename Reflect, typename Model, typename Table, size_t ...Is>
-    Model to_model_impl(Table &&table, std::index_sequence<Is...>) {
+    Model assign_model_impl(Table &&table, std::index_sequence<Is...>) {
+        Model model;
+        ((model.*std::get<Is>(Reflect::map_members).first = table.*std::get<Is>(Reflect::map_members).second), ...);
+        return model;
+    }
+
+    template <typename Reflect, typename Model, typename Table, size_t ...Is>
+    Model assign_model_impl(const Table &table, std::index_sequence<Is...>) {
         Model model;
         ((model.*std::get<Is>(Reflect::map_members).first = table.*std::get<Is>(Reflect::map_members).second), ...);
         return model;
     }
 
     template <typename Reflect, typename Model, typename Table, size_t Start = 1>
-    Model to_model(Table &&table) {
+    Model assign_model_impl(Table &&table) {
         constexpr auto size = std::tuple_size_v<decltype(Reflect::map_members)>;
-        return to_model_impl<Reflect, Model, Table, Start>(std::forward<Table>(table));
-    }
-
-    template <typename Reflect, typename Model, typename Table, size_t Start = 1>
-    Model to_model(const Table &table) {
-        constexpr auto size = std::tuple_size_v<decltype(Reflect::map_members)>;
-        return to_model_impl<Reflect, Model, Table, Start>(table);
+        return assign_model_impl<Reflect, Model, Table, Start>(std::forward<Table>(table));
     }
 }
 
 
 template <typename Model, typename Table, size_t Start = 1>
 class GenericRepository {
-    using Reflect = ModelReflectTable<Model, Table>;
+    using Reflect = ReflectTable<Model, Table>;
     using pooled_conn_ptr_type = std::shared_ptr<sqlpp::sqlite3::pooled_connection>;
-    using RetContainer = std::vector<Model>;
+    using SelectRetType = std::vector<Model>;
+    using InsertRetType = bool;
+    using UpdateRetType = bool;
+    using DeleteRetType = bool;
 public:
-    bool insert(Model&& model) {
-        return utils::database_utils::DataBaseHelper::execute<bool>([](const pooled_conn_ptr_type &conn, Model &&model_) {
+    InsertRetType insert(const Model &model) const {
+        return utils::database_utils::DataBaseHelper::execute<InsertRetType>([](const pooled_conn_ptr_type &conn, const Model &model_) {
             Table table {};
-            (*conn)(insert_into(table).set(details::from_model<Reflect, Start>(model_, table)));
-        }, std::forward<Model>(model));
-    }
-
-    bool insert(const Model& model) {
-        return utils::database_utils::DataBaseHelper::execute<bool>([](const pooled_conn_ptr_type &conn_, const Model &model_) {
-            Table table {};
-            (*conn_)(insert_into(table).set(details::from_model<Reflect, Model, Table, Start>(model_, table)));
+            (*conn)(insert_into(table).set(details::assign_table<Reflect, Model, Table, Start>(model_, table)));
             return true;
         }, model);
     }
 
     template <typename Condition>
-    bool update(Model&& model, Condition&& condition) {
-        return utils::database_utils::DataBaseHelper::execute<bool>([] (const pooled_conn_ptr_type &conn_, Model &&model_, Condition &&condition_) {
+    UpdateRetType update(const Model& model, const Condition& condition) const {
+        return utils::database_utils::DataBaseHelper::execute<UpdateRetType>([] (const pooled_conn_ptr_type &conn_, const Model &model_, const Condition &condition_) {
             Table table {};
-            (*conn_)(sqlpp::update(table).set(details::from_model<Reflect, Model, Table, Start>(model_, table)).where(
-                std::forward<Condition>(condition_)));
+            (*conn_)(sqlpp::update(table).set(details::assign_table<Reflect, Model, Table, Start>(model_, table)).where(
+                condition_));
             return true;
-        }, std::forward<Model>(model), std::forward<Condition>(condition));
+        }, model, condition);
     }
 
     template <typename Condition>
-    bool update(const Model& model, Condition&& condition) {
-        return utils::database_utils::DataBaseHelper::execute<bool>([] (const pooled_conn_ptr_type &conn_, const Model &model_, Condition &&condition_) {
+    SelectRetType select(const Condition &condition) const {
+        return utils::database_utils::DataBaseHelper::execute<SelectRetType>([] (const pooled_conn_ptr_type &conn_, const Condition &condition_) {
             Table table {};
-            (*conn_)(sqlpp::update(table).set(details::from_model<Reflect, Model, Table, Start>(model_, table)).where(std::forward<Condition>(condition_)));
-            return true;
-        }, model, std::forward<Condition>(condition));
-    }
-
-    template <typename Condition>
-    RetContainer select(Condition &&condition = {}) {
-        return utils::database_utils::DataBaseHelper::execute<RetContainer>([] (const pooled_conn_ptr_type &conn_, Condition &&condition_) {
-            Table table {};
-            RetContainer ret_container {};
-            auto select_result = (*conn_)(sqlpp::select(all_of(table)).from(table).where(std::forward<Condition>(condition_)));
+            SelectRetType ret_container {};
+            auto select_result = (*conn_)(sqlpp::select(all_of(table)).from(table).where(condition_));
             for (auto &row : select_result) {
-                ret_container.push_back(details::to_model<Reflect, Model, Table, Start>(row));
+                ret_container.push_back(ReflectTableRow<Admin, decltype(row)>::assign_model(row));
             }
             return ret_container;
-        }, std::forward<Condition>(condition));
+        }, condition);
+    }
+
+    template <typename Condition>
+    DeleteRetType remove(const Condition &condition) const {
+        return utils::database_utils::DataBaseHelper::execute<DeleteRetType>([] (const pooled_conn_ptr_type &conn_, const Condition &condition_) {
+            Table table {};
+            (*conn_)(remove_from(table).where(condition_));
+            return true;
+        }, condition);
     }
 };
 
+// 特化出从模型到表的反射
+template <>
+struct ReflectTable<Admin, Admin_::Admin> {
+    static constexpr auto map_members = std::make_tuple(
+        std::make_pair(&Admin::id, &Admin_::Admin::id),
+        std::make_pair(&Admin::username, &Admin_::Admin::username),
+        std::make_pair(&Admin::password, &Admin_::Admin::password)
+    );
+};
+
+template <typename AdminTableRow>
+struct ReflectTableRow <Admin, AdminTableRow> {
+    static constexpr auto assign_model(AdminTableRow && row) {
+        return Admin {.id = static_cast<size_t>(row.id), .username = row.username, .password = row.password};
+    }
+};
 
 int main() {
+    GenericRepository<Admin, Admin_::Admin> repository;
+    for (size_t i = 60; i < 70; ++i) {
+        Admin admin {.username = std::to_string(i + 30), .password = "password"};
+        // repository.insert(Admin{.username = std::to_string(i), .password = std::to_string(i)});
+        repository.remove(Admin_::Admin{}.username == std::to_string(i));
+        // repository.update(admin, Admin_::Admin{}.username == std::to_string(i));
+    }
+    auto rows = repository.select(Admin_::Admin{}.id >= 44);
+    for (auto &row : rows) {
+        std::cout << row.id << " " << row.username << " " << row.password << std::endl;
+    }
 
-    using Reflect = ModelReflectTable<Admin, Admin_::Admin>;
-    auto conn_ = utils::database_utils::get_pooled_conn_ptr();
-    using namespace std;
-    // cin >> admin.username >> admin.password;
-    GenericRepository<Admin, Admin_::Admin, 1> repository;
-    repository.select(Admin_::Admin{}.id >= 0);
+    // auto res = repository.select(Admin_::Admin{}.id == 43);
+    // for (auto &row : res) {
+    //     std::cout << row.id << " " << row.username << std::endl;
+    // }
     // repository.update(admin, Admin_::Admin{}.id == 43);
 
     // crow::SimpleApp app{};
@@ -176,21 +194,3 @@ int main() {
 
     return 0;
 }
-
-// template <typename Model, typename Table>
-// class GenericRepository {
-//     using Reflect = ModelReflectTable<Model, Table>;
-//     using pooled_conn_ptr_type = utils::database_utils::ConnDefiner::pooled_conn_ptr_type;
-//
-// public:
-//     GenericRepository() = default;
-//     ~GenericRepository() = default;
-//
-//     bool insert(const Model& model) {
-//         return utils::database_utils::DataBaseHelper::execute<bool>([] (const pooled_conn_ptr_type &conn, Model &&_model) {
-//             Table table;
-//             (*conn)(insert_into(table).set(details::make_assignments<Reflect, Model, Table>(std::forward<Model>(_model), std::forward<Table>(table))));
-//         }, std::forward<Model>(model));
-//     }
-//
-// };
