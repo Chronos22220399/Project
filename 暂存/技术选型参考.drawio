@@ -1,0 +1,55 @@
+<mxfile host="Electron" modified="2025-03-06T10:56:38.389Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.0 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="JvfN26VkL9noarcSsf4z" version="24.4.0" type="device">
+  <diagram name="第 1 页" id="P347gwp0EcLwIljre9aC">
+    <mxGraphModel dx="734" dy="538" grid="0" gridSize="10" guides="0" tooltips="0" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="S1ya8HceqxFShD0z1BwW-33" value="数据库" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="219" y="420" width="360" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-27" value="调用" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="S1ya8HceqxFShD0z1BwW-1" target="S1ya8HceqxFShD0z1BwW-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-1" value="前端&lt;br&gt;（独立，Web Vue.js）" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="218" y="32" width="364" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-3" value="视图层(View)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="219" y="120" width="360" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-32" value="提供" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="1" source="S1ya8HceqxFShD0z1BwW-4" target="S1ya8HceqxFShD0z1BwW-3" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-4" value="收银模块 后端（Cpp + sqlpp + crow + spdlog 等框架）" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;" parent="1" vertex="1">
+          <mxGeometry x="219" y="200" width="360" height="180" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="S1ya8HceqxFShD0z1BwW-5" target="S1ya8HceqxFShD0z1BwW-7" edge="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="399" y="300" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="399" y="289" />
+              <mxPoint x="399" y="289" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-5" value="业务逻辑层(Controller)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="239" y="240" width="322" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-24" value="缓存" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="S1ya8HceqxFShD0z1BwW-7" target="S1ya8HceqxFShD0z1BwW-9" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-26" value="持久化" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="1" source="S1ya8HceqxFShD0z1BwW-7" target="S1ya8HceqxFShD0z1BwW-8" edge="1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-7" value="数据访问逻辑(Model)" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="239" y="320" width="320" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-8" value="SQLite3" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="409" y="450" width="150" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="S1ya8HceqxFShD0z1BwW-9" value="Redis" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+          <mxGeometry x="239" y="450" width="150" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
