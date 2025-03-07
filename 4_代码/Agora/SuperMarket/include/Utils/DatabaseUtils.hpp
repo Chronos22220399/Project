@@ -24,7 +24,7 @@ struct ConnDefiner {
     static sqlpp::sqlite3::connection_config config{};
     static std::once_flag flag;
     std::call_once(flag, [&]() {
-        static auto root_dir_path = utils::get_project_root_path(
+        static auto root_dir_path = Utils::get_project_root_path(
             std::filesystem::current_path(), "Agora");
         fmt::println("Current Path: {}", root_dir_path.c_str());
         config.debug = true;
