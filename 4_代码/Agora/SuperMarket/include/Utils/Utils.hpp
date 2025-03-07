@@ -7,36 +7,31 @@
 
 #include <filesystem>
 
-namespace details
-{
-template <size_t N, size_t ...Is>
-struct make_even_or_odd_sequence: make_even_or_odd_sequence<N-2, N-2, Is...>{};
+namespace details {
+template <size_t N, size_t... Is>
+struct make_even_or_odd_sequence
+    : make_even_or_odd_sequence<N - 2, N - 2, Is...> {};
 
-template <size_t ...Is>
-struct make_even_or_odd_sequence<0, Is...>
-{
+template <size_t... Is> struct make_even_or_odd_sequence<0, Is...> {
     using type = std::index_sequence<Is...>;
 };
 
-template <size_t ...Is>
-struct make_even_or_odd_sequence<1, Is...>
-{
+template <size_t... Is> struct make_even_or_odd_sequence<1, Is...> {
     using type = std::index_sequence<Is...>;
 };
 
-template<size_t N, size_t... Is>
-auto make_index_sequence_from(std::index_sequence<Is...>)
-{
+template <size_t N, size_t... Is>
+auto make_index_sequence_from(std::index_sequence<Is...>) {
     return std::index_sequence<N + Is...>{};
 }
 
-}
+} // namespace details
 #include <fmt/format.h>
 #include <functional>
 #include <future>
 #include <vector>
 
-namespace utils {
+namespace Utils {
 
 inline std::filesystem::path get_project_root_path(std::filesystem::path path,
                                                    std::string root_dir_name) {
@@ -70,13 +65,12 @@ template <size_t LoopNum> struct ForLoop {
 };
 
 template <size_t N>
-using make_even_index_sequence = typename details::make_even_or_odd_sequence<N+2>::type;
+using make_even_index_sequence =
+    typename details::make_even_or_odd_sequence<N + 2>::type;
 
-template<size_t N, size_t L>
-auto make_index_sequence_from()
-{
+template <size_t N, size_t L> auto make_index_sequence_from() {
     return details::make_index_sequence_from<N>(std::make_index_sequence<L>{});
 }
-} // namespace utils
+} // namespace Utils
 
 #endif // UTILS_HPP
