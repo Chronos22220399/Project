@@ -1,13 +1,10 @@
+#include <Cases/get_pooled_conn_ptr_case.hpp>
 #include <Model/AdminModel.h>
 #include <Model/GeneralModel.hpp>
+#include <Utils/Base64.h>
 #include <Utils/Encrypter.h>
 #include <crow.h>
-#include <openssl/bio.h>
-#include <openssl/buffer.h>
-#include <openssl/encoder.h>
-#include <openssl/evp.h>
-#include <openssl/hmac.h>
-#include <openssl/sha.h>
+#include <future>
 #include <sstream>
 
 struct Header {
@@ -24,85 +21,51 @@ struct Payload {
 
 struct Jwt {};
 
-std::string hmac_sha256(const std::string &key, const std::string &data) {
-    unsigned char *result;
-    unsigned int len = SHA256_DIGEST_LENGTH;
-    result = HMAC(EVP_sha256(), key.c_str(), key.length(),
-                  (unsigned char *)data.c_str(), data.length(), NULL, NULL);
-    return std::string(reinterpret_cast<char *>(result), len);
-}
-
-std::string base64_encode(const std::string &in) {
-    BIO *bio, *b64;
-    char *encoded;
-    size_t length = in.length();
-
-    b64 = BIO_new(BIO_f_base64());
-    bio = BIO_new(BIO_s_mem());
-    bio = BIO_push(b64, bio);
-
-    BIO_write(bio, in.c_str(), length);
-    BIO_flush(bio);
-    BIO_get_mem_data(bio, &encoded);
-    std::string result(encoded, length);
-
-    BIO_free_all(bio);
-    return result;
-}
-
-std::string base64url_encode(const std::string &in) {
-    std::string base64 = base64_encode(in);
-
-    std::string base64url = base64;
-    std::replace(base64url.begin(), base64url.end(), '+', '-');
-    std::replace(base64url.begin(), base64url.end(), '/', '_');
-
-    base64url.erase(std::remove(base64url.begin(), base64url.end(), '='),
-                    base64url.end());
-    return base64url;
-}
-
-std::string base64url_decode(const std::string &in) {
-    std::string base64 = in;
-
-    std::replace(base64.begin(), base64.end(), '-', '+');
-    std::replace(base64.begin(), base64.end(), '_', '/');
-
-    while (base64.length() % 4 != 0) {
-        base64.push_back('=');
-    }
-
-    BIO *bio, *b64;
-    char *decoded;
-    size_t length = base64.length();
-
-    b64 = BIO_new(BIO_f_base64());
-    bio = BIO_new(BIO_s_mem());
-    bio = BIO_push(b64, bio);
-
-    BIO_write(bio, base64.c_str(), length);
-    BIO_flush(bio);
-    BIO_get_mem_data(bio, &decoded);
-    std::string result(decoded, length);
-
-    BIO_free_all(bio);
-    return result;
-    return {};
+template <typename Operation, typename... Args>
+void test(const std::string &caseName, Operation &&operation, Args &&...args) {
+    fmt::println("\n -------- Test Case: {} Start -------\n", caseName);
+    std::invoke(std::forward<Operation>(operation),
+                std::forward<Args>(args)...);
+    fmt::println("\n -------- Test Case: {} End -------\n", caseName);
 }
 
 int main() {
     using namespace std;
 
-    std::string header = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
-    std::string payload =
-        "{\"sub\":\"1234567890\",\"name\":\"John Doe\",\"iat\":1516239022}";
+    test("1", []() {
+        std::string header = R"({"alg":"HS256","typ":"JWT"})";
+        std::string payload =
+            R"({"sub":"1234567890","name":"John Doe","iat":1516239022})";
 
-    std::string header_base64url = base64url_encode(header);
-    std::string payload_base64url = base64url_encode(payload);
+        vector<std::future<void>> futures;
+        for (size_t i = 0; i < 10; ++i) {
+            futures.emplace_back(async(std::launch::async, [&header,
+                                                            &payload]() {
+                Utils::Base64 base64;
+                std::string header_b64 = base64.url_encode(header);
+                std::string payload_b64 = base64.url_encode(payload);
 
-    std::cout << "Header (Base64Url): " << header_base64url << std::endl;
-    std::cout << "Payload (Base64Url): " << payload_base64url << std::endl;
+                std::cout << "Header (Base64Url): " << header_b64 << std::endl;
+                std::cout << "Payload (Base64Url): " << payload_b64
+                          << std::endl;
 
+                std::string decoded_header = base64.url_decode(header_b64);
+                std::string decoded_payload = base64.url_decode(payload_b64);
+
+                std::cout << "Decoded Header: " << decoded_header << std::endl;
+                std::cout << "Decoded Payload: " << decoded_payload
+                          << std::endl;
+            }));
+        }
+        for (auto &f : futures) {
+            f.wait();
+        }
+    });
+
+    test("2", []() {
+        Model::AdminModel model;
+        model.get_admin_by_id(70);
+    });
     // Utils::Encrypter::init();
     // crow::SimpleApp app{};
     //
