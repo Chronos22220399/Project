@@ -11,7 +11,7 @@
 #include <sqlpp11/sqlite3/connection_pool.h>
 #include <sqlpp11/sqlite3/sqlite3.h>
 
-namespace utils {
+namespace Utils {
 
 struct ConnDefiner {
     using conn_pool_type = sqlpp::sqlite3::connection_pool;
@@ -118,5 +118,5 @@ struct DataBaseHelper : ConnDefiner {
     }
 };
 
-} // namespace utils
+} // namespace Utils
 #endif // DATABASE_UTILS_HPP

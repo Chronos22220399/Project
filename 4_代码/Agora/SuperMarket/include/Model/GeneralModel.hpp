@@ -4,10 +4,6 @@
 #include <sqlpp11/sqlpp11.h>
 
 namespace Model {
-template <typename Model, typename Table> struct ReflectTable;
-
-template <typename Model, typename TableRow> struct ReflectTableRow {};
-
 namespace details {
 
 template <typename Reflect, typename Model, typename Table, size_t... Is>
@@ -19,6 +15,10 @@ auto assign_table_impl(Model &&model, Table &&table,
              std::get<Is>(Reflect::map_members).first)...);
 }
 } // namespace details
+
+template <typename Model, typename Table> struct ReflectTable;
+
+template <typename Model, typename TableRow> struct ReflectTableRow {};
 
 template <typename Reflect, typename Model, typename Table, size_t Start = 1>
 auto assign_table(Model &&model, Table &&table) {
@@ -39,7 +39,7 @@ template <typename Model, typename Table, size_t Start = 1> class GenericModel {
 
   public:
     template <typename T> InsertRetType insert(T &&model) const {
-        return utils::DataBaseHelper::execute<InsertRetType>(
+        return Utils::DataBaseHelper::execute<InsertRetType>(
             [](const pooled_conn_ptr_type &conn, T &&model_) {
                 Table table_{};
                 (*conn)(insert_into(table_).set(
@@ -52,7 +52,7 @@ template <typename Model, typename Table, size_t Start = 1> class GenericModel {
 
     template <typename T, typename Condition>
     UpdateRetType update(T &&model, Condition &&condition) const {
-        return utils::DataBaseHelper::execute<UpdateRetType>(
+        return Utils::DataBaseHelper::execute<UpdateRetType>(
             [](const pooled_conn_ptr_type &conn_, T &&model_,
                Condition &&condition_) {
                 Table table_{};
@@ -68,7 +68,7 @@ template <typename Model, typename Table, size_t Start = 1> class GenericModel {
 
     template <typename Condition>
     SelectRetType select(Condition &&condition) const {
-        return utils::DataBaseHelper::execute<SelectRetType>(
+        return Utils::DataBaseHelper::execute<SelectRetType>(
             [](const pooled_conn_ptr_type &conn_, Condition &&condition_) {
                 Table table_{};
                 SelectRetType ret_container{};
@@ -88,7 +88,7 @@ template <typename Model, typename Table, size_t Start = 1> class GenericModel {
 
     template <typename Condition>
     DeleteRetType remove(Condition &&condition) const {
-        return utils::DataBaseHelper::execute<DeleteRetType>(
+        return Utils::DataBaseHelper::execute<DeleteRetType>(
             [](const pooled_conn_ptr_type &conn_, Condition &&condition_) {
                 Table table_{};
                 (*conn_)(remove_from(table_).where(
