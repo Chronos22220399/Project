@@ -1,5 +1,7 @@
 #include <Utils/Base64.h>
+#include <Utils/Log.hpp>
 #include <algorithm>
+#include <iostream>
 #include <map>
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
@@ -9,14 +11,6 @@
 #include <openssl/sha.h>
 #include <stdexcept>
 using namespace Utils;
-
-std::string hmac_sha256(const std::string &key, const std::string &data) {
-    unsigned char *result;
-    unsigned int len = SHA256_DIGEST_LENGTH;
-    result = HMAC(EVP_sha256(), key.c_str(), key.length(),
-                  (unsigned char *)data.c_str(), data.length(), NULL, NULL);
-    return std::string(reinterpret_cast<char *>(result), len);
-}
 
 class Base64::Base64Impl {
   public:
@@ -88,6 +82,7 @@ class Base64::Base64Impl {
             result.append(buffer, len);
         }
         if (len < 0) {
+            BIO_free_all(bio_chain);
             throw std::runtime_error("BIO_read 失败");
         }
 

@@ -6,14 +6,14 @@
 #define UTILS_HPP
 
 #include <Utils/Log.hpp>
-#include <algorithm>
 #include <filesystem>
+#include <functional>
+#include <future>
 #include <openssl/bio.h>
 #include <openssl/buffer.h>
 #include <openssl/encoder.h>
 #include <openssl/evp.h>
-#include <openssl/hmac.h>
-#include <openssl/sha.h>
+#include <vector>
 
 namespace details {
 template <size_t N, size_t... Is>
@@ -34,10 +34,6 @@ auto make_index_sequence_from(std::index_sequence<Is...>) {
 }
 
 } // namespace details
-#include <fmt/format.h>
-#include <functional>
-#include <future>
-#include <vector>
 
 namespace Utils {
 
@@ -80,112 +76,12 @@ template <size_t N, size_t L> auto make_index_sequence_from() {
     return details::make_index_sequence_from<N>(std::make_index_sequence<L>{});
 }
 
-inline std::string base64_encode(const std::string &in) {
-    try {
-        BIO *bio, *b64;
-        BUF_MEM *bufferPtr = nullptr;
-
-        // 创建 base64 过滤器并禁用换行符号
-        b64 = BIO_new(BIO_f_base64());
-        if (!b64) {
-            throw std::runtime_error("创建 BIO_f_base64 失败");
-        }
-        BIO_set_flags(b64, BIO_FLAGS_BASE64_NO_NL);
-
-        // 创建内存 BIO 并链接到 base64 过滤器上
-        bio = BIO_new(BIO_s_mem());
-        if (!bio) {
-            BIO_free_all(b64);
-            throw std::runtime_error("创建 BIO_s_mem 失败");
-        }
-        bio = BIO_push(b64, bio);
-
-        // 写入数据并刷新
-        int len = BIO_write(bio, in.data(), static_cast<int>(in.length()));
-        if (len <= 0 || static_cast<size_t>(len) != in.length()) {
-            BIO_free_all(bio);
-            throw std::runtime_error("写入数据到 BIO 失败");
-        }
-        BIO_flush(bio);
-
-        // 获取内存缓冲区信息
-        BIO_get_mem_ptr(bio, &bufferPtr);
-        if (!bufferPtr || !bufferPtr->data || bufferPtr->length == 0) {
-            BIO_free_all(bio);
-            throw std::runtime_error("读取内存缓冲区信息失败");
-        }
-        std::string result(bufferPtr->data, bufferPtr->length);
-
-        // 释放整个 BIO 链
-        BIO_free_all(bio);
-        return result;
-    } catch (const std::exception &e) {
-        LOG(e.what());
-        return "";
-    }
-}
-
-inline std::string base64url_encode(const std::string &in) {
-    try {
-        std::string base64 = base64_encode(in);
-
-        std::string base64url = base64;
-        std::replace(base64url.begin(), base64url.end(), '+', '-');
-        std::replace(base64url.begin(), base64url.end(), '/', '_');
-
-        base64url.erase(std::remove(base64url.begin(), base64url.end(), '='),
-                        base64url.end());
-        return base64url;
-    } catch (const std::exception &e) {
-        LOG(e.what());
-        return "";
-    }
-}
-
-inline std::string base64url_decode(const std::string &in) {
-    try {
-        std::string base64 = in;
-
-        std::replace(base64.begin(), base64.end(), '-', '+');
-        std::replace(base64.begin(), base64.end(), '_', '/');
-
-        auto padding = (4 - (base64.length() % 4)) % 4;
-        base64.append(padding, '=');
-
-        BIO *bio, *b64;
-        BUF_MEM *bufferPtr = nullptr;
-
-        bio = BIO_new(BIO_s_mem());
-        if (!bio) {
-            BIO_free_all(b64);
-            throw std::runtime_error("创建 BIO_s_mem 失败");
-        }
-        bio = BIO_push(b64, bio);
-
-        // 写入数据并刷新
-        int len =
-            BIO_write(bio, base64.data(), static_cast<int>(base64.length()));
-        if (len <= 0 || static_cast<size_t>(len) != base64.length()) {
-            BIO_free_all(bio);
-            throw std::runtime_error("写入数据到 BIO 失败");
-        }
-        BIO_flush(bio);
-
-        // 获取内存缓冲区信息
-        BIO_get_mem_ptr(bio, &bufferPtr);
-        if (!bufferPtr || !bufferPtr->data || bufferPtr->length == 0) {
-            BIO_free_all(bio);
-            throw std::runtime_error("读取内存缓冲区信息失败");
-        }
-        std::string result(bufferPtr->data, bufferPtr->length);
-
-        // 释放整个 BIO 链
-        BIO_free_all(bio);
-        return result;
-    } catch (const std::exception &e) {
-        LOG(e.what());
-        return "";
-    }
+template <typename Operation, typename... Args>
+void test(const std::string &caseName, Operation &&operation, Args &&...args) {
+    fmt::println("\n -------- Test Case: {} Start -------\n", caseName);
+    std::invoke(std::forward<Operation>(operation),
+                std::forward<Args>(args)...);
+    fmt::println("\n -------- Test Case: {} End -------\n", caseName);
 }
 } // namespace Utils
 

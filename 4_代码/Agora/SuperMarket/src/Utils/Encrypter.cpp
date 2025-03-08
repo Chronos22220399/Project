@@ -1,6 +1,7 @@
 #include <Utils/Encrypter.h>
 #include <Utils/Log.hpp>
-#include <fmt/format.h>
+#include <openssl/hmac.h>
+#include <openssl/sha.h>
 #include <sodium.h>
 
 namespace Utils {
@@ -38,4 +39,14 @@ bool Encrypter::verify_password(const std::string &hashed_password,
     return crypto_pwhash_str_verify(hashed_password.c_str(), password.c_str(),
                                     password.length()) == 0;
 }
+
+std::string Encrypter::hmac_sha256(const std::string &key,
+                                   const std::string &data) {
+    unsigned char *result;
+    unsigned int len = SHA256_DIGEST_LENGTH;
+    result = HMAC(EVP_sha256(), key.c_str(), key.length(),
+                  (unsigned char *)data.c_str(), data.length(), NULL, NULL);
+    return std::string(reinterpret_cast<char *>(result), len);
+}
+
 } // namespace Utils
