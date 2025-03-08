@@ -13,14 +13,17 @@ class Base64 {
     Base64(Base64 &&other) noexcept;
     Base64 &operator=(Base64 &&other) noexcept;
     ~Base64();
-    std::string encode(const std::string &in,
-                       BioFlags flag = BioFlags::no_new_line);
-    std::string decode(const std::string &in,
-                       BioFlags flag = BioFlags::no_new_line);
+
     std::string url_encode(const std::string &in,
                            BioFlags flag = BioFlags::no_new_line);
     std::string url_decode(const std::string &in,
                            BioFlags flag = BioFlags::no_new_line);
+
+  private:
+    std::string encode(const std::string &in,
+                       BioFlags flag = BioFlags::no_new_line);
+    std::string decode(const std::string &in,
+                       BioFlags flag = BioFlags::no_new_line);
 
   private:
     struct Base64Impl;

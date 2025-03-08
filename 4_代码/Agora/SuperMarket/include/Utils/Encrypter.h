@@ -12,6 +12,8 @@ class Encrypter {
     // 不可获取原信息的哈希，通过用对 input 哈希后与存储的值对比方式查找
     static std::optional<std::string> crypto_hash(const std::string &input);
 
+    std::string hmac_sha256(const std::string &key, const std::string &data);
+
     // 哈希加密信息
     static std::optional<std::string>
     hash_password(const std::string &password);
