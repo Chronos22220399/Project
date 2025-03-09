@@ -18,12 +18,16 @@ int main() {
     using namespace std;
     Utils::test("permission management", []() {
         Utils::PermissionManager manager;
-        Utils::Permission permission;
-        permission.resource = "user_data";
-        permission.actions.insert({Utils::Action::Read, Utils::Action::Write});
-        manager.set_actions_of("user", permission.resource, permission.actions);
-        manager.display();
-        manager.save_data_to_json();
+        std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
+        auto res = manager.check_access(user, Utils::Resource::Goods,
+                                        Utils::Action::Read);
+        fmt::println("{}", res);
+        res = manager.check_access(user, Utils::Resource::Goods,
+                                   Utils::Action::Write);
+        fmt::println("{}", res);
+        res = manager.check_access(user, Utils::Resource::Goods,
+                                   Utils::Action::Delete);
+        fmt::println("{}", res);
     });
 
     Utils::test("generate numbers", []() {

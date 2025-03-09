@@ -1,26 +1,36 @@
 {
-    "admin": [
-        {
-            "user_data": [
-                "Delete",
-                "Write",
-                "Read"
-            ]
-        }
-    ],
-    "customer": [
-        {
-            "user_data": [
-                "Read"
-            ]
-        }
-    ],
-    "user": [
-        {
-            "user_data": [
-                "Write",
-                "Read"
-            ]
-        }
-    ]
+    "admin": {
+        "user_data": [
+            "Read",
+            "Write",
+            "Delete"
+        ],
+        "goods": [
+            "Read",
+            "Write",
+            "Delete"
+        ]
+    },
+    "customer": {
+        "user_data": [
+            "Read",
+            "Write"
+        ],
+        "goods": [
+            "Read"
+        ]
+    },
+    "user": {
+        "user_data": [
+            "Write",
+            "Read"
+        ]
+    },
+    "boss": {
+        "goods": [
+            "Read",
+            "Write",
+            "Delete"
+        ]
+    }
 }

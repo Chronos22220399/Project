@@ -3,44 +3,14 @@
 #include <fstream>
 #include <mutex>
 #include <shared_mutex>
-#include <stdexcept>
 
 namespace Utils {
-
-// 将字符串转换为 `Action` 枚举
-Action stringToAction(const std::string &actionStr) {
-    if (actionStr == "Read")
-        return Action::Read;
-    if (actionStr == "Write")
-        return Action::Write;
-    if (actionStr == "Delete")
-        return Action::Delete;
-    throw std::invalid_argument("Unknown action: " + actionStr);
-}
-
-std::string actionToString(Action action) {
-    if (action == Action::Read)
-        return "Read";
-    if (action == Action::Write)
-        return "Write";
-    if (action == Action::Delete)
-        return "Delete";
-    throw std::invalid_argument("Unknown action");
-}
 
 void to_json(nlohmann::json &j, const Permission &p) {
     using json = nlohmann::json;
     j = json{{p.resource, json::array()}};
     for (auto &action : p.actions) {
         j[p.resource].push_back(actionToString(action));
-    }
-}
-
-void from_json(const nlohmann::json &j, Permission &p) {
-    auto it = j.begin();
-    p.resource = it.key();
-    for (const auto &actionStr : it.value()) {
-        p.actions.insert(stringToAction(actionStr));
     }
 }
 
@@ -56,29 +26,20 @@ class PermissionManager::PMImpl {
         jfile >> j;
 
         role_permissions.clear();
-        for (auto &[role, resources] : j.items()) {
-            for (auto &resource_entry : resources) {
-                for (auto &[resource, actions] : resource_entry.items()) {
-                    if (actions.is_array()) {
-                        std::unordered_set<Action> actions_;
-                        for (auto &action : actions) {
-                            actions_.insert(stringToAction(action));
-                        }
-                        Permission p{resource, std::move(actions_)};
-                        role_permissions[role].insert(p);
-                    } else {
-                        throw std::runtime_error(
-                            "permission.json 内出现格式错误，请检查是否有非 "
-                            "array "
-                            "的 actions");
-                    }
+        for (auto &[role, permissions] : j.items()) { // 遍历角色
+            for (auto &[resource, actions] : permissions.items()) {
+                Permission temp;
+                temp.resource = resource;
+                for (const auto &action : actions) {
+                    temp.actions.insert(stringToAction(action));
                 }
+                role_permissions[role].insert(std::move(temp));
             }
         }
     }
 
     void save_data_to_json() {
-        std::shared_lock lock(rw_mutex);
+        std::shared_lock<std::shared_mutex> lock(rw_mutex);
         using namespace nlohmann;
         json j;
         for (auto &[role, permissions] : role_permissions) {
@@ -110,6 +71,7 @@ class PermissionManager::PMImpl {
     }
 
     void display() const {
+        std::shared_lock<std::shared_mutex> lock(rw_mutex);
         for (const auto &[role, permissions] : role_permissions)
             for (auto &permission : permissions) {
                 for (auto &action : permission.actions) {
@@ -169,9 +131,10 @@ PermissionManager::PermissionManager() : impl(std::make_unique<PMImpl>()) {}
 PermissionManager::~PermissionManager() = default;
 
 bool PermissionManager::check_access(const std::unique_ptr<BasicUser> &user,
-                                     const std::string &resource,
+                                     const Resource &resource,
                                      Action action) const {
-    return impl->check_access(user, resource, action);
+    auto resourceStr = resourceToString(resource);
+    return impl->check_access(user, resourceStr, action);
 }
 
 void PermissionManager::display() const { impl->display(); }

@@ -126,6 +126,7 @@ class Jwt::JwtImpl {
 
         auto data = headerB64 + "." + payloadB64;
         auto secretKey = generator_.generate_string(32);
+        // TODO: 将 hmac_sha256 更改为哈希策略
         auto signature = encrypter_.hmac_sha256(secretKey, data);
         auto signatureB64 = base64_.url_encode(signature);
 
