@@ -3,8 +3,6 @@
 
 namespace Utils {
 
-inline std::string hmac_sha256(const std::string &key, const std::string &data);
-
 class Base64 {
   public:
     enum class BioFlags { no_new_line };
@@ -15,15 +13,15 @@ class Base64 {
     ~Base64();
 
     std::string url_encode(const std::string &in,
-                           BioFlags flag = BioFlags::no_new_line);
+                           BioFlags flag = BioFlags::no_new_line) const;
     std::string url_decode(const std::string &in,
-                           BioFlags flag = BioFlags::no_new_line);
+                           BioFlags flag = BioFlags::no_new_line) const;
 
   private:
     std::string encode(const std::string &in,
-                       BioFlags flag = BioFlags::no_new_line);
+                       BioFlags flag = BioFlags::no_new_line) const;
     std::string decode(const std::string &in,
-                       BioFlags flag = BioFlags::no_new_line);
+                       BioFlags flag = BioFlags::no_new_line) const;
 
   private:
     struct Base64Impl;

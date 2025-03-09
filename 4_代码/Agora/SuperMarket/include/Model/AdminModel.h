@@ -4,12 +4,11 @@
 
 #ifndef ADMINMODEL_H
 #define ADMINMODEL_H
+#include <Model/GeneralModel.hpp>
 #include <Utils/DatabaseUtils.hpp>
 #include <include/admin.h>
-#include <Model/GeneralModel.hpp>
 
-namespace Model
-{
+namespace Model {
 
 struct AdminModel {
     struct Admin {
@@ -23,13 +22,13 @@ struct AdminModel {
     ~AdminModel();
     std::vector<Admin> get_all_admins() const;
     Admin get_admin_by_id(size_t id) const;
+    size_t insert_bulk(std::vector<Admin> admins) const;
 
-private:
+  private:
     struct AdminModelImpl;
     std::shared_ptr<AdminModelImpl> impl;
 };
 
-
-}
+} // namespace Model
 
 #endif // ADMINMODEL_H

@@ -2,29 +2,63 @@
 #include <Model/AdminModel.h>
 #include <Model/GeneralModel.hpp>
 #include <Utils/Jwt.h>
+#include <Utils/Log.hpp>
+#include <Utils/RBAC/PermissionManager.h>
 #include <crow.h>
+#include <fstream>
 #include <future>
 #include <nlohmann/json.hpp>
 #include <random>
+#include <sqlpp11/sqlpp11.h>
 #include <sstream>
+
+struct User : public Utils::BasicUser {};
 
 int main() {
     using namespace std;
-    Utils::test("1", []() {
-        using json = nlohmann::json;
-        Utils::Jwt::Header header{.alg = "HS256", .typ = "JWT"};
-        Utils::Jwt::Payload payload{"hello", "name", 30000};
-
-        auto result = Utils::Jwt::instance().serialize(header, payload);
-        fmt::println("jwt: {}", result.jwt);
-        auto check_result = Utils::Jwt::instance().check_jwt(result);
-        fmt::println("check result is: {}",
-                     check_result == Utils::Jwt::JwtCheckResult::isValid);
-        fmt::println("check result is: {}",
-                     check_result == Utils::Jwt::JwtCheckResult::notMatched);
-        fmt::println("check result is: {}",
-                     check_result == Utils::Jwt::JwtCheckResult::expired);
+    Utils::test("permission management", []() {
+        Utils::PermissionManager manager;
+        Utils::Permission permission;
+        permission.resource = "user_data";
+        permission.actions.insert({Utils::Action::Read, Utils::Action::Write});
+        manager.set_actions_of("user", permission.resource, permission.actions);
+        manager.display();
+        manager.save_data_to_json();
     });
+
+    Utils::test("generate numbers", []() {
+        Utils::RandomGenerator g;
+        auto res = g.generate_numbers_from(0, 30, 10);
+        for (auto &i : res) {
+            LOG("{}", i);
+        }
+    });
+
+    Utils::test("generate number", []() {
+        Utils::RandomGenerator g;
+        auto res = g.generate_number_from(-30, 30);
+        LOG("{}", res);
+    });
+
+    // Utils::test("1", []() {
+    //     using json = nlohmann::json;
+    //     Utils::Jwt::Header header{};
+    //     Utils::Jwt::Payload payload{"hello", "name"};
+    //
+    //     auto result = Utils::Jwt::instance().serialize(header, payload);
+    //     auto jwtStr = result.jwt;
+    //     auto secretKey = result.secretKey;
+    //     auto check_result = Utils::Jwt::instance().validate(jwtStr,
+    //     secretKey);
+    //
+    //     fmt::println("check result is: {}",
+    //                  check_result == Utils::Jwt::ValidationResult::Valid);
+    //     fmt::println("check result is: {}",
+    //                  check_result ==
+    //                  Utils::Jwt::ValidationResult::NotMatched);
+    //     fmt::println("check result is: {}",
+    //                  check_result == Utils::Jwt::ValidationResult::Expired);
+    // });
 
     // Utils::test("1", []() {
     //     auto mess = "hello, world";

@@ -1,5 +1,4 @@
 #pragma once
-#include <Utils/Base64.h>
 #include <Utils/Encrypter.h>
 #include <Utils/RandomGenerator.h>
 #include <Utils/Utils.hpp>
@@ -9,12 +8,22 @@
 
 namespace Utils {
 
+class SecretKeyProvider {
+    using json = nlohmann::json;
+
+  public:
+    virtual ~SecretKeyProvider() = default;
+    virtual std::optional<std::string> get_key(const json &payload) const = 0;
+};
+
 class Jwt {
   public:
     struct Header {
         using json = nlohmann::json;
         std::string alg;
         std::string typ;
+
+        Header() : alg("HS256"), typ("JWT") {}
 
         json to_json() const {
             auto j = json{{"alg", this->alg}, {"typ", this->typ}};
@@ -35,11 +44,13 @@ class Jwt {
         std::string name;
         size_t iat;
         size_t exp;
+        std::string role;
 
         Payload() = default;
 
-        Payload(std::string sub, std::string name, size_t exp = 3000)
-            : sub(sub), name(name), exp(exp) {
+        Payload(std::string sub, std::string name, size_t exp = 3000,
+                const std::string &role = "customer")
+            : sub(sub), name(name), exp(exp), role(role) {
             auto now = std::chrono::system_clock::now();
             auto timeStamp = std::chrono::duration_cast<std::chrono::seconds>(
                                  now.time_since_epoch())
@@ -48,8 +59,11 @@ class Jwt {
         }
 
         json to_json() const {
-            auto j =
-                json{{"sub", sub}, {"name", name}, {"iat", iat}, {"exp", exp}};
+            auto j = json{{"sub", sub},
+                          {"name", name},
+                          {"iat", iat},
+                          {"exp", exp},
+                          {"role", role}};
             return j;
         }
 
@@ -59,6 +73,7 @@ class Jwt {
             j.at("name").get_to(payload.name);
             j.at("iat").get_to(payload.iat);
             j.at("exp").get_to(payload.exp);
+            j.at("role").get_to(payload.role);
             return payload;
         }
     };
@@ -68,11 +83,12 @@ class Jwt {
         std::string jwt;
     };
 
-    enum class JwtCheckResult { isValid, notMatched, expired };
+    enum class ValidationResult { Valid, Expired, NotMatched };
 
     SerializeResult serialize(const Header &header, const Payload &payload);
 
-    JwtCheckResult check_jwt(const SerializeResult &result);
+    ValidationResult validate(const std::string &jwtStr,
+                              const std::string &secretKey);
 
     Jwt(Jwt &&) = delete;
 
