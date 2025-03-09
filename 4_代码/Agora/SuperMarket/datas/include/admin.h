@@ -10,55 +10,55 @@
 namespace Admin_ {
 namespace Admin_ {
 struct Id {
-  struct _alias_t {
-    static constexpr const char _literal[] = "id";
-    using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
-    template <typename T> struct _member_t {
-      T id;
-      T &operator()() { return id; }
-      const T &operator()() const { return id; }
+    struct _alias_t {
+        static constexpr const char _literal[] = "id";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template <typename T> struct _member_t {
+            T id;
+            T &operator()() { return id; }
+            const T &operator()() const { return id; }
+        };
     };
-  };
-  using _traits =
-      sqlpp::make_traits<sqlpp::integer, sqlpp::tag::must_not_insert,
-                         sqlpp::tag::must_not_update>;
+    using _traits =
+        sqlpp::make_traits<sqlpp::integer, sqlpp::tag::must_not_insert,
+                           sqlpp::tag::must_not_update>;
 };
 struct Username {
-  struct _alias_t {
-    static constexpr const char _literal[] = "username";
-    using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
-    template <typename T> struct _member_t {
-      T username;
-      T &operator()() { return username; }
-      const T &operator()() const { return username; }
+    struct _alias_t {
+        static constexpr const char _literal[] = "username";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template <typename T> struct _member_t {
+            T username;
+            T &operator()() { return username; }
+            const T &operator()() const { return username; }
+        };
     };
-  };
-  using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
+    using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
 };
 struct Password {
-  struct _alias_t {
-    static constexpr const char _literal[] = "password";
-    using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
-    template <typename T> struct _member_t {
-      T password;
-      T &operator()() { return password; }
-      const T &operator()() const { return password; }
+    struct _alias_t {
+        static constexpr const char _literal[] = "password";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template <typename T> struct _member_t {
+            T password;
+            T &operator()() { return password; }
+            const T &operator()() const { return password; }
+        };
     };
-  };
-  using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
+    using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
 };
 } // namespace Admin_
 
 struct Admin
     : sqlpp::table_t<Admin, Admin_::Id, Admin_::Username, Admin_::Password> {
-  struct _alias_t {
-    static constexpr const char _literal[] = "Admin";
-    using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
-    template <typename T> struct _member_t {
-      T Admin;
-      T &operator()() { return Admin; }
-      const T &operator()() const { return Admin; }
+    struct _alias_t {
+        static constexpr const char _literal[] = "Admin";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template <typename T> struct _member_t {
+            T Admin;
+            T &operator()() { return Admin; }
+            const T &operator()() const { return Admin; }
+        };
     };
-  };
 };
 } // namespace Admin_

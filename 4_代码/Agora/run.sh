@@ -1,4 +1,5 @@
 #!/bin/bash
 
-cmake -B build
+cmake -S . -B build
 cmake --build build --parallel $(nproc) 
+cd build/SuperMarket && ctest

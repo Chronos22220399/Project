@@ -1,0 +1,26 @@
+{
+    "admin": [
+        {
+            "user_data": [
+                "Delete",
+                "Write",
+                "Read"
+            ]
+        }
+    ],
+    "customer": [
+        {
+            "user_data": [
+                "Read"
+            ]
+        }
+    ],
+    "user": [
+        {
+            "user_data": [
+                "Write",
+                "Read"
+            ]
+        }
+    ]
+}

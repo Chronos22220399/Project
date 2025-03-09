@@ -32,7 +32,7 @@ template <typename Model, typename Table, size_t Start = 1> class GenericModel {
     using pooled_conn_ptr_type =
         std::shared_ptr<sqlpp::sqlite3::pooled_connection>;
     using SelectRetType = std::vector<Model>;
-    using InsertRetType = bool;
+    using InsertRetType = size_t;
     using UpdateRetType = bool;
     using DeleteRetType = bool;
     using Reflect = ReflectTable<Model, Table>;
@@ -45,7 +45,7 @@ template <typename Model, typename Table, size_t Start = 1> class GenericModel {
                 (*conn)(insert_into(table_).set(
                     assign_table<Reflect, T, Table, Start>(
                         std::forward<T>(model_), std::forward<Table>(table_))));
-                return true;
+                return 1;
             },
             std::forward<T>(model));
     }

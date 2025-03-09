@@ -17,7 +17,7 @@ class Base64::Base64Impl {
     Base64Impl() { OpenSSL_add_all_algorithms(); }
     ~Base64Impl() = default;
 
-    int get_bio_flag(BioFlags flag) {
+    int get_bio_flag(BioFlags flag) const {
         auto it = bioFlagMap.find(flag);
         if (it == bioFlagMap.end()) {
             throw std::runtime_error("BIO 标志选择错误");
@@ -26,7 +26,7 @@ class Base64::Base64Impl {
     }
 
     // 编码函数
-    std::string encode(const std::string &in, BioFlags flag) {
+    std::string encode(const std::string &in, BioFlags flag) const {
         BIO *b64 = BIO_new(BIO_f_base64());
         if (!b64)
             throw std::runtime_error("创建 BIO_f_base64 失败");
@@ -64,7 +64,7 @@ class Base64::Base64Impl {
         return result;
     }
 
-    std::string decode(const std::string &in, BioFlags flag) {
+    std::string decode(const std::string &in, BioFlags flag) const {
         std::string base64 = in;
         // 创建反向 BIO 链：内存 -> Base64 解码器
         BIO *bio_mem =
@@ -91,7 +91,7 @@ class Base64::Base64Impl {
     }
 
     // Base64URL 编码
-    std::string url_encode(const std::string &in, BioFlags flag) {
+    std::string url_encode(const std::string &in, BioFlags flag) const {
         std::string base64 = encode(in, flag);
         std::replace(base64.begin(), base64.end(), '+', '-');
         std::replace(base64.begin(), base64.end(), '/', '_');
@@ -101,7 +101,7 @@ class Base64::Base64Impl {
     }
 
     // Base64URL 解码
-    std::string url_decode(const std::string &in, BioFlags flag) {
+    std::string url_decode(const std::string &in, BioFlags flag) const {
         std::string base64 = in;
         std::replace(base64.begin(), base64.end(), '-', '+');
         std::replace(base64.begin(), base64.end(), '_', '/');
@@ -126,18 +126,18 @@ Base64 &Base64::operator=(Base64 &&other) noexcept = default;
 
 Base64::~Base64() = default;
 
-std::string Base64::encode(const std::string &in, BioFlags flag) {
+std::string Base64::encode(const std::string &in, BioFlags flag) const {
     return impl->encode(in, flag);
 }
 
-std::string Base64::decode(const std::string &in, BioFlags flag) {
+std::string Base64::decode(const std::string &in, BioFlags flag) const {
     return impl->decode(in, flag);
 }
 
-std::string Base64::url_encode(const std::string &in, BioFlags flag) {
+std::string Base64::url_encode(const std::string &in, BioFlags flag) const {
     return impl->url_encode(in, flag);
 }
 
-std::string Base64::url_decode(const std::string &in, BioFlags flag) {
+std::string Base64::url_decode(const std::string &in, BioFlags flag) const {
     return impl->url_decode(in, flag);
 }
