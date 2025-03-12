@@ -1,4 +1,4 @@
-#include <Utils/Jwt.h>
+#include <../include/Utils/Jwt/Jwt.h>
 #include <gtest/gtest.h>
 
 TEST(jwt_test, test_check) {

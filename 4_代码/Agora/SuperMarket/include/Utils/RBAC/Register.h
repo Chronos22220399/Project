@@ -1,7 +1,7 @@
-#pragma
-#include <Utils/Jwt.h>
-#include <Utils/RBAC/PasswordManager.hpp>
-#include <Utils/RBAC/PermissionManager.h>
+#pragma once
+#include "../Jwt/Jwt.h"
+#include "PasswordManager.hpp"
+#include "PermissionManager.h"
 #include <memory>
 #include <regex>
 
@@ -14,6 +14,13 @@ class RegDBStrategy {
     virtual bool query_name(const std::string &username) = 0;
 };
 
+class DefaultRegDBStrategy : public RegDBStrategy {
+  public:
+    DefaultRegDBStrategy() = default;
+    bool save(std::shared_ptr<BasicUser> user) override { return false; }
+    bool query_name(const std::string &username) override { return false; }
+};
+
 class TokenGetter {
   public:
     static Jwt::SerializeResult get() {
@@ -23,7 +30,8 @@ class TokenGetter {
     }
 };
 
-// TODO: 添加db策略，实现注册模块，然后进行测试
+// TODO: 通过模板模式实现登陆基本功能，使用者通过继承 GenericRegister 后重载
+// save、find_name 等函数完善 regist 函数的功能
 class BasicRegister {
   public:
     struct RegistResult {
@@ -39,55 +47,24 @@ class BasicRegister {
     check_password(const std::string &password) const = 0;
 };
 
+// 定义登录流程的通用实现
 class GenericRegister : public BasicRegister {
   public:
-    GenericRegister(std::shared_ptr<RegDBStrategy> database)
-        : database_(database) {}
+    explicit GenericRegister(std::shared_ptr<RegDBStrategy> database);
 
-    ~GenericRegister() = default;
+    ~GenericRegister();
 
-    RegistResult regist(std::shared_ptr<BasicUser> user) const override {
-        if (auto err = check_username(user->username)) {
-            return {std::nullopt, err};
-        }
-        if (auto err = check_password(user->password)) {
-            return {std::nullopt, err};
-        }
-        if (!database_->save(user)) {
-            return {std::nullopt, {"username is exists"}};
-        }
-        auto result = TokenGetter::get();
-        return {result.jwt, std::nullopt};
-    }
+    RegistResult regist(std::shared_ptr<BasicUser> user) const override;
 
     virtual std::optional<std::string>
-    check_username(const std::string &username) const override {
-        if (username.length() < 3 || username.length() > 30) {
-            return "Username must be between 3 and 20 characters.";
-        }
-        if (!std::regex_match(username, std::regex("^[a-zA-Z0-9_.]+$"))) {
-            return "Username contains invalid characters.";
-        }
-        return std::nullopt;
-    }
+    check_username(const std::string &username) const override;
 
     virtual std::optional<std::string>
-    check_password(const std::string &password) const override {
-        if (password.length() < 8) {
-            return "Password must be at least 8 characters long.";
-        }
-        if (!std::regex_search(password, std::regex("[A-Z]")) ||
-            !std::regex_search(password, std::regex("[a-z]")) ||
-            !std::regex_search(password, std::regex("[0-9]")) ||
-            !std::regex_search(password, std::regex("[!@#$%^&*]"))) {
-            return "Password must contain uppercase, lowercase, number, and "
-                   "special character.";
-        }
-        return std::nullopt;
-    }
+    check_password(const std::string &password) const override;
 
   private:
-    std::shared_ptr<RegDBStrategy> database_;
+    struct Impl;
+    std::unique_ptr<Impl> impl;
 };
 
 } // namespace Utils
