@@ -30,7 +30,7 @@ struct ConnDefiner {
         config.debug = true;
         config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
         config.path_to_database = std::string(root_dir_path) +
-                                  "/SuperMarket/datas/sqlite3/admin.sqlite3";
+                                  "/SuperMarket/datas/sqlite3/datas.sqlite3";
     });
     static auto config_ptr =
         std::make_shared<sqlpp::sqlite3::connection_config>(config);
