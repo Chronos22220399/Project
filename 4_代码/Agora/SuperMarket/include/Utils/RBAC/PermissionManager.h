@@ -4,6 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <unordered_set>
+#include <Utils/RBAC/BasicUser.hpp>
 
 namespace Utils {
 
@@ -81,12 +82,6 @@ inline void to_json(nlohmann::json &j, const Permission &p);
 
 inline void from_json(const nlohmann::json &j, Permission &p);
 
-struct BasicUser {
-    size_t id;
-    std::string username;
-    std::string password;
-    std::string role = "customer";
-};
 
 class PermissionManager {
   public:

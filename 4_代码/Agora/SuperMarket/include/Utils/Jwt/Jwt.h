@@ -1,23 +1,16 @@
 #pragma once
-#include <Utils/Encrypter.h>
-#include <Utils/RandomGenerator.h>
-#include <Utils/Utils.hpp>
+#include "../Encrypter.h"
+#include "../RandomGenerator.h"
+#include "../Utils.hpp"
 #include <chrono>
 #include <nlohmann/json.hpp>
 #include <string>
 
 namespace Utils {
 
-class SecretKeyProvider {
-    using json = nlohmann::json;
-
-  public:
-    virtual ~SecretKeyProvider() = default;
-    virtual std::optional<std::string> get_key(const json &payload) const = 0;
-};
-
 class Jwt {
   public:
+
     struct Header {
         using json = nlohmann::json;
         std::string alg;

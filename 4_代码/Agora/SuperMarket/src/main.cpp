@@ -1,9 +1,10 @@
+#include <../include/Utils/Jwt/Jwt.h>
 #include <Cases/get_pooled_conn_ptr_case.hpp>
 #include <Model/AdminModel.h>
 #include <Model/GeneralModel.hpp>
-#include <Utils/Jwt.h>
 #include <Utils/Log.hpp>
 #include <Utils/RBAC/PermissionManager.h>
+#include <Utils/RBAC/Register.h>
 #include <crow.h>
 #include <fstream>
 #include <future>
@@ -14,21 +15,31 @@
 
 struct User : public Utils::BasicUser {};
 
-struct A {
-    A() = default;
-    ~A() = default;
-};
+struct CustumRegDB final : public Utils::RegDBStrategy {
+  public:
+    CustumRegDB() {}
+    ~CustumRegDB() {}
 
-struct B : public A {};
+    bool save(std::shared_ptr<Utils::BasicUser> user) override { return false; }
+
+    bool query_name(const std::string &name) override {
+        return model.get_admin_by_username(name).has_value();
+    }
+
+    Model::AdminModel model;
+};
 
 int main() {
     using namespace std;
-    int y = 0, &z = y, *p = &y;
-    decltype(y + 1) a;
-    decltype(z + 1) b;
-    decltype(*p + 1) ca;
-
-    // Utils::test("permission management", []() {
+    // Utils::test("Register", []()
+    // {
+    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
+    //     Utils::GenericRegister reg();
+    // });
+    //
+    //
+    // Utils::test("permission management", []()
+    // {
     //     Utils::PermissionManager manager;
     //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
     //     auto res = manager.check_access(user, Utils::Resource::Goods,
@@ -42,15 +53,23 @@ int main() {
     //     fmt::println("{}", res);
     // });
     //
+    //
     // Utils::test("generate numbers", []() {
     //     Utils::RandomGenerator g;
     //     auto res = g.generate_numbers_from(0, 30, 10);
     //     for (auto &i : res) {
+    // Utils::test("generate numbers", []()
+    // {
+    //     Utils::RandomGenerator g;
+    //     auto res = g.generate_numbers_from(0, 30, 10);
+    //     for (auto &i: res)
+    //     {
     //         LOG("{}", i);
     //     }
     // });
     //
-    // Utils::test("generate number", []() {
+    // Utils::test("generate number", []()
+    // {
     //     Utils::RandomGenerator g;
     //     auto res = g.generate_number_from(-30, 30);
     //     LOG("{}", res);
@@ -84,12 +103,10 @@ int main() {
     //     LOG(base64.url_encode(res));
     // });
 
-    // Utils::Encrypter::init();
-    // crow::SimpleApp app{};
-    //
-    // Model::AdminModel model;
+    Utils::Encrypter::init();
+    crow::SimpleApp app{};
+
     // auto admin = model.get_admin_by_id(74);
-    // std::stringstream ss;
     // auto psd = Utils::Encrypter::hash_password(admin.password);
     // if (psd) {
     //     ss << "Id: " << admin.id << "\tUsername: " << admin.username
@@ -102,13 +119,32 @@ int main() {
     //           admin.password)
     //           << "\n";
 
-    // CROW_ROUTE(app, "/get_all_admins")([]() {
-    //     Model::AdminModel model{};
-    //     auto admins = model.get_all_admins();
-    //     return static_cast<std::string>(ss.str());
-    // });
+    CROW_ROUTE(app, "/create_admin/<string>/<string>")(
+        [](std::string username, std::string password) {
+            Model::AdminModel model;
+            Model::AdminModel::Admin_ admin;
+            admin.username = username;
+            admin.password = password;
+            admin.role = "admin";
+            if (model.create_admin(admin)) {
+                return "Successfully created admin";
+            }
+            return "Failed to create admin";
+        });
 
-    // app.port(18080).multithreaded().run();
+    CROW_ROUTE(app, "/get_admin_by_id/<int>")([](int id) {
+        Model::AdminModel model{};
+        std::stringstream ss;
+        auto admins = model.get_admin_by_id(id);
+        if (!admins.has_value()) {
+            return "admin not found";
+        }
+        auto admin = admins.value();
+        ss << admin.id << " " << admin.username << " " << admin.password;
+        return std::move(ss.str().c_str());
+    });
+
+    app.port(18080).multithreaded().run();
 
     return 0;
 }
