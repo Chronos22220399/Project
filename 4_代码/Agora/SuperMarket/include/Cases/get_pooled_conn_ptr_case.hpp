@@ -16,7 +16,7 @@ inline auto get_pooled_conn_ptr_case() {
     Utils::ForLoop<168>::run([]() {
         try {
             auto pooled_conn_ptr = Utils::get_pooled_conn_ptr();
-            Admin_::Admin admin;
+            Admin::Admin admin;
             // auto execution =
             // (*pooled_ptr)(insert_into(admin).set(admin.username=std::to_string(i),
             // admin.password=std::to_string(i)));
@@ -41,7 +41,7 @@ inline void DataBaseHelper_case_query() {
     Utils::ForLoop<10>::run(
         [](int id) {
             auto query = [](auto &&pooled_conn, int id) {
-                Admin_::Admin admin;
+                Admin::Admin admin;
                 auto result = (*pooled_conn)(select(sqlpp::all_of(admin))
                                                  .from(admin)
                                                  .where(admin.id == id));
@@ -62,7 +62,7 @@ inline void DataBaseHelper_case_update() {
         futures.emplace_back(std::async(std::launch::async, [i] {
             Utils::DataBaseHelper::execute<int>(
                 [](auto &&pooled_conn_ptr, std::string username) {
-                    Admin_::Admin admin{};
+                    Admin::Admin admin{};
                     (*pooled_conn_ptr)(update(admin)
                                            .where(admin.id == 1)
                                            .set(admin.username = username));
@@ -83,7 +83,7 @@ inline void DataBaseHelper_case_remove() {
         futures.emplace_back(std::async(std::launch::async, [i] {
             Utils::DataBaseHelper::execute<int>(
                 [](auto &&pooled_conn_ptr, int id) {
-                    Admin_::Admin admin{};
+                    Admin::Admin admin{};
                     (*pooled_conn_ptr)(
                         remove_from(admin).where(admin.id == id));
                     return 0;

@@ -3,42 +3,57 @@
 //
 #include <Model/AdminModel.h>
 #include <Utils/DatabaseUtils.hpp>
-#include <include/admin.h>
 #include <sqlpp11/sqlpp11.h>
+#include <include/admin.h>
 
 namespace Model {
 // 特化出从模型到表的反射
-template <> struct ReflectTable<AdminModel::Admin, Admin_::Admin> {
+template <> struct ReflectTable<AdminModel::Admin_, Admin::Admin> {
     static constexpr auto map_members = std::make_tuple(
-        std::make_pair(&AdminModel::Admin::id, &Admin_::Admin::id),
-        std::make_pair(&AdminModel::Admin::username, &Admin_::Admin::username),
-        std::make_pair(&AdminModel::Admin::password, &Admin_::Admin::password));
+        std::make_pair(&AdminModel::Admin_::id, &Admin::Admin::id),
+        std::make_pair(&AdminModel::Admin_::username, &Admin::Admin::username),
+        std::make_pair(&AdminModel::Admin_::password, &Admin::Admin::password),
+        std::make_pair(&AdminModel::Admin_::role, &Admin::Admin::role));
 };
 
 template <typename AdminTableRow>
-struct ReflectTableRow<AdminModel::Admin, AdminTableRow> {
+struct ReflectTableRow<AdminModel::Admin_, AdminTableRow> {
     static constexpr auto assign_model(AdminTableRow &&row) {
-        return AdminModel::Admin{.id = static_cast<size_t>(row.id),
-                                 .username = row.username,
-                                 .password = row.password};
+        return AdminModel::Admin_(
+            static_cast<size_t>(row.id),
+            std::string(row.username),
+            std::string(row.password),
+            std::string(row.role)
+        );
     }
 };
 
 struct AdminModel::AdminModelImpl
-    : public GenericModel<AdminModel::Admin, Admin_::Admin> {
+    : public GenericModel<AdminModel::Admin_, Admin::Admin> {
     AdminModelImpl() = default;
     AdminModelImpl(const AdminModelImpl &) = delete;
     ~AdminModelImpl() = default;
 };
 
 AdminModel::AdminModel() = default;
-std::vector<AdminModel::Admin> AdminModel::get_all_admins() const {
-    return impl->select(Admin_::Admin{}.id > 0);
+std::vector<AdminModel::Admin_> AdminModel::get_all_admins() const {
+    return impl->select(Admin::Admin{}.id > 0);
 }
 
-AdminModel::Admin AdminModel::get_admin_by_id(size_t id) const {
-    auto res = impl->select(Admin_::Admin{}.id == id);
-    return !res.empty() ? res.at(0) : Admin{};
+std::optional<AdminModel::Admin_> AdminModel::get_admin_by_id(size_t id) const {
+    auto res = impl->select(Admin::Admin{}.id == id);
+    return !res.empty() ? std::optional{res.at(0)} : std::nullopt;
+}
+std::optional<AdminModel::Admin_> AdminModel::get_admin_by_username(const std::string &username) const
+{
+    auto res = impl->select(Admin::Admin{}.username == username);
+    return !res.empty() ? std::optional{res.at(0)} : std::nullopt;
+}
+
+size_t AdminModel::create_admin(const Admin_ &admin) const
+{
+    auto res = impl->insert<Admin_>(Admin_(admin));
+    return res;
 }
 
 AdminModel::~AdminModel() = default;

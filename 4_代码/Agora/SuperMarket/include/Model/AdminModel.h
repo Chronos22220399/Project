@@ -7,22 +7,27 @@
 #include <Model/GeneralModel.hpp>
 #include <Utils/DatabaseUtils.hpp>
 #include <include/admin.h>
+#include <Utils/RBAC/BasicUser.h>
 
 namespace Model {
 
 struct AdminModel {
-    struct Admin {
-        size_t id;
-        std::string username;
-        std::string password;
+    struct Admin_: public Utils::BasicUser {
+        Admin_() = default;
+        explicit Admin_(size_t id, const std::string &username, const std::string &password, const std::string &role): BasicUser(id, username, password, role) {}
     };
 
     explicit AdminModel();
-    explicit AdminModel(const Admin &admin) = delete;
+    explicit AdminModel(const Admin_ &admin) = delete;
     ~AdminModel();
-    std::vector<Admin> get_all_admins() const;
-    Admin get_admin_by_id(size_t id) const;
-    size_t insert_bulk(std::vector<Admin> admins) const;
+    std::vector<Admin_> get_all_admins() const;
+    std::optional<Admin_> get_admin_by_id(size_t id) const;
+    std::optional<Admin_> get_admin_by_username(const std::string &username) const;
+    size_t create_admin(const Admin_ &admin) const;
+
+
+
+    size_t insert_bulk(std::vector<Admin_> admins) const;
 
   private:
     struct AdminModelImpl;

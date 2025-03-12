@@ -1,23 +1,30 @@
 #pragma once
-#include <Utils/Encrypter.h>
-#include <Utils/RandomGenerator.h>
-#include <Utils/Utils.hpp>
+#include <../Encrypter.h>
+#include <../RandomGenerator.h>
+#include <../Utils.hpp>
 #include <chrono>
 #include <nlohmann/json.hpp>
 #include <string>
 
 namespace Utils {
 
-class SecretKeyProvider {
-    using json = nlohmann::json;
-
-  public:
-    virtual ~SecretKeyProvider() = default;
-    virtual std::optional<std::string> get_key(const json &payload) const = 0;
-};
+// class SecretKeyProvider {
+//     using json = nlohmann::json;
+//
+//   public:
+//     virtual ~SecretKeyProvider() = default;
+//     virtual std::optional<std::string> get_key(const json &payload) const = 0;
+// };
 
 class Jwt {
   public:
+    struct SerializeResult {
+        std::string secretKey;
+        std::string jwt;
+    };
+
+    enum class ValidationResult { Valid, Expired, NotMatched };
+
     struct Header {
         using json = nlohmann::json;
         std::string alg;
@@ -78,12 +85,6 @@ class Jwt {
         }
     };
 
-    struct SerializeResult {
-        std::string secretKey;
-        std::string jwt;
-    };
-
-    enum class ValidationResult { Valid, Expired, NotMatched };
 
     SerializeResult serialize(const Header &header, const Payload &payload);
 
