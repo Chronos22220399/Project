@@ -1,5 +1,5 @@
-#include <../../include/Utils/Jwt/Base64.h>
-#include <Utils/Log.hpp>
+#include "../include/Utils/Base64.h"
+#include "../include/Utils/Log.hpp"
 #include <algorithm>
 #include <iostream>
 #include <map>
@@ -10,6 +10,7 @@
 #include <openssl/hmac.h>
 #include <openssl/sha.h>
 #include <stdexcept>
+
 using namespace Utils;
 
 class Base64::Base64Impl {

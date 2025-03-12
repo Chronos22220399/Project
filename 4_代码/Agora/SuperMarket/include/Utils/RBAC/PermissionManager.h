@@ -4,7 +4,7 @@
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <unordered_set>
-#include <Utils/RBAC/BasicUser.h>
+#include <Utils/RBAC/BasicUser.hpp>
 
 namespace Utils {
 

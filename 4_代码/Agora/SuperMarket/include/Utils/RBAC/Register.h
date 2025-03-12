@@ -1,7 +1,7 @@
-#pragma
-#include <../Jwt/Jwt.h>
-#include <Utils/RBAC/PasswordManager.hpp>
-#include <Utils/RBAC/PermissionManager.h>
+#pragma once
+#include "../Jwt/Jwt.h"
+#include "PasswordManager.hpp"
+#include "PermissionManager.h"
 #include <memory>
 #include <regex>
 
@@ -16,7 +16,7 @@ class RegDBStrategy {
 
 class TokenGetter {
   public:
-    static Jwt::SerializeResult get(Jwt::Header &header, std::shared_ptr<BasicUser> user) {
+    static Jwt::SerializeResult get() {
         Jwt::Header header;
         Jwt::Payload payload{};
         return Jwt::instance().serialize(header, payload);

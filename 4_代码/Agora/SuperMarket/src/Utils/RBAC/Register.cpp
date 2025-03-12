@@ -1,7 +1,7 @@
 //
 // Created by 无铭 on 25-3-10.
 //
-#include <Utils/RBAC/Register.h>
+#include "../include/Utils/RBAC/Register.h"
 
 namespace Utils {
 

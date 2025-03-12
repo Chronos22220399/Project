@@ -7,7 +7,7 @@
 #include <Model/GeneralModel.hpp>
 #include <Utils/DatabaseUtils.hpp>
 #include <include/admin.h>
-#include <Utils/RBAC/BasicUser.h>
+#include <Utils/RBAC/BasicUser.hpp>
 
 namespace Model {
 

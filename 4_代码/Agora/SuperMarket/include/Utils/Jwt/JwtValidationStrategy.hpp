@@ -5,10 +5,15 @@
 #ifndef JWTVALIDATIONSTRATEGY_HPP
 #define JWTVALIDATIONSTRATEGY_HPP
 #include <string>
+#include "Jwt.h"
+#include "JwtDecoder.hpp"
+#include "../Base64.h"
 
+namespace Utils
+{
 
 class JwtValidationStrategy {
-  public:
+public:
     virtual ~JwtValidationStrategy() = default;
 
     // 验证签名策略
@@ -50,7 +55,7 @@ class HS256ValidationStrategy : public JwtValidationStrategy {
         return Jwt::ValidationResult::Valid;
     }
 
-  private:
+private:
     static std::string hmac_sha256(const std::string &secret_key,
                                    const std::string &data) {
         const auto expected_sig = Encrypter::hmac_sha256(secret_key, data);
@@ -62,4 +67,6 @@ class HS256ValidationStrategy : public JwtValidationStrategy {
         return base64.url_encode(input);
     }
 };
+
+}
 #endif //JWTVALIDATIONSTRATEGY_HPP

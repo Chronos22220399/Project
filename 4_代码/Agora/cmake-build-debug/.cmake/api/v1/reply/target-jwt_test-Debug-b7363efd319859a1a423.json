@@ -193,7 +193,8 @@
 			[
 				0,
 				1,
-				2
+				2,
+				3
 			]
 		}
 	],
@@ -279,14 +280,15 @@
 			[
 				0,
 				1,
-				2
+				2,
+				3
 			]
 		},
 		{
 			"name" : "Header Files",
 			"sourceIndexes" : 
 			[
-				3
+				4
 			]
 		}
 	],
@@ -296,6 +298,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "SuperMarket/test/jwt_test.cc",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "SuperMarket/src/Utils/Base64.cpp",
 			"sourceGroupIndex" : 0
 		},
 		{
