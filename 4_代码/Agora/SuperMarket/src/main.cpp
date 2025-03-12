@@ -14,35 +14,47 @@
 
 struct User : public Utils::BasicUser {};
 
+struct A {
+    A() = default;
+    ~A() = default;
+};
+
+struct B : public A {};
+
 int main() {
     using namespace std;
-    Utils::test("permission management", []() {
-        Utils::PermissionManager manager;
-        std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
-        auto res = manager.check_access(user, Utils::Resource::Goods,
-                                        Utils::Action::Read);
-        fmt::println("{}", res);
-        res = manager.check_access(user, Utils::Resource::Goods,
-                                   Utils::Action::Write);
-        fmt::println("{}", res);
-        res = manager.check_access(user, Utils::Resource::Goods,
-                                   Utils::Action::Delete);
-        fmt::println("{}", res);
-    });
+    int y = 0, &z = y, *p = &y;
+    decltype(y + 1) a;
+    decltype(z + 1) b;
+    decltype(*p + 1) ca;
 
-    Utils::test("generate numbers", []() {
-        Utils::RandomGenerator g;
-        auto res = g.generate_numbers_from(0, 30, 10);
-        for (auto &i : res) {
-            LOG("{}", i);
-        }
-    });
-
-    Utils::test("generate number", []() {
-        Utils::RandomGenerator g;
-        auto res = g.generate_number_from(-30, 30);
-        LOG("{}", res);
-    });
+    // Utils::test("permission management", []() {
+    //     Utils::PermissionManager manager;
+    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
+    //     auto res = manager.check_access(user, Utils::Resource::Goods,
+    //                                     Utils::Action::Read);
+    //     fmt::println("{}", res);
+    //     res = manager.check_access(user, Utils::Resource::Goods,
+    //                                Utils::Action::Write);
+    //     fmt::println("{}", res);
+    //     res = manager.check_access(user, Utils::Resource::Goods,
+    //                                Utils::Action::Delete);
+    //     fmt::println("{}", res);
+    // });
+    //
+    // Utils::test("generate numbers", []() {
+    //     Utils::RandomGenerator g;
+    //     auto res = g.generate_numbers_from(0, 30, 10);
+    //     for (auto &i : res) {
+    //         LOG("{}", i);
+    //     }
+    // });
+    //
+    // Utils::test("generate number", []() {
+    //     Utils::RandomGenerator g;
+    //     auto res = g.generate_number_from(-30, 30);
+    //     LOG("{}", res);
+    // });
 
     // Utils::test("1", []() {
     //     using json = nlohmann::json;
