@@ -1,10 +1,10 @@
 #pragma once
+#include <Utils/RBAC/BasicUser.hpp>
 #include <fmt/format.h>
 #include <memory>
 #include <nlohmann/json.hpp>
 #include <unordered_map>
 #include <unordered_set>
-#include <Utils/RBAC/BasicUser.hpp>
 
 namespace Utils {
 
@@ -82,15 +82,15 @@ inline void to_json(nlohmann::json &j, const Permission &p);
 
 inline void from_json(const nlohmann::json &j, Permission &p);
 
-
 class PermissionManager {
+
   public:
     PermissionManager();
 
     ~PermissionManager();
 
-    bool check_access(const std::unique_ptr<BasicUser> &user,
-                      const Resource &resource, Action action) const;
+    bool check_access(const BasicUser &user, const Resource &resource,
+                      Action action) const;
 
     std::unordered_set<Permission>
     get_permission_of(const std::string &role) const;
@@ -98,9 +98,9 @@ class PermissionManager {
     bool set_actions_of(const std::string &role, const std::string &resource,
                         const std::unordered_set<Action> &newActions);
 
-    void load_data_from_json();
+    void load_from_json();
 
-    void save_data_to_json();
+    void save_to_json();
 
     void display() const;
 

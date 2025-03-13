@@ -10,7 +10,6 @@ namespace Utils {
 
 class Jwt {
   public:
-
     struct Header {
         using json = nlohmann::json;
         std::string alg;

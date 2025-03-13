@@ -7,6 +7,7 @@
 #include <Model/GeneralModel.hpp>
 #include <Utils/DatabaseUtils.hpp>
 #include <Utils/RBAC/BasicUser.hpp>
+#include <Utils/RBAC/Register.h>
 #include <include/admin.h>
 #include <optional>
 
@@ -20,20 +21,43 @@ struct AdminModel {
             : BasicUser(id, username, password, role) {}
     };
 
+    struct AdminDBStrategy final : Utils::RegDBStrategy {
+        explicit AdminDBStrategy(const AdminModel &model) : model_(model) {}
+        ~AdminDBStrategy() = default;
+        bool save_to_db(std::shared_ptr<Utils::BasicUser> user) const {
+            return model_.save_to_db(user);
+        }
+        bool username_in_db(const std::string &username) const {
+            return model_.username_in_db(username);
+        }
+
+      private:
+        const AdminModel &model_;
+    };
+
     explicit AdminModel();
-    explicit AdminModel(const Admin_ &admin) = delete;
+
+    explicit AdminModel(const AdminModel &admin) = delete;
+
     ~AdminModel();
+
     std::vector<Admin_> get_all_admins() const;
+
     std::optional<Admin_> get_admin_by_id(size_t id) const;
+
     std::optional<Admin_>
     get_admin_by_username(const std::string &username) const;
+
     size_t create_admin(const Admin_ &admin) const;
 
-    size_t insert_bulk(std::vector<Admin_> admins) const;
+    bool save_to_db(std::shared_ptr<Utils::BasicUser> user) const;
+
+    bool username_in_db(const std::string &username) const;
 
   private:
     struct AdminModelImpl;
-    std::shared_ptr<AdminModelImpl> impl;
+    std::unique_ptr<AdminModelImpl> impl;
+    std::unique_ptr<Utils::GenericRegister> reg;
 };
 
 } // namespace Model
