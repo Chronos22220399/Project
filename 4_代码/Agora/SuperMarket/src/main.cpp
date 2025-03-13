@@ -1,5 +1,5 @@
 #include <../include/Utils/Jwt/Jwt.h>
-#include <Cases/get_pooled_conn_ptr_case.hpp>
+// #include <Cases/get_pooled_conn_ptr_case.hpp>
 #include <Model/AdminModel.h>
 #include <Model/GeneralModel.hpp>
 #include <Utils/Log.hpp>
@@ -15,19 +15,20 @@
 
 struct User : public Utils::BasicUser {};
 
-struct CustumRegDB final : public Utils::RegDBStrategy {
-  public:
-    CustumRegDB() {}
-    ~CustumRegDB() {}
-
-    bool save(std::shared_ptr<Utils::BasicUser> user) override { return false; }
-
-    bool query_name(const std::string &name) override {
-        return model.get_admin_by_username(name).has_value();
-    }
-
-    Model::AdminModel model;
-};
+// struct CustumRegDB final : public Utils::RegDBStrategy {
+//   public:
+//     CustumRegDB() {}
+//     ~CustumRegDB() {}
+//
+//     bool save(std::shared_ptr<Utils::BasicUser> user) override { return
+//     false; }
+//
+//     bool query_name(const std::string &name) override {
+//         return model.get_admin_by_username(name).has_value();
+//     }
+//
+//     Model::AdminModel model;
+// };
 
 int main() {
     using namespace std;

@@ -1,9 +1,9 @@
-#include "../include/Utils/Base64.h"
 #include "../include/Utils/Jwt/Jwt.h"
+#include "../include/Utils/Base64.h"
+#include "../include/Utils/Encrypter.h"
+#include "../include/Utils/Jwt/JwtValidationStrategy.hpp"
 #include "../include/Utils/RandomGenerator.h"
 #include "../include/Utils/Utils.hpp"
-#include "../include/Utils/Jwt/JwtValidationStrategy.hpp"
-#include "../include/Utils/Encrypter.h"
 #include <chrono>
 #include <iostream>
 #include <nlohmann/json.hpp>
@@ -13,8 +13,6 @@
 
 using namespace Utils;
 using namespace nlohmann;
-
-
 
 class Jwt::JwtImpl {
   public:
