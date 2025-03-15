@@ -4,7 +4,7 @@
 #include <Model/AdminModel.h>
 #include <Utils/DatabaseUtils.hpp>
 #include <Utils/RBAC/PasswordManager.hpp>
-#include <include/admin.h>
+#include <include/user.h>
 #include <sqlpp11/sqlpp11.h>
 
 namespace Model {
