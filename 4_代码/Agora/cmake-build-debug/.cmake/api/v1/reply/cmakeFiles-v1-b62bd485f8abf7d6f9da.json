@@ -5,8 +5,8 @@
 			"expression" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/datas/include/*.h",
 			"paths" : 
 			[
-				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/datas/include/admin.h",
-				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/datas/include/test.h"
+				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/datas/include/test.h",
+				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/datas/include/user.h"
 			],
 			"recurse" : true
 		},
@@ -14,12 +14,12 @@
 			"expression" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/*.h",
 			"paths" : 
 			[
-				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Model/AdminModel.h",
+				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Model/UserModel.h",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Utils/Base64.h",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Utils/Encrypter.h",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Utils/Jwt/Jwt.h",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Utils/RBAC/PermissionManager.h",
-				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Utils/RBAC/Register.h",
+				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Utils/RBAC/UserValidator.h",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include/Utils/RandomGenerator.h"
 			],
 			"recurse" : true
@@ -60,7 +60,7 @@
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/src/Utils/Encrypter.cpp",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/src/Utils/Jwt/Jwt.cpp",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/src/Utils/RBAC/PermissionManager.cpp",
-				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/src/Utils/RBAC/Register.cpp",
+				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/src/Utils/RBAC/UserValidator.cpp",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/src/Utils/RandomGenerator.cpp",
 				"/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/src/main.cpp"
 			],
