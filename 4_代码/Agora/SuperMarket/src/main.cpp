@@ -1,8 +1,12 @@
 #include <../include/Utils/Jwt/Jwt.h>
 // #include <Cases/get_pooled_conn_ptr_case.hpp>
+<<<<<<< HEAD
 #include "../../cmake-build-debug/_deps/googletest-src/googletest/include/gtest/gtest-param-test.h"
 
 #include <Model/AdminModel.h>
+=======
+#include <Model/UserModel.h>
+    >>>>>>> 4c5689a0f1af2e87abcfc520adb4dceccdfe1a57
 #include <Model/GeneralModel.hpp>
 #include <Utils/Log.hpp>
 #include <Utils/RBAC/BasicUser.hpp>
@@ -16,7 +20,9 @@
 #include <sqlpp11/sqlpp11.h>
 #include <sstream>
 
-struct User : public Utils::BasicUser {};
+    struct TmpUser : public Utils::BasicUser {
+    std::string role = "user";
+};
 
 // struct CustumRegDB final : public Utils::RegDBStrategy {
 //   public:
@@ -37,48 +43,48 @@ int main() {
     using namespace std;
     // Utils::test("Register", []()
     // {
-    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
-    //     Utils::GenericRegister reg();
+    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<TmpUser>();
     // });
-    //
-    //
-    // Utils::test("permission management", []()
-    // {
-    //     Utils::PermissionManager manager;
-    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
-    //     auto res = manager.check_access(user, Utils::Resource::Goods,
-    //                                     Utils::Action::Read);
-    //     fmt::println("{}", res);
-    //     res = manager.check_access(user, Utils::Resource::Goods,
-    //                                Utils::Action::Write);
-    //     fmt::println("{}", res);
-    //     res = manager.check_access(user, Utils::Resource::Goods,
-    //                                Utils::Action::Delete);
-    //     fmt::println("{}", res);
-    // });
-    //
-    //
-    // Utils::test("generate numbers", []() {
-    //     Utils::RandomGenerator g;
-    //     auto res = g.generate_numbers_from(0, 30, 10);
-    //     for (auto &i : res) {
+
+    Utils::test("permission management", []() {
+        Utils::PermissionManager manager;
+        std::unique_ptr<Utils::BasicUser> user = std::make_unique<TmpUser>();
+        auto res = manager.check_access(*user, Utils::Resource::Goods,
+                                        Utils::Action::Read);
+        fmt::println("{}", res);
+        res = manager.check_access(*user, Utils::Resource::Goods,
+                                   Utils::Action::Write);
+        fmt::println("{}", res);
+        res = manager.check_access(*user, Utils::Resource::Goods,
+                                   Utils::Action::Delete);
+        fmt::println("{}", res);
+    });
+
     // Utils::test("generate numbers", []()
     // {
     //     Utils::RandomGenerator g;
     //     auto res = g.generate_numbers_from(0, 30, 10);
-    //     for (auto &i: res)
+    //     for (auto &i : res)
     //     {
-    //         LOG("{}", i);
+    //         Utils::test("generate numbers", []()
+    //         {
+    //             Utils::RandomGenerator g;
+    //             auto res = g.generate_numbers_from(0, 30, 10);
+    //             for (auto &i: res)
+    //             {
+    //                 LOG("{}", i);
+    //             }
+    //         });
     //     }
     // });
-    //
+
     // Utils::test("generate number", []()
     // {
     //     Utils::RandomGenerator g;
     //     auto res = g.generate_number_from(-30, 30);
     //     LOG("{}", res);
     // });
-
+    //
     // Utils::test("1", []() {
     //     using json = nlohmann::json;
     //     Utils::Jwt::Header header{};
@@ -107,8 +113,8 @@ int main() {
     //     LOG(base64.url_encode(res));
     // });
 
-    Utils::Encrypter::init();
-    crow::SimpleApp app{};
+    // Utils::Encrypter::init();
+    // crow::SimpleApp app{};
 
     // auto admin = model.get_admin_by_id(74);
     // auto psd = Utils::Encrypter::hash_password(admin.password);
@@ -147,7 +153,11 @@ int main() {
     //     ss << admin.id << " " << admin.username << " " << admin.password;
     //     return std::move(ss.str().c_str());
     // });
+<<<<<<< HEAD
     //
+=======
+
+>>>>>>> 4c5689a0f1af2e87abcfc520adb4dceccdfe1a57
     // app.port(18080).multithreaded().run();
 
     return 0;

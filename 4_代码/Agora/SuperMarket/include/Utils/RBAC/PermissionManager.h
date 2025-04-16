@@ -73,6 +73,8 @@ template <> struct hash<Utils::Permission> {
         }
         return h1 ^ (h2 << 1);
     }
+    // 就业 大厂
+    // 考研 武理: 一由老师。2，智能驾驶
 };
 } // namespace std
 
