@@ -1,6 +1,6 @@
-<mxfile host="Electron" modified="2025-03-21T06:34:32.417Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.0 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="1VuRJi5QBPvZDygpCeGy" version="24.4.0" type="device">
+<mxfile host="Electron" modified="2025-03-15T15:48:18.208Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.4.0 Chrome/120.0.6099.109 Electron/28.1.0 Safari/537.36" etag="FTCv_vZf8thoss9k-Pk6" version="24.4.0" type="device">
   <diagram name="第 1 页" id="5vucOQTz6A589Odep5zr">
-    <mxGraphModel dx="2521" dy="1804" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="3017" dy="2168" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -56,12 +56,12 @@
         <mxCell id="7Q65nIUXwfw6w49E0r2U-14" value="本地验证商品信息合法性" style="rhombus;whiteSpace=wrap;html=1;" parent="7Q65nIUXwfw6w49E0r2U-8" vertex="1">
           <mxGeometry x="440" y="20" width="80" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="7Q65nIUXwfw6w49E0r2U-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" parent="7Q65nIUXwfw6w49E0r2U-8" source="7Q65nIUXwfw6w49E0r2U-14" edge="1">
+        <mxCell id="7Q65nIUXwfw6w49E0r2U-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.452;entryY=1.003;entryDx=0;entryDy=0;entryPerimeter=0;" parent="7Q65nIUXwfw6w49E0r2U-8" source="7Q65nIUXwfw6w49E0r2U-14" target="7Q65nIUXwfw6w49E0r2U-13" edge="1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
-              <mxPoint x="480" y="300" />
+              <mxPoint x="480" y="110" />
+              <mxPoint x="294" y="110" />
             </Array>
-            <mxPoint x="140" y="300" as="targetPoint" />
           </mxGeometry>
         </mxCell>
         <mxCell id="7Q65nIUXwfw6w49E0r2U-16" value="&amp;nbsp;验证失败" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" parent="7Q65nIUXwfw6w49E0r2U-15" vertex="1" connectable="0">

@@ -1,10 +1,9 @@
 #include <../include/Utils/Jwt/Jwt.h>
 // #include <Cases/get_pooled_conn_ptr_case.hpp>
-#include <Model/AdminModel.h>
+#include <Model/UserModel.h>
 #include <Model/GeneralModel.hpp>
 #include <Utils/Log.hpp>
 #include <Utils/RBAC/PermissionManager.h>
-#include <Utils/RBAC/Register.h>
 #include <crow.h>
 #include <fstream>
 #include <future>
@@ -13,7 +12,10 @@
 #include <sqlpp11/sqlpp11.h>
 #include <sstream>
 
-struct User : public Utils::BasicUser {};
+struct TmpUser : public Utils::BasicUser
+{
+    std::string role = "user";
+};
 
 // struct CustumRegDB final : public Utils::RegDBStrategy {
 //   public:
@@ -34,48 +36,50 @@ int main() {
     using namespace std;
     // Utils::test("Register", []()
     // {
-    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
-    //     Utils::GenericRegister reg();
+    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<TmpUser>();
     // });
-    //
-    //
-    // Utils::test("permission management", []()
-    // {
-    //     Utils::PermissionManager manager;
-    //     std::unique_ptr<Utils::BasicUser> user = std::make_unique<User>();
-    //     auto res = manager.check_access(user, Utils::Resource::Goods,
-    //                                     Utils::Action::Read);
-    //     fmt::println("{}", res);
-    //     res = manager.check_access(user, Utils::Resource::Goods,
-    //                                Utils::Action::Write);
-    //     fmt::println("{}", res);
-    //     res = manager.check_access(user, Utils::Resource::Goods,
-    //                                Utils::Action::Delete);
-    //     fmt::println("{}", res);
-    // });
-    //
-    //
-    // Utils::test("generate numbers", []() {
-    //     Utils::RandomGenerator g;
-    //     auto res = g.generate_numbers_from(0, 30, 10);
-    //     for (auto &i : res) {
+
+    Utils::test("permission management", []()
+    {
+        Utils::PermissionManager manager;
+        std::unique_ptr<Utils::BasicUser> user = std::make_unique<TmpUser>();
+        auto res = manager.check_access(*user, Utils::Resource::Goods,
+                                        Utils::Action::Read);
+        fmt::println("{}", res);
+        res = manager.check_access(*user, Utils::Resource::Goods,
+                                   Utils::Action::Write);
+        fmt::println("{}", res);
+        res = manager.check_access(*user, Utils::Resource::Goods,
+                                   Utils::Action::Delete);
+        fmt::println("{}", res);
+    });
+
+
     // Utils::test("generate numbers", []()
     // {
     //     Utils::RandomGenerator g;
     //     auto res = g.generate_numbers_from(0, 30, 10);
-    //     for (auto &i: res)
+    //     for (auto &i : res)
     //     {
-    //         LOG("{}", i);
+    //         Utils::test("generate numbers", []()
+    //         {
+    //             Utils::RandomGenerator g;
+    //             auto res = g.generate_numbers_from(0, 30, 10);
+    //             for (auto &i: res)
+    //             {
+    //                 LOG("{}", i);
+    //             }
+    //         });
     //     }
     // });
-    //
+
     // Utils::test("generate number", []()
     // {
     //     Utils::RandomGenerator g;
     //     auto res = g.generate_number_from(-30, 30);
     //     LOG("{}", res);
     // });
-
+    //
     // Utils::test("1", []() {
     //     using json = nlohmann::json;
     //     Utils::Jwt::Header header{};
@@ -104,8 +108,8 @@ int main() {
     //     LOG(base64.url_encode(res));
     // });
 
-    Utils::Encrypter::init();
-    crow::SimpleApp app{};
+    // Utils::Encrypter::init();
+    // crow::SimpleApp app{};
 
     // auto admin = model.get_admin_by_id(74);
     // auto psd = Utils::Encrypter::hash_password(admin.password);
@@ -120,32 +124,32 @@ int main() {
     //           admin.password)
     //           << "\n";
 
-    CROW_ROUTE(app, "/create_admin/<string>/<string>")(
-        [](std::string username, std::string password) {
-            Model::AdminModel model;
-            Model::AdminModel::Admin_ admin;
-            admin.username = username;
-            admin.password = password;
-            admin.role = "admin";
-            if (model.create_admin(admin)) {
-                return "Successfully created admin";
-            }
-            return "Failed to create admin";
-        });
+    // CROW_ROUTE(app, "/create_admin/<string>/<string>")(
+    //     [](std::string username, std::string password) {
+    //         Model::AdminModel model;
+    //         Model::AdminModel::Admin_ admin;
+    //         admin.username = username;
+    //         admin.password = password;
+    //         admin.role = "admin";
+    //         if (model.create_admin(admin)) {
+    //             return "Successfully created admin";
+    //         }
+    //         return "Failed to create admin";
+    //     });
+    //
+    // CROW_ROUTE(app, "/get_admin_by_id/<int>")([](int id) {
+    //     Model::AdminModel model{};
+    //     std::stringstream ss;
+    //     auto admins = model.get_admin_by_id(id);
+    //     if (!admins.has_value()) {
+    //         return "admin not found";
+    //     }
+    //     auto admin = admins.value();
+    //     ss << admin.id << " " << admin.username << " " << admin.password;
+    //     return std::move(ss.str().c_str());
+    // });
 
-    CROW_ROUTE(app, "/get_admin_by_id/<int>")([](int id) {
-        Model::AdminModel model{};
-        std::stringstream ss;
-        auto admins = model.get_admin_by_id(id);
-        if (!admins.has_value()) {
-            return "admin not found";
-        }
-        auto admin = admins.value();
-        ss << admin.id << " " << admin.username << " " << admin.password;
-        return std::move(ss.str().c_str());
-    });
-
-    app.port(18080).multithreaded().run();
+    // app.port(18080).multithreaded().run();
 
     return 0;
 }
