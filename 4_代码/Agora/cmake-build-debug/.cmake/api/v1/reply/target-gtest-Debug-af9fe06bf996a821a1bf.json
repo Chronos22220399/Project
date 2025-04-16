@@ -3,7 +3,7 @@
 	"artifacts" : 
 	[
 		{
-			"path" : "lib/libgmock.a"
+			"path" : "lib/libgtest.a"
 		}
 	],
 	"backtrace" : 3,
@@ -16,14 +16,13 @@
 			"cxx_library",
 			"install",
 			"install_project",
-			"target_link_libraries",
 			"include_directories",
 			"target_compile_features"
 		],
 		"files" : 
 		[
 			"cmake-build-debug/_deps/googletest-src/googletest/cmake/internal_utils.cmake",
-			"cmake-build-debug/_deps/googletest-src/googlemock/CMakeLists.txt"
+			"cmake-build-debug/_deps/googletest-src/googletest/CMakeLists.txt"
 		],
 		"nodes" : 
 		[
@@ -33,7 +32,7 @@
 			{
 				"command" : 2,
 				"file" : 1,
-				"line" : 97,
+				"line" : 126,
 				"parent" : 0
 			},
 			{
@@ -51,7 +50,7 @@
 			{
 				"command" : 4,
 				"file" : 1,
-				"line" : 120,
+				"line" : 150,
 				"parent" : 0
 			},
 			{
@@ -63,17 +62,11 @@
 			{
 				"command" : 5,
 				"file" : 1,
-				"line" : 98,
+				"line" : 116,
 				"parent" : 0
 			},
 			{
 				"command" : 6,
-				"file" : 1,
-				"line" : 75,
-				"parent" : 0
-			},
-			{
-				"command" : 7,
 				"file" : 0,
 				"line" : 192,
 				"parent" : 2
@@ -86,31 +79,21 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=c++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -mmacosx-version-min=14.5 -fcolor-diagnostics"
+					"fragment" : "-g -std=c++17 -fdiagnostics-color=always"
 				},
 				{
-					"fragment" : " -DGTEST_HAS_PTHREAD=1  "
+					"fragment" : "-Wall -Wshadow -Wno-error=dangling-else -DGTEST_HAS_PTHREAD=1 -fexceptions -Wextra -Wno-unused-parameter -Wno-missing-field-initializers"
 				}
 			],
 			"includes" : 
 			[
 				{
-					"backtrace" : 7,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googlemock/include"
+					"backtrace" : 6,
+					"path" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest/include"
 				},
 				{
-					"backtrace" : 7,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googlemock"
-				},
-				{
-					"backtrace" : 7,
-					"isSystem" : true,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest/include"
-				},
-				{
-					"backtrace" : 7,
-					"isSystem" : true,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest"
+					"backtrace" : 6,
+					"path" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest"
 				}
 			],
 			"language" : "CXX",
@@ -118,7 +101,7 @@
 			{
 				"backtraces" : 
 				[
-					8
+					7
 				],
 				"standard" : "17"
 			},
@@ -128,14 +111,7 @@
 			]
 		}
 	],
-	"dependencies" : 
-	[
-		{
-			"backtrace" : 6,
-			"id" : "gtest::@1ea2dfc0605fe3ab2a3f"
-		}
-	],
-	"id" : "gmock::@0f7bb11d64f3678238c7",
+	"id" : "gtest::@1ea2dfc0605fe3ab2a3f",
 	"install" : 
 	{
 		"destinations" : 
@@ -150,12 +126,12 @@
 			"path" : "/usr/local"
 		}
 	},
-	"name" : "gmock",
-	"nameOnDisk" : "libgmock.a",
+	"name" : "gtest",
+	"nameOnDisk" : "libgtest.a",
 	"paths" : 
 	{
-		"build" : "_deps/googletest-build/googlemock",
-		"source" : "cmake-build-debug/_deps/googletest-src/googlemock"
+		"build" : "_deps/googletest-build/googletest",
+		"source" : "cmake-build-debug/_deps/googletest-src/googletest"
 	},
 	"sourceGroups" : 
 	[
@@ -172,7 +148,7 @@
 		{
 			"backtrace" : 3,
 			"compileGroupIndex" : 0,
-			"path" : "cmake-build-debug/_deps/googletest-src/googlemock/src/gmock-all.cc",
+			"path" : "cmake-build-debug/_deps/googletest-src/googletest/src/gtest-all.cc",
 			"sourceGroupIndex" : 0
 		}
 	],
