@@ -1,14 +1,17 @@
 #include <../include/Utils/Jwt/Jwt.h>
 // #include <Cases/get_pooled_conn_ptr_case.hpp>
+#include "../../cmake-build-debug/_deps/googletest-src/googletest/include/gtest/gtest-param-test.h"
+
 #include <Model/AdminModel.h>
 #include <Model/GeneralModel.hpp>
 #include <Utils/Log.hpp>
+#include <Utils/RBAC/BasicUser.hpp>
 #include <Utils/RBAC/PermissionManager.h>
-#include <Utils/RBAC/Register.h>
 #include <crow.h>
 #include <fstream>
 #include <future>
 #include <nlohmann/json.hpp>
+#include <queue>
 #include <random>
 #include <sqlpp11/sqlpp11.h>
 #include <sstream>
@@ -120,32 +123,32 @@ int main() {
     //           admin.password)
     //           << "\n";
 
-    CROW_ROUTE(app, "/create_admin/<string>/<string>")(
-        [](std::string username, std::string password) {
-            Model::AdminModel model;
-            Model::AdminModel::Admin_ admin;
-            admin.username = username;
-            admin.password = password;
-            admin.role = "admin";
-            if (model.create_admin(admin)) {
-                return "Successfully created admin";
-            }
-            return "Failed to create admin";
-        });
-
-    CROW_ROUTE(app, "/get_admin_by_id/<int>")([](int id) {
-        Model::AdminModel model{};
-        std::stringstream ss;
-        auto admins = model.get_admin_by_id(id);
-        if (!admins.has_value()) {
-            return "admin not found";
-        }
-        auto admin = admins.value();
-        ss << admin.id << " " << admin.username << " " << admin.password;
-        return std::move(ss.str().c_str());
-    });
-
-    app.port(18080).multithreaded().run();
+    // CROW_ROUTE(app, "/create_admin/<string>/<string>")(
+    //     [](std::string username, std::string password) {
+    //         Model::AdminModel model;
+    //         Model::AdminModel::Admin_ admin;
+    //         admin.username = username;
+    //         admin.password = password;
+    //         admin.role = "admin";
+    //         if (model.create_admin(admin)) {
+    //             return "Successfully created admin";
+    //         }
+    //         return "Failed to create admin";
+    //     });
+    //
+    // CROW_ROUTE(app, "/get_admin_by_id/<int>")([](int id) {
+    //     Model::AdminModel model{};
+    //     std::stringstream ss;
+    //     auto admins = model.get_admin_by_id(id);
+    //     if (!admins.has_value()) {
+    //         return "admin not found";
+    //     }
+    //     auto admin = admins.value();
+    //     ss << admin.id << " " << admin.username << " " << admin.password;
+    //     return std::move(ss.str().c_str());
+    // });
+    //
+    // app.port(18080).multithreaded().run();
 
     return 0;
 }

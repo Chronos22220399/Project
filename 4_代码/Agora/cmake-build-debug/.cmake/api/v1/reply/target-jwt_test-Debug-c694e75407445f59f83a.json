@@ -126,7 +126,7 @@
 			"compileCommandFragments" : 
 			[
 				{
-					"fragment" : "-g -std=c++17 -arch arm64 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk -mmacosx-version-min=14.5 -fcolor-diagnostics"
+					"fragment" : "-g -std=c++17 -fdiagnostics-color=always"
 				}
 			],
 			"defines" : 
@@ -148,36 +148,21 @@
 			[
 				{
 					"backtrace" : 15,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/include"
+					"path" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/SuperMarket/include"
 				},
 				{
 					"backtrace" : 16,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarket/datas"
+					"path" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/SuperMarket/datas"
 				},
 				{
 					"backtrace" : 2,
 					"isSystem" : true,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest/include"
+					"path" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest/include"
 				},
 				{
 					"backtrace" : 2,
 					"isSystem" : true,
-					"path" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest"
-				},
-				{
-					"backtrace" : 3,
-					"isSystem" : true,
-					"path" : "/opt/homebrew/include"
-				},
-				{
-					"backtrace" : 14,
-					"isSystem" : true,
-					"path" : "/usr/local/include"
-				},
-				{
-					"backtrace" : 5,
-					"isSystem" : true,
-					"path" : "/opt/homebrew/Cellar/openssl@3/3.4.1/include"
+					"path" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/_deps/googletest-src/googletest"
 				}
 			],
 			"language" : "CXX",
@@ -219,7 +204,7 @@
 				"role" : "flags"
 			},
 			{
-				"fragment" : "-L/opt/homebrew/opt/mysql@8.4/lib",
+				"fragment" : "",
 				"role" : "flags"
 			},
 			{
@@ -229,22 +214,22 @@
 			},
 			{
 				"backtrace" : 3,
-				"fragment" : "/opt/homebrew/lib/libfmt.11.1.3.dylib",
+				"fragment" : "/usr/lib/libfmt.so.11.1.3",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 4,
-				"fragment" : "/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.dylib",
+				"fragment" : "/usr/lib/libsodium.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 5,
-				"fragment" : "/opt/homebrew/Cellar/openssl@3/3.4.1/lib/libcrypto.dylib",
+				"fragment" : "/usr/lib/libcrypto.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 5,
-				"fragment" : "/opt/homebrew/Cellar/openssl@3/3.4.1/lib/libssl.dylib",
+				"fragment" : "/usr/lib/libssl.so",
 				"role" : "libraries"
 			},
 			{
@@ -254,12 +239,12 @@
 			},
 			{
 				"backtrace" : 12,
-				"fragment" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libsqlite3.tbd",
+				"fragment" : "/usr/lib/libsqlite3.so",
 				"role" : "libraries"
 			},
 			{
 				"backtrace" : 5,
-				"fragment" : "/opt/homebrew/Cellar/openssl@3/3.4.1/lib/libcrypto.dylib",
+				"fragment" : "/usr/lib/libcrypto.so",
 				"role" : "libraries"
 			}
 		],
