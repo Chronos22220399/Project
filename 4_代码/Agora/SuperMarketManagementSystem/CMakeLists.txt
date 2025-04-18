@@ -4,7 +4,6 @@ file(
   CONFIGURE_DEPENDS
   include/*.h
   include/*.hpp
-  datas/include/*.h
   src/*.c
   src/*.cpp
   src/*.cc)
@@ -44,16 +43,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto OpenSSL::SSL)
 enable_testing()
 file(GLOB UTILS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Utils/*.cpp")
 # add_executable(hello_test test/hello_test.cc)
-add_executable(jwt_test test/jwt_test.cc ${UTILS_SOURCES})
 # target_link_libraries(hello_test GTest::gtest_main)
-target_link_libraries(jwt_test PRIVATE GTest::gtest_main)
-target_link_libraries(jwt_test PRIVATE fmt::fmt)
-target_link_libraries(jwt_test PRIVATE sqlpp11::sqlpp11 sqlpp11::sqlite3)
-target_link_libraries(jwt_test PRIVATE Crow::Crow)
-target_link_libraries(jwt_test PRIVATE ${sodium_LIBRARY_DEBUG})
-target_link_libraries(jwt_test PRIVATE OpenSSL::Crypto OpenSSL::SSL)
-target_include_directories(jwt_test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
-target_include_directories(jwt_test PRIVATE ${CMAKE_CURRENT_LIST_DIR}/datas/)
 include(GoogleTest)
 # gtest_add_tests(TARGET hello_test)
 gtest_add_tests(TARGET jwt_test)

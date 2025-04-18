@@ -1,0 +1,27 @@
+# use archlinux
+FROM archlinux:latest AS builder
+
+RUN echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist \
+  && echo 'Server = https://mirror.archlinuxarm.org/$arch/$repo' >> /etc/pacman.d/mirrorlist
+
+RUN pacman -Syu --noconfirm \
+  && pacman -S --noconfirm \
+  base-devel \
+  cmake \
+  git \
+  sqlite \
+  openssl \
+  pkgconf \
+  ninja \
+  clang \
+  curl \
+  fmt \
+  sodium \
+  && pacman -Sc --noconfirm
+  
+
+WORKDIR /app
+
+COPY . .
+
+RUN chmod +x ./setup.sh && ./setup.sh
