@@ -12,6 +12,7 @@ if [ ! -D "sqlpp11" ]; then
   git clone https://github.com/rbock/sqlpp11.git
 fi
 
+# installed sqlpp11 by hand
 cd sqlpp11
 cmake -B build \
   -DBUILD_SQLITE3_CONNECTOR=ON \

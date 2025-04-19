@@ -1,5 +1,5 @@
 # use archlinux
-FROM archlinux:latest AS builder
+FROM archlinux AS builder
 
 RUN echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist \
   && echo 'Server = https://mirror.archlinuxarm.org/$arch/$repo' >> /etc/pacman.d/mirrorlist
