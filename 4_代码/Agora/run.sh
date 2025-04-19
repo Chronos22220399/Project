@@ -2,4 +2,5 @@
 
 cmake -S . -B build
 cmake --build build --parallel $(nproc) 
-cd build/SuperMarket && ctest
+# cd build/SuperMarketManagementSystem && ctest
+./build/SuperMarketManagementSystem/SuperMarketManagementSystem
