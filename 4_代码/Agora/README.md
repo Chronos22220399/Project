@@ -1,3 +1,59 @@
+## 配置详述
+通过 `./init.sh` 构建容器,容器创建后会自动调用 setup.sh 对环境进行基础配置
+
+### 错误处理 
+
+#### 权限错误
+`./init.sh` 没有权限导致的，使用 `sudo chmod +x init.sh` 配置即可
+
+#### 镜像拉取错误
+在使用`./init.sh` 构建容器时若无法获取镜像，则优先检查代理设置（或镜像源设置，二选一即可）
+
+##### 通过 docker-desktop 使用的 docker
+请在 ~/.docker/daemon.json 中配置代理或镜像源，以我的配置举例
+```json
+{
+  "builder": {
+    "gc": {
+      "defaultKeepStorage": "20GB",
+      "enabled": true
+    }
+  },
+  "experimental": false,
+  "ipv6": false,
+  "proxies": {
+    "default": {
+      "httpProxy": "http://localhost:7897",
+      "httpsProxy": "https://localhost:7897",
+      "noProxy": "localhost,127.0.0.1,.docker.internal"
+    }
+  }
+}
+```
+> 其中 ipv6 禁止掉
+> httpProxy 和 httpsProxy 请改写成自己的代理地址和端口
+
+##### 非 docker-desktop 启动
+创建目录 /etc/systemd/system/docker.service.d/，接着在前述目录下创建并编辑 http-proxy.conf 文件
+```bash
+sudo mkdir -p /etc/systemd/system/docker.service.d/
+sudo vim /etc/systemd/system/docker.service.d/http-proxy.conf
+```
+在上述文件中添加代理配置
+> 以我的配置举例
+```bash
+[Service]
+Environment="HTTP_PROXY=http://proxy-server:port"
+Environment="HTTPS_PROXY=http://proxy-server:port"
+Environment="NO_PROXY=localhost,127.0.0.1,.docker.internal"
+```
+接着重启服务
+```bash
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+
+
 ## 目录内容介绍
 
 1. cmake/ 存放 cmake 配置文件
