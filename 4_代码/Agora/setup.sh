@@ -19,4 +19,5 @@ cmake -B build \
   -DBUILD_MYSQL_CONNECTOR=ON \
   -DDEPENDENCY_CHECK=OFF \
   -BUILD_TESTING=OFF
+
 cmake --build build --parallel $(nproc) --target install

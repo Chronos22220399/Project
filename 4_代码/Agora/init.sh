@@ -1,28 +1,41 @@
-#! /bin/bash
+#!/bin/bash
 
-if ! command -v docker &> /dev/null; then
-  echo "Docker does not found, Please check whether installed it or started"
+./scripts/docker-check.sh
+
+# 定义容器名和镜像名
+CONTAINER_NAME="supermarket-builder"
+IMAGE_NAME="supermarket-builder"
+
+# 清理旧容器
+if docker ps -a --format '{{.Names}}' | grep -q "^${CONTAINER_NAME}$"; then
+  echo "发现已存在的容器 ${CONTAINER_NAME}，正在清理..."
+  docker stop ${CONTAINER_NAME} > /dev/null 2>&1
+  docker rm ${CONTAINER_NAME} > /dev/null 2>&1
+fi
+
+# 清理旧镜像
+if docker image inspect ${IMAGE_NAME}:latest > /dev/null 2>&1; then
+  echo "清理旧镜像 ${IMAGE_NAME}:latest..."
+  docker rmi ${IMAGE_NAME}:latest > /dev/null 2>&1
+fi
+
+# 替代 arch 命令：使用 uname -m 获取架构
+ARCH=$(uname -m)
+
+# 标准化架构名称
+case "$ARCH" in
+  x86_64|amd64) DOCKERFILE="Dockerfile.amd64";;
+  arm64|aarch64) DOCKERFILE="Dockerfile.arm64" ;;
+  *) echo "未知架构: $ARCH"; exit 1 ;;
+esac
+
+# 构建镜像
+echo "检测到设备为 $ARCH 架构，使用 $DOCKERFILE 构建镜像"
+if ! docker build -f ./${DOCKERFILE} --network host -t ${IMAGE_NAME}:latest .; then
+  echo "构建镜像失败，请检查错误日志"
   exit 1
 fi
 
-# check the device's system
-OS_TYPE="$(uname)"
-
-# if is pure linux and has group docker, then execute `newgrp docker` to avoid `sudo`
-if [[ "$OS_TYPE" != "Darwin" ]] && ! grep -qEi "(Microsoft|WSL)" /proc/version 2> /dev/null; then
-# add current user to docker group temporarily
-  echo "is not apple"
-  getent group docker > /dev/null 2>&1 && newgrp docker
-fi
-
-ARCH=$(arch)
-
-#
-if [[ "$ARCH" == "arm64" || "$ARCH" == "aarch64" ]]; then
-  echo "检测到设备为 arm64(aarch64) 架构，已自动作出更改"
-  docker build -f ./Dockerfile.arm64 --network host -t supermarket-builder . 
-elif [[ "$ARCH" == "x86_64" || "$ARCH" == "amd64" ]]; then
-  docker build -f ./Dockerfile.amd64 --network host -t supermarket-builder .
-fi
-
-docker run -it --rm supermarket-builder
+# 运行容器
+echo "启动容器 ${CONTAINER_NAME}..."
+docker run -it --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
