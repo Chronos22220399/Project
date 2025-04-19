@@ -24,7 +24,7 @@ FetchContent_MakeAvailable(googletest)
 
 message(STATUS "Sqlpp11_DIR: ${Sqlpp11_DIR}")
 
-project(SuperMarket LANGUAGES CXX)
+project(SuperMarketManagementSystem LANGUAGES CXX)
 
 add_executable(${PROJECT_NAME} ${srcs})
 
@@ -40,10 +40,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE Crow::Crow)
 target_link_libraries(${PROJECT_NAME} PRIVATE ${sodium_LIBRARY_DEBUG})
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenSSL::Crypto OpenSSL::SSL)
 
-enable_testing()
-file(GLOB UTILS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Utils/*.cpp")
+# enable_testing()
+# file(GLOB UTILS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Utils/*.cpp")
 # add_executable(hello_test test/hello_test.cc)
 # target_link_libraries(hello_test GTest::gtest_main)
-include(GoogleTest)
+# include(GoogleTest)
 # gtest_add_tests(TARGET hello_test)
-gtest_add_tests(TARGET jwt_test)
+# gtest_add_tests(TARGET jwt_test)

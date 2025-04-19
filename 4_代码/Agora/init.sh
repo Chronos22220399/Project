@@ -38,4 +38,4 @@ fi
 
 # 运行容器
 echo "启动容器 ${CONTAINER_NAME}..."
-docker run -it --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+docker run -it --network host --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
