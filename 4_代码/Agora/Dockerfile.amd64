@@ -16,12 +16,11 @@ RUN pacman -Syu --noconfirm \
   clang \
   curl \
   fmt \
-  sodium \
+  libsodium \
   && pacman -Sc --noconfirm
   
 
 WORKDIR /app
 
 COPY . .
-
-RUN chmod +x ./setup.sh && ./setup.sh
+RUN ls -al
