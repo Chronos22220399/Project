@@ -31,8 +31,6 @@ add_executable(${PROJECT_NAME} ${srcs})
 target_include_directories(${PROJECT_NAME} PRIVATE ${Sqlpp11_DIR})
 target_include_directories(${PROJECT_NAME}
                            PRIVATE ${CMAKE_CURRENT_LIST_DIR}/include)
-target_include_directories(${PROJECT_NAME}
-                           PRIVATE ${CMAKE_CURRENT_LIST_DIR}/datas/)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 target_link_libraries(${PROJECT_NAME} PRIVATE sqlpp11::sqlpp11 sqlpp11::sqlite3)
