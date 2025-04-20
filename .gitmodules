@@ -1,0 +1,6 @@
+[submodule "4_代码/Agora/SuperMarketManagementSystem/third_party/date"]
+	path = 4_代码/Agora/SuperMarketManagementSystem/third_party/date
+	url = https://github.com/HowardHinnant/date.git
+[submodule "4_代码/Agora/SuperMarketManagementSystem/third_party/sqlpp11"]
+	path = 4_代码/Agora/SuperMarketManagementSystem/third_party/sqlpp11
+	url = https://github.com/rbock/sqlpp11.git

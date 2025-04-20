@@ -12,6 +12,7 @@ export MYSQL_LIBRARY=/usr/lib/libmariadb.so
 if ! ls ./ | grep sqlpp11 > /dev/null 2>&1; then
   echo "third_party 中不存在 sqlpp11, 开始获取 sqlpp11"
   # 克隆仓库
+  # git submodule add https://github.com/HowardHinnant/date.git ./SuperMarketManagementSystem/third_party/date
   git clone https://github.com/rbock/sqlpp11.git
 fi
 
