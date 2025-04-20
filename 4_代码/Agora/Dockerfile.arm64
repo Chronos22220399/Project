@@ -1,34 +1,39 @@
-# 使用 archlinux
-FROM fascinatedcow/archlinux AS builder
+# 使用 x86 架构镜像并通过 Rosetta 转译
+FROM --platform=linux/amd64 archlinux:latest AS builder
 
-# 配置代理，这里需要改成自己主机上的代理，我用的是 clash,默认为 7897 端口
-# v2raya 默认是 http: 20171 https: 20172。其他的请自行查阅
+# 配置代理（确保主机代理已开启）
 ENV HTTP_PROXY="http://host.docker.internal:7897" \
-  HTTPS_PROXY="https://host.docker.internal:7897"
-  
-# 配置清华镜像源
-RUN echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist \
-  && echo 'Server = https://mirror.archlinuxarm.org/$arch/$repo' >> /etc/pacman.d/mirrorlist
+    HTTPS_PROXY="http://host.docker.internal:7897"
 
-# 安装必要的工具包和项目需要用到的第三方库
+# 配置清华源（x86 专用）
+RUN echo 'Server = https://mirrors.tuna.tsinghua.edu.cn/archlinux/$repo/os/$arch' > /etc/pacman.d/mirrorlist
+
+# 使用中科大源
+# RUN echo 'Server = https://mirrors.ustc.edu.cn/archlinux/$repo/os/$arch' >> /etc/pacman.d/mirrorlist
+
+# 更新 CA 证书
+RUN pacman -Sy --noconfirm ca-certificates && update-ca-trust
+
+# 更新系统并安装依赖
 RUN pacman -Syu --noconfirm && \
-  pacman -S --noconfirm \
-  base-devel \
-  cmake \
-  git \
-  vim \
-  sqlite \
-  mysql \
-  openssl \
-  pkgconf \
-  ninja \
-  clang \
-  curl \
-  asio \
-  fmt \
-  libsodium \
-  nlohmann-json \
-  && pacman -Sc --noconfirm
+    pacman -S --noconfirm \
+      base-devel \
+      cmake \
+      git \
+      vim \
+      sqlite \
+      mysql \
+      openssl \
+      pkgconf \
+      ninja \
+      clang \
+      curl \
+      asio \
+      fmt \
+      libsodium \
+      nlohmann-json \
+    && pacman -Sc --noconfirm
+
 
 # 创建 builder 用户并将其入组
 RUN useradd -m builder && \
@@ -58,5 +63,5 @@ WORKDIR /app
 COPY . .
 RUN ls -al
 
-# RUN chmod +x ./scripts/install-sqlpp11.sh && \
-#   bash ./scripts/install-sqlpp11.sh
+RUN chmod +x ./scripts/install-sqlpp11.sh && \
+  bash ./scripts/install-sqlpp11.sh

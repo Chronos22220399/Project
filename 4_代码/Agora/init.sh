@@ -19,6 +19,10 @@ if docker image inspect ${IMAGE_NAME}:latest > /dev/null 2>&1; then
   docker rmi ${IMAGE_NAME}:latest > /dev/null 2>&1
 fi
 
+# 同步第三方库
+echo "开始同步子模块..."
+git submodule update --init --recursive
+
 # 替代 arch 命令：使用 uname -m 获取架构
 ARCH=$(uname -m)
 
@@ -28,14 +32,13 @@ case "$ARCH" in
   arm64|aarch64) DOCKERFILE="Dockerfile.arm64" ;;
   *) echo "未知架构: $ARCH"; exit 1 ;;
 esac
-
 # 构建镜像
 echo "检测到设备为 $ARCH 架构，使用 $DOCKERFILE 构建镜像"
-if ! docker build -f ./${DOCKERFILE} --network host -t ${IMAGE_NAME}:latest .; then
+if ! docker build --platform linux/amd64 -f ./${DOCKERFILE} --network host -t ${IMAGE_NAME}:latest .; then
   echo "构建镜像失败，请检查错误日志"
   exit 1
 fi
 
 # 运行容器
 echo "启动容器 ${CONTAINER_NAME}..."
-docker run -it --network host --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+docker run -it --platform linux/amd64 --network host --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
