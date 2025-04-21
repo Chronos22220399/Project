@@ -1,9 +1,11 @@
 #pragma once
 
+#include <crow.h>
 #include <filesystem>
 #include <functional>
 #include <future>
 #include <nlohmann/json.hpp>
+#include <optional>
 #include <vector>
 
 /**
@@ -139,4 +141,12 @@ template <size_t N, size_t L> auto make_index_sequence_from() {
  * @return std::string 固定字符串 "1"（测试阶段固定）。
  */
 inline std::string create_id() { return "1"; }
+
+inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {
+  try {
+    return nlohmann::json::parse(body);
+  } catch (...) {
+    return std::nullopt;
+  }
+}
 } // namespace utils

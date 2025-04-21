@@ -24,6 +24,7 @@
 //
 
 struct GoodsDTO {
+  id_type id;
   std::string goods_id;
   id_type category_id;
   id_type supplier_id;
@@ -36,7 +37,8 @@ struct GoodsDTO {
 
   static GoodsDTO from_json(const nlohmann::json &j) {
     try {
-      return GoodsDTO{.goods_id = utils::create_id(),
+      return GoodsDTO{.id = 1,
+                      .goods_id = utils::create_id(),
                       .category_id = j.at("category_id").get<id_type>(),
                       .supplier_id = j.at("supplier_id").get<id_type>(),
                       .unit_id = j.at("unit_id").get<id_type>(),
@@ -53,11 +55,25 @@ struct GoodsDTO {
   }
 };
 
-namespace Model {
+inline void to_json(nlohmann::json &j, const GoodsDTO &g) {
+  j = nlohmann::json{{"id", g.id},
+                     {"goods_id", g.goods_id},
+                     {"category_id", g.category_id},
+                     {"supplier_id", g.supplier_id},
+                     {"unit_id", g.unit_id},
+                     {"goods_name", g.goods_name},
+                     {"shelf_life_days", g.shelf_life_days},
+                     {"barcode", g.barcode},
+                     {"image_url", g.image_url},
+                     {"description", g.description}};
+}
+
+namespace model {
 
 // 反射 DTO 与表字段的映射关系
 template <> struct ReflectTable<GoodsDTO, db::goods> {
   static constexpr auto map_members = std::make_tuple(
+      std::make_pair(&GoodsDTO::id, &db::goods::id),
       std::make_pair(&GoodsDTO::goods_id, &db::goods::goods_id),
       std::make_pair(&GoodsDTO::category_id, &db::goods::category_id),
       std::make_pair(&GoodsDTO::supplier_id, &db::goods::supplier_id),
@@ -84,4 +100,4 @@ template <typename GoodsRow> struct ReflectTableRow<GoodsDTO, GoodsRow> {
   }
 };
 
-} // namespace Model
+} // namespace model

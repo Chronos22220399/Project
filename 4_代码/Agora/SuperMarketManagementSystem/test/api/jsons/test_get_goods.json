@@ -1,0 +1,34 @@
+{
+  "1": {
+    "page": 1,
+    "page_size": 10
+  },
+  "2": {
+    "page": 2,
+    "page_size": 5
+  },
+  "3": {
+    "page": 0,
+    "page_size": 10
+  },
+  "4": {
+    "page": -1,
+    "page_size": 10
+  },
+  "5": {
+    "page": 1,
+    "page_size": 0
+  },
+  "6": {
+    "page": "one",
+    "page_size": 10
+  },
+  "7": {
+    "page": 1
+  },
+  "8": {
+    "page_size": 5
+  },
+  "9": {},
+  "10": "invalid json string"
+}

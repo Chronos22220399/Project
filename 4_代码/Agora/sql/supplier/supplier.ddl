@@ -1,5 +1,5 @@
 -- 供应商信息表
-CREATE TABLE supplier (
+CREATE TABLE IF NOT EXISTS supplier (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     supplier_id TEXT UNIQUE, -- 逻辑ID
     supplier_name TEXT NOT NULL,

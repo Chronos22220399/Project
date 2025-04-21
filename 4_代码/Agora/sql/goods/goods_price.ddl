@@ -1,5 +1,5 @@
 -- 商品价格表
-CREATE TABLE goods_price (
+CREATE TABLE IF NOT EXISTS goods_price (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     goods_id INTEGER NOT NULL,
     price REAL NOT NULL,

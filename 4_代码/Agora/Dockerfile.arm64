@@ -21,6 +21,7 @@ RUN pacman -Syu --noconfirm && \
       cmake \
       git \
       vim \
+      tmux \
       sqlite \
       mysql \
       openssl \
