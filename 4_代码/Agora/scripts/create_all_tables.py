@@ -1,11 +1,13 @@
 import os
 import subprocess
 import sys
+import sqlite3
 
 DDL_ROOT = "sql"
 OUTPUT_ROOT = "SuperMarketManagementSystem/include/model/db"
 DDL2CPP_BIN = "/bin/sqlpp11-ddl2cpp"
 NAMESPACE = "db"
+SQLITE_DB_PATH = "SuperMarketManagementSystem/datas/datas.sqlite3"
 
 def check_ddl2cpp():
     if not os.path.exists(DDL2CPP_BIN):
@@ -40,10 +42,30 @@ def generate_header(ddl_file):
     print(f"Generating: {output_path}.h")
     subprocess.run(cmd, check=True)
 
+def create_tables_in_sqlite(ddl_file):
+    with open(ddl_file, 'r', encoding='utf-8') as f:
+        ddl_sql = f.read()
+
+    if not ddl_sql.strip():
+        print(f"Warning: DDL file {ddl_file} is empty.")
+        return
+
+    print(f"Executing SQL for: {ddl_file}")
+    try:
+        conn = sqlite3.connect(SQLITE_DB_PATH)
+        cursor = conn.cursor()
+        cursor.executescript(ddl_sql)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print(f"SQLite error in {ddl_file}: {e}")
+        sys.exit(1)
+
 def main():
     check_ddl2cpp()
     for ddl_file in find_ddl_files(DDL_ROOT):
         generate_header(ddl_file)
+        create_tables_in_sqlite(ddl_file)
 
 if __name__ == "__main__":
     main()

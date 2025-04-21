@@ -1,11 +1,13 @@
 import os
 import sys
 import subprocess
+import sqlite3
 
 DDL2CPP_BIN = "/bin/sqlpp11-ddl2cpp"
 NAMESPACE = "db"
 DDL_ROOT = "sql"
 OUTPUT_ROOT = "SuperMarketManagementSystem/include/model/db"
+SQLITE_DB_PATH = "SuperMarketManagementSystem/datas/datas.sqlite3"
 
 def usage():
     print("Usage: python gen_single_header.py <relative/path/to/file.ddl>")
@@ -14,6 +16,36 @@ def usage():
 def check_ddl2cpp():
     if not os.path.exists(DDL2CPP_BIN):
         print(f"Error: ddl2cpp script not found at {DDL2CPP_BIN}")
+        sys.exit(1)
+
+def generate_header(full_path, output_path):
+    cmd = [
+        DDL2CPP_BIN,
+        "-identity-naming",
+        full_path,
+        output_path,
+        NAMESPACE
+    ]
+    print(f"Generating: {output_path}.h")
+    subprocess.run(cmd, check=True)
+
+def create_table_in_sqlite(ddl_file_path):
+    print(f"Executing SQL: {ddl_file_path}")
+    with open(ddl_file_path, 'r', encoding='utf-8') as f:
+        ddl_sql = f.read()
+
+    if not ddl_sql.strip():
+        print("Warning: DDL file is empty.")
+        return
+
+    try:
+        conn = sqlite3.connect(SQLITE_DB_PATH)
+        cursor = conn.cursor()
+        cursor.executescript(ddl_sql)
+        conn.commit()
+        conn.close()
+    except sqlite3.Error as e:
+        print(f"SQLite error: {e}")
         sys.exit(1)
 
 def main():
@@ -37,16 +69,8 @@ def main():
     os.makedirs(output_dir, exist_ok=True)
     output_path = os.path.join(output_dir, ddl_basename)
 
-    cmd = [
-        DDL2CPP_BIN,
-        "-identity-naming",
-        full_path,
-        output_path,
-        NAMESPACE
-    ]
-
-    print(f"Generating: {output_path}.h")
-    subprocess.run(cmd, check=True)
+    generate_header(full_path, output_path)
+    create_table_in_sqlite(full_path)
 
 if __name__ == "__main__":
     main()

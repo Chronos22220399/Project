@@ -1,5 +1,5 @@
 -- 商品促销信息表
-CREATE TABLE goods_promotion (
+CREATE TABLE IF NOT EXISTS goods_promotion (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     goods_id INTEGER,
     promotion_id INTEGER,

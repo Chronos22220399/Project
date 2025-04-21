@@ -1,5 +1,5 @@
 -- 库存表
-CREATE TABLE inventory (
+CREATE TABLE IF NOT EXISTS inventory (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     goods_id INTEGER NOT NULL,
     warehouse_id INTEGER NOT NULL,

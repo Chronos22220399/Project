@@ -50,6 +50,7 @@
     "description": "Contains invalid !@# characters"
   },
   "8": {
+    "goods_id": "g111",
     "category_id": 106,
     "supplier_id": 206,
     "unit_id": 306,

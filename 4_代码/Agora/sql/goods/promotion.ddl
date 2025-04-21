@@ -1,5 +1,5 @@
 -- 促销活动表
-CREATE TABLE promotion (
+CREATE TABLE IF NOT EXISTS promotion (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     promotion_id TEXT UNIQUE,
     name TEXT NOT NULL,

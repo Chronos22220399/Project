@@ -1,8 +1,11 @@
 #include <common/common_utils.hpp>
 #include <common/database_utils.hpp>
+#include <common/uni_define.h>
+#include <sqlpp11/insert.h>
+#include <sqlpp11/select.h>
 #include <sqlpp11/sqlpp11.h>
 
-namespace Model {
+namespace model {
 namespace details {
 
 template <typename Reflect, typename Model, typename Table, size_t... Is>
@@ -30,28 +33,24 @@ auto assign_table(Model &&model, Table &&table) {
 template <typename Model, typename Table, size_t Start = 1> class GenericModel {
   using pooled_conn_ptr_type =
       std::shared_ptr<sqlpp::sqlite3::pooled_connection>;
-  using SelectRetType = std::vector<Model>;
-  using InsertRetType = size_t;
-  using UpdateRetType = bool;
-  using DeleteRetType = bool;
   using Reflect = ReflectTable<Model, Table>;
 
 public:
-  template <typename T> InsertRetType insert(T &&model) const {
-    return utils::DataBaseHelper::execute<InsertRetType>(
+  template <typename T> static insert_ret_type _insert(T &&model) {
+    return utils::DataBaseHelper::execute<insert_ret_type>(
         [](const pooled_conn_ptr_type &conn, T &&model_) {
           Table table_{};
           (*conn)(
               insert_into(table_).set(assign_table<Reflect, T, Table, Start>(
                   std::forward<T>(model_), std::forward<Table>(table_))));
-          return 1;
+          return true;
         },
         std::forward<T>(model));
   }
 
   template <typename T, typename Condition>
-  UpdateRetType update(T &&model, Condition &&condition) const {
-    return utils::DataBaseHelper::execute<UpdateRetType>(
+  static update_ret_type _update(T &&model, Condition &&condition) {
+    return utils::DataBaseHelper::execute<update_ret_type>(
         [](const pooled_conn_ptr_type &conn_, T &&model_,
            Condition &&condition_) {
           Table table_{};
@@ -66,11 +65,11 @@ public:
   }
 
   template <typename Condition>
-  SelectRetType select(Condition &&condition) const {
-    return utils::DataBaseHelper::execute<SelectRetType>(
+  static select_ret_type<Model> _select(Condition &&condition) {
+    return utils::DataBaseHelper::execute<select_ret_type<Model>>(
         [](const pooled_conn_ptr_type &conn_, Condition &&condition_) {
           Table table_{};
-          SelectRetType ret_container{};
+          select_ret_type<Model> ret_container{};
           auto select_result =
               (*conn_)(sqlpp::select(all_of(table_))
                            .from(table_)
@@ -85,8 +84,31 @@ public:
   }
 
   template <typename Condition>
-  DeleteRetType remove(Condition &&condition) const {
-    return utils::DataBaseHelper::execute<DeleteRetType>(
+  static select_ret_type<Model>
+  _select_from(Condition &&condition, count_type page_size, count_type offset) {
+    return utils::DataBaseHelper::execute<select_ret_type<Model>>(
+        [limit_ = page_size, offset_ = offset](
+            const pooled_conn_ptr_type &conn_, Condition &&condition_) {
+          Table table_{};
+          select_ret_type<Model> ret_container{};
+          auto select_result =
+              (*conn_)(sqlpp::select(all_of(table_))
+                           .from(table_)
+                           .where(std::forward<Condition>(condition_))
+                           .limit(limit_)
+                           .offset(offset_));
+          for (auto &row : select_result) {
+            ret_container.push_back(
+                ReflectTableRow<Model, decltype(row)>::assign_model(row));
+          }
+          return ret_container;
+        },
+        std::forward<Condition>(condition));
+  }
+
+  template <typename Condition>
+  static delete_ret_type _remove(Condition &&condition) {
+    return utils::DataBaseHelper::execute<delete_ret_type>(
         [](const pooled_conn_ptr_type &conn_, Condition &&condition_) {
           Table table_{};
           (*conn_)(
@@ -95,10 +117,21 @@ public:
         },
         std::forward<Condition>(condition));
   }
-};
-} // namespace Model
 
-namespace Unused {
+  static count_type _count() {
+    return utils::DataBaseHelper::execute<count_type>(
+        [](const pooled_conn_ptr_type &conn_) {
+          Table table_{};
+          auto rows = (*conn_)(sqlpp::select(sqlpp::count(table_.id))
+                                   .from(table_)
+                                   .where(table_.id >= 0));
+          return rows.front().count;
+        });
+  }
+};
+} // namespace model
+
+namespace unused {
 template <typename Reflect, typename Model, typename Table, size_t... Is>
 Model assign_model_impl(Table &&table, std::index_sequence<Is...>) {
   Model model;
@@ -123,4 +156,4 @@ Model assign_model(Table &&table) {
   return assign_model_impl<Reflect, Model, Table, Start>(
       std::forward<Table>(table));
 }
-} // namespace Unused
+} // namespace unused

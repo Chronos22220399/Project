@@ -1,5 +1,5 @@
 -- 单位表
-CREATE TABLE unit (
+CREATE TABLE IF NOT EXISTS unit (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     unit_id TEXT UNIQUE,
     unit_name TEXT NOT NULL

@@ -1,5 +1,5 @@
 -- 商品表
-CREATE TABLE goods (
+CREATE TABLE IF NOT EXISTS goods (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     goods_id TEXT UNIQUE NOT NULL,
     category_id INTEGER,

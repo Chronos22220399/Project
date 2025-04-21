@@ -21,7 +21,8 @@ using pooled_conn_ptr_type = std::shared_ptr<pooled_conn_type>;
     config.debug = true;
     config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
     config.path_to_database =
-        std::string(root_dir_path) + "/SuperMarket/datas/sqlite3/datas.sqlite3";
+        std::string(root_dir_path) +
+        "/SuperMarketManagementSystem/datas/datas.sqlite3";
   });
   static auto config_ptr =
       std::make_shared<sqlpp::sqlite3::connection_config>(config);
