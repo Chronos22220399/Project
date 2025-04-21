@@ -1,0 +1,62 @@
+{
+  "1": {
+    "name": "niger",
+    "price": 123
+  },
+  "2": {},
+  "3": {
+    "category_id": 101,
+    "supplier_id": 201,
+    "unit_id": 301,
+    "goods_name": "Organic Apples",
+    "shelf_life_days": 30,
+    "barcode": "1234567890123",
+    "image_url": "https://example.com/apple.jpg",
+    "description": "Fresh organic apples from local farm"
+  },
+  "4": {
+    "category_id": 102,
+    "supplier_id": 202,
+    "unit_id": 302,
+    "shelf_life_days": 15,
+    "barcode": "2345678901234",
+    "description": "Missing goods_name field"
+  },
+  "5": {
+    "category_id": "invalid_category",
+    "supplier_id": 203,
+    "unit_id": 303,
+    "goods_name": "Whole Milk",
+    "shelf_life_days": 7,
+    "barcode": "3456789012345",
+    "description": "Fresh dairy milk"
+  },
+  "6": {
+    "category_id": 104,
+    "supplier_id": 204,
+    "unit_id": 304,
+    "goods_name": "Canned Beans",
+    "shelf_life_days": 3650,
+    "barcode": "4567890123456",
+    "description": "Long shelf life product"
+  },
+  "7": {
+    "category_id": 105,
+    "supplier_id": 205,
+    "unit_id": 305,
+    "goods_name": "Bread@Loaf",
+    "shelf_life_days": 5,
+    "barcode": "5678901234567",
+    "description": "Contains invalid !@# characters"
+  },
+  "8": {
+    "category_id": 106,
+    "supplier_id": 206,
+    "unit_id": 306,
+    "goods_name": "Table Salt",
+    "shelf_life_days": 730,
+    "barcode": "6789012345678",
+    "image_url": "none",
+    "description": "Basic test case"
+  }
+}

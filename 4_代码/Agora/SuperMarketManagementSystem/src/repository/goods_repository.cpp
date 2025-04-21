@@ -1,5 +1,6 @@
+#include <iostream>
+#include <model/dto/goods_dto.hpp>
 #include <repository/goods_repository.h>
+using namespace std;
 
-bool GoodsRepository::insert(const std::string &name, double price) {
-  return true;
-}
+bool GoodsRepository::insert(const GoodsDTO &goods_dto) { return true; }

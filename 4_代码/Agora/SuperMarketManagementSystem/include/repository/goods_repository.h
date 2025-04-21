@@ -1,8 +1,7 @@
 #pragma once
-#include <string>
+#include <model/dto/goods_dto.hpp>
 
-class GoodsRepository {
+class GoodsRepository : public Model::GenericModel<GoodsDTO, db::goods> {
 public:
-  // just an instance
-  static bool insert(const std::string &name, double price);
+  static bool insert(const GoodsDTO &goods_dto);
 };
