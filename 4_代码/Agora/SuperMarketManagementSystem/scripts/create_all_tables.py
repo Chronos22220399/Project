@@ -4,10 +4,10 @@ import sys
 import sqlite3
 
 DDL_ROOT = "sql"
-OUTPUT_ROOT = "SuperMarketManagementSystem/include/model/db"
+OUTPUT_ROOT = "include/model/db"
 DDL2CPP_BIN = "/bin/sqlpp11-ddl2cpp"
 NAMESPACE = "db"
-SQLITE_DB_PATH = "SuperMarketManagementSystem/datas/datas.sqlite3"
+SQLITE_DB_PATH = "datas/datas.sqlite3"
 
 def check_ddl2cpp():
     if not os.path.exists(DDL2CPP_BIN):

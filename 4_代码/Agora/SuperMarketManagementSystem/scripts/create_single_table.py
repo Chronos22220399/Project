@@ -6,8 +6,8 @@ import sqlite3
 DDL2CPP_BIN = "/bin/sqlpp11-ddl2cpp"
 NAMESPACE = "db"
 DDL_ROOT = "sql"
-OUTPUT_ROOT = "SuperMarketManagementSystem/include/model/db"
-SQLITE_DB_PATH = "SuperMarketManagementSystem/datas/datas.sqlite3"
+OUTPUT_ROOT = "include/model/db"
+SQLITE_DB_PATH = "datas/datas.sqlite3"
 
 def usage():
     print("Usage: python gen_single_header.py <relative/path/to/file.ddl>")

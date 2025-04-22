@@ -71,13 +71,11 @@ template <> struct ReflectTable<GoodsCategoryDTO, db::category> {
 template <typename CategoryRow>
 struct ReflectTableRow<GoodsCategoryDTO, CategoryRow> {
   static GoodsCategoryDTO assign_model(CategoryRow &&row) {
-    return GoodsCategoryDTO{
-        .category_id = row.category_id,
-        .category_name = std::string(row.category_name),
-        .category_description = std::string(row.category_description),
-        .parent_category_id = row.parent_category_id
-                                  ? std::make_optional(row.parent_category_id)
-                                  : std::nullopt};
+    return GoodsCategoryDTO{.category_id = row.category_id,
+                            .category_name = std::string(row.category_name),
+                            .category_description =
+                                std::string(row.category_description),
+                            .parent_category_id = row.parent_category_id};
   }
 };
 } // namespace model

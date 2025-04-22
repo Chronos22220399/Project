@@ -39,6 +39,13 @@ if ! docker build --platform linux/amd64 -f ./${DOCKERFILE} --network host -t ${
   exit 1
 fi
 
+
 # 运行容器
 echo "启动容器 ${CONTAINER_NAME}..."
-docker run -it --platform linux/amd64 --network host --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+if [[ "$OSTYPE" == "darwin"* || "$OSTYPE" == "msys"* ]]; then
+  # macOS 或 Windows
+  docker run -it --platform linux/amd64 -p 8888:8888 -v "$(pwd)":/app --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+else
+  # Linux 可用 host 网络
+  docker run -it --platform linux/amd64 --network host -v "$(pwd)":/app --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+fi

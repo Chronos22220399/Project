@@ -26,8 +26,11 @@ void insert_test_data() {
 
 int main() {
   crow::SimpleApp app;
+
+  std::uint16_t port = utils::configManager.getPort();
+
   initRouters(app);
-  app.multithreaded().port(12789).run();
+  app.multithreaded().port(port).run();
   // cout << GoodsRepository::count() << endl;
   // auto goods_list = GoodsRepository::getGoodsByPage(10, 0);
   // for (auto goods : goods_list) {
