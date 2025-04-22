@@ -1,5 +1,5 @@
 #pragma once
-#include <model/dto/goods_dto.hpp>
+#include <model/dto/goods/goods_dto.hpp>
 
 class GoodsRepository : protected model::GenericModel<GoodsDTO, db::goods> {
 public:

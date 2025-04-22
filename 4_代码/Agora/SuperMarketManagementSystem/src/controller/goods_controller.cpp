@@ -18,5 +18,6 @@ void GoodsController::registerRoutes(crow::SimpleApp &app) {
   CROW_ROUTE(app, "/goods/get_all")
       .methods("GET"_method)(
           [](const crow::request &req) { return GoodsService::getAllGoods(); });
+
   // other routes
 }
