@@ -1,5 +1,5 @@
 -- 商品类别表（支持层级结构）
-CREATE TABLE IF NOT EXISTS category (
+CREATE TABLE IF NOT EXISTS goods_category (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     category_id TEXT UNIQUE,
     category_name TEXT NOT NULL,

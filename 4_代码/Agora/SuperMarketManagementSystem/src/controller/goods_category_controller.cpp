@@ -3,7 +3,7 @@
 
 void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   // add goods
-  CROW_ROUTE(app, "/goods/add")
+  CROW_ROUTE(app, "/goods_category/add")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsCategoryService::addCategory(req.body);
       });
@@ -15,7 +15,7 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
       });
 
   // get goods
-  CROW_ROUTE(app, "/goods/get")
+  CROW_ROUTE(app, "/goods_category/get")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsCategoryService::getCategoryByPage(req.body);
       });

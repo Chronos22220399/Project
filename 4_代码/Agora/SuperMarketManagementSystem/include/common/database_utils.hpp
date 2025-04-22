@@ -1,4 +1,5 @@
 #include <common/common_utils.hpp>
+#include <common/config_utils.h>
 #include <common/uni_define.h>
 #include <fmt/format.h>
 #include <sqlpp11/sqlite3/connection_config.h>
@@ -11,6 +12,9 @@ using conn_pool_ptr_type = std::shared_ptr<conn_pool_type>;
 using pooled_conn_type = sqlpp::sqlite3::pooled_connection;
 using pooled_conn_ptr_type = std::shared_ptr<pooled_conn_type>;
 
+inline auto config_file = "./SuperMarketManagementSystem/config/config.json";
+inline utils::ConfigManager configManager(config_file);
+
 [[nodiscard]] static auto get_pooled_conn_ptr() {
   static sqlpp::sqlite3::connection_config config{};
   static std::once_flag flag;
@@ -20,9 +24,8 @@ using pooled_conn_ptr_type = std::shared_ptr<pooled_conn_type>;
     fmt::println("Current Path: {}", root_dir_path.c_str());
     config.debug = true;
     config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-    config.path_to_database =
-        std::string(root_dir_path) +
-        "/SuperMarketManagementSystem/datas/datas.sqlite3";
+    auto databasePath = configManager.getDatabasePath();
+    config.path_to_database = std::string(root_dir_path) + databasePath;
   });
   static auto config_ptr =
       std::make_shared<sqlpp::sqlite3::connection_config>(config);
