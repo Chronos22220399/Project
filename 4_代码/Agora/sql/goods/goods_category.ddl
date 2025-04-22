@@ -4,6 +4,6 @@ CREATE TABLE IF NOT EXISTS category (
     category_id TEXT UNIQUE,
     category_name TEXT NOT NULL,
     category_description TEXT,
-    parent_category_id INTEGER,
+    parent_category_id INTEGER DEFAULT NULL,
     FOREIGN KEY (parent_category_id) REFERENCES category(id)
 );
