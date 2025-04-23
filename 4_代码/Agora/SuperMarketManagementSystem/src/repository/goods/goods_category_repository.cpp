@@ -1,4 +1,4 @@
-#include <repository/goods_category_repository.h>
+#include <repository/goods/goods_category_repository.h>
 
 insert_ret_type
 GoodsCategoryRepository::insert(const GoodsCategoryDTO &goods_category_dto) {
