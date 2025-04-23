@@ -173,6 +173,15 @@ struct ReflectTable<{self.dto_name}, db::{self.table['table_name']}> {{
         {self._generate_orm_mapping()}
     );
 }};
+
+// mapping
+template <typename {self.table['table_name'].capitalize()}Row> struct ReflectTableRow<{self.dto_name}, {self.table['table_name'].capitalize()}Row> {{
+    static {self.dto_name} assign_model({self.table['table_name'].capitalize()}Row &&row) {{
+        return {self.dto_name} {{
+            {self._generate_orm_mapping_rev()}
+        }};           
+    }}
+}}
 }} // namespace model
 """
     
@@ -206,6 +215,10 @@ struct ReflectTable<{self.dto_name}, db::{self.table['table_name']}> {{
             for col in self.table["columns"]
         )
 
+    def _generate_orm_mapping_rev(self) -> str:
+        ret = ',\n'.join(f'.{col["name"]} = row.{col["name"]}' for col in self.table["columns"])
+        return ret
+
     # ---------- Repository生成 ----------
     def generate_repository(self, db_dir_name: str) -> Tuple[str, str]:
         h_content = f"""#pragma once
@@ -230,7 +243,7 @@ public:
 }};
 """
         
-        cpp_content = f"""#include <repository/{self.repo_name}/{to_snake_case(self.repo_name)}.h>
+        cpp_content = f"""#include <repository/{self.table['table_name']}/{to_snake_case(self.repo_name)}.h>
 
 using namespace model;
 
@@ -244,7 +257,7 @@ select_ret_type<{self.dto_name}> {self.repo_name}::get(id_type id) {{
 }};
 
 update_ret_type {self.repo_name}::update(const {self.dto_name} &dto) {{
-    return _update(dto, db::{self.table['table_name']}{{}}.id == id);
+    return _update(dto, db::{self.table['table_name']}{{}}.id == dto.id);
 }};
 
 delete_ret_type {self.repo_name}::remove(id_type id) {{
@@ -289,7 +302,7 @@ public:
 """
         
         cpp_content = f"""#include <controller/{db_dir_name}/{to_snake_case(self.controller_name)}.h>
-#include <service/{self.table['table_name']}/{self.service_name}.h>
+#include <service/{self.table['table_name']}/{self.table['table_name']}.h>
 
 void {self.controller_name}::registerRoutes(crow::SimpleApp& app) {{
     CROW_ROUTE(app, "/api/{self.table['table_name']}/add")

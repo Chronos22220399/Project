@@ -92,11 +92,11 @@ template <typename GoodsRow> struct ReflectTableRow<GoodsDTO, GoodsRow> {
                     .category_id = row.category_id,
                     .supplier_id = row.supplier_id,
                     .unit_id = row.unit_id,
-                    .goods_name = std::string(row.goods_name),
+                    .goods_name = row.goods_name,
                     .shelf_life_days = row.shelf_life_days,
-                    .barcode = std::string(row.barcode),
-                    .image_url = std::string(row.image_url),
-                    .description = std::string(row.description)};
+                    .barcode = row.barcode,
+                    .image_url = row.image_url,
+                    .description = row.description};
   }
 };
 
