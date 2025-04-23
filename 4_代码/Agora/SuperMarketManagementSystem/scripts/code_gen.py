@@ -7,6 +7,7 @@ from typing import Dict, List, Tuple
 # ========== 配置部分 ==========
 PROJECT_ROOT = Path(__file__).parent.parent
 DDL_DIR = PROJECT_ROOT / "sql"
+DB_DIR = PROJECT_ROOT / "include/model/db"
 DTO_DIR = PROJECT_ROOT / "include/model/dto"
 REPO_DIR = PROJECT_ROOT / "include/repository"
 SERVICE_DIR = PROJECT_ROOT / "include/service"
@@ -71,7 +72,8 @@ class DDLAnalyzer:
             r"^\s*(\w+)\s+(\w+)\s*(.*?)(?=,|$)",
             re.MULTILINE | re.IGNORECASE
         )
-        for match in column_pattern.finditer(ddl):
+        matchs = list(column_pattern.finditer(ddl))
+        for match in matchs[1:]:
             name = match.group(1)
             data_type = match.group(2).upper()
             constraints = [c.upper() for c in match.group(3).split()]
@@ -118,7 +120,7 @@ class CodeGenerator:
         self.controller_name = self.dto_name[:-3] + "Controller"
     
     # ---------- DTO生成 ----------
-    def generate_dto(self) -> str:
+    def generate_dto(self, db_dir_name: str) -> str:
         fields = []
         for col in self.table["columns"]:
             cpp_type = TYPE_MAPPING.get(col["type"], "std::string")
@@ -134,6 +136,8 @@ class CodeGenerator:
         return f"""#pragma once
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
+#include <common/uni_define.h>
+#include <model/db/{db_dir_name}/{self.table['table_name']}.h>
 #include <nlohmann/json.hpp>
 #include <string>
 
@@ -197,29 +201,28 @@ struct ReflectTable<{self.dto_name}, db::{self.table['table_name']}> {{
         return ',\n'.join(entries)
     
     def _generate_orm_mapping(self) -> str:
-        return ',\n'.join(
-            f'std::make_pair(&{self.dto_name}::{col["name"]}, '
+        return ',\n'.join( f'std::make_pair(&{self.dto_name}::{col["name"]}, '
             f'&db::{self.table["table_name"]}::{col["name"]})'
             for col in self.table["columns"]
         )
 
     # ---------- Repository生成 ----------
-    def generate_repository(self) -> Tuple[str, str]:
-        hpp_content = f"""#pragma once
-#include <model/dto/{self.table['table_name']}_dto.hpp>
-#include <repository/generic_repository.hpp>
+    def generate_repository(self, db_dir_name: str) -> Tuple[str, str]:
+        h_content = f"""#pragma once
+#include <model/dto/{db_dir_name}/{self.table['table_name']}_dto.hpp>
+#include <common/generic_model.hpp>
 
-class {self.repo_name} : public GenericRepository<{self.dto_name}> {{
+class {self.repo_name} : protected model::GenericModel<{self.dto_name}, db::{self.table['table_name']}> {{
 public:
     // CRUD Operations
     static insert_ret_type create(const {self.dto_name}& dto);
-    static select_ret_type<{self.dto_name}> getById(id_type id);
+    static select_ret_type<{self.dto_name}> get(id_type id);
     static update_ret_type update(const {self.dto_name}& dto);
     static delete_ret_type remove(id_type id);
     
     // Custom Queries
-    static select_ret_type<std::vector<{self.dto_name}>> getAll();
-    static select_ret_type<std::vector<{self.dto_name}>> paginate(int page, int size);
+    static select_ret_type<{self.dto_name}> getAll();
+    static select_ret_type<{self.dto_name}> getByPage(int page_size, int offset);
     static count_type count();
     
     // Foreign Key Relations
@@ -227,21 +230,42 @@ public:
 }};
 """
         
-        cpp_content = f"""#include <repository/{to_snake_case(self.repo_name)}.hpp>
+        cpp_content = f"""#include <repository/{self.repo_name}/{to_snake_case(self.repo_name)}.h>
 
 using namespace model;
 
-insert_ret_type {self.repo_name}::create(const {self.dto_name}& dto) {{
-    return GenericRepository<{self.dto_name}>::_insert(dto);
+// CRUD Operations
+insert_ret_type {self.repo_name}::create(const {self.dto_name} &dto) {{
+    return _insert(dto);
+}};
+
+select_ret_type<{self.dto_name}> {self.repo_name}::get(id_type id) {{
+  return _select(db::{self.table['table_name']}{{}}.id == id);
+}};
+
+update_ret_type {self.repo_name}::update(const {self.dto_name} &dto) {{
+    return _update(dto, db::{self.table['table_name']}{{}}.id == id);
+}};
+
+delete_ret_type {self.repo_name}::remove(id_type id) {{
+  return _remove(db::{self.table['table_name']}{{}}.id == id);
 }}
 
-select_ret_type<{self.dto_name}> {self.repo_name}::getById(id_type id) {{
-    return GenericRepository<{self.dto_name}>::_get(id);
+// Custom Queries
+select_ret_type<{self.dto_name}> {self.repo_name}::getAll() {{
+  return _select(db::{self.table['table_name']}{{}}.id >= 0);
 }}
+
+select_ret_type<{self.dto_name}> {self.repo_name}::getByPage(int page_size,
+                                                           int offset) {{
+  return _select_from(db::{self.table['table_name']}{{}}.id >= 0, page_size, offset);
+}}
+
+count_type {self.repo_name}::count() {{ return _count(); }}
 
 // 其他方法实现...
 """
-        return hpp_content, cpp_content
+        return h_content, cpp_content
 
     def _generate_foreign_key_methods(self) -> str:
         methods = []
@@ -254,10 +278,9 @@ select_ret_type<{self.dto_name}> {self.repo_name}::getById(id_type id) {{
         return '\n    '.join(methods)
 
     # ---------- Controller生成 ----------
-    def generate_controller(self) -> Tuple[str, str]:
-        hpp_content = f"""#pragma once
+    def generate_controller(self, db_dir_name: str) -> Tuple[str, str]:
+        h_content = f"""#pragma once
 #include <crow.h>
-#include <service/{to_snake_case(self.service_name)}.hpp>
 
 class {self.controller_name} {{
 public:
@@ -265,26 +288,97 @@ public:
 }};
 """
         
-        cpp_content = f"""#include <controller/{to_snake_case(self.controller_name)}.hpp>
+        cpp_content = f"""#include <controller/{db_dir_name}/{to_snake_case(self.controller_name)}.h>
+#include <service/{self.table['table_name']}/{self.service_name}.h>
 
 void {self.controller_name}::registerRoutes(crow::SimpleApp& app) {{
-    CROW_ROUTE(app, "/api/{self.table['table_name']}/create")
+    CROW_ROUTE(app, "/api/{self.table['table_name']}/add")
         .methods("POST"_method)([](const crow::request& req) {{
-            auto dto = {self.dto_name}::from_json(
-                nlohmann::json::parse(req.body)
-            );
-            return {self.service_name}::create(dto).to_json().dump();
+            return {self.service_name}::add(req.body);
         }});
         
-    CROW_ROUTE(app, "/api/{self.table['table_name']}/get/<int>")
-        .methods("GET"_method)([](int id) {{
-            return {self.service_name}::getById(id).to_json().dump();
+    CROW_ROUTE(app, "/api/{self.table['table_name']}/getByPage")
+        .methods("POST"_method)([](const crow::request& req) {{
+            return {self.service_name}::getByPage(req.body);
+        }});
+        
+    CROW_ROUTE(app, "/api/{self.table['table_name']}/getAll")
+        .methods("GET"_method)([]() {{
+            return {self.service_name}::getAll();
         }});
         
     // 其他路由...
 }}
 """
-        return hpp_content, cpp_content
+        return h_content, cpp_content
+
+    def generate_service(self, db_dir_name: str, func_sig_list: list[str]):
+        h_content = f"""#pragma once
+#include <crow.h>
+#include <string>
+
+class {self.service_name} {{
+public:
+    {self._generate_func_statement(func_sig_list)}
+}};
+"""
+
+        cpp_content = f"""
+#include <common/common_utils.hpp>      
+#include <fmt/format.h>
+#include <nlohmann/json.hpp>
+#include <repository/{db_dir_name}/{self.table["table_name"]}_repository.h>
+#include <service/{db_dir_name}/{self.table["table_name"]}_service.h>
+
+using json = nlohmann::json;
+
+{self._generate_func_defination(func_sig_list)}
+"""
+        return h_content, cpp_content;
+
+    # 生成函数声明
+    def _generate_func_statement(self, func_sig_list: list[str]):
+        ret = ';\n'.join(func_sig_list) + ";"
+        return ret;
+    
+    # 生成函数定义
+    def _generate_func_defination(self, func_sig_list: list[str]):
+        if len(func_sig_list) == 0:
+            return ""
+        
+        func_define_list = []
+        func_define: str = ""
+        for func_sig in func_sig_list:
+            if len(func_sig) == 0:
+                continue
+            
+            func_info = func_sig.split(' ')
+            _, ret_type, content = self._get_func_info(func_info)
+            # 构造出函数定义
+            func_define = ret_type + " " + f"{self.service_name}" + "::" + content + " {\n}"; 
+            
+            func_define_list.append(func_define)
+            func_define = "\n\n".join(func_define_list)
+            
+        return func_define
+
+    def _get_func_info(self, func_info):
+        specify_info = ""
+        ret_type: str
+        content: str
+        if (func_info[0] == "static"):
+            specify_info = func_info[0]
+            ret_type = func_info[1]
+            content = " ".join(func_info[2:])
+        elif (func_info[0] == "inline"):
+            ret_type = func_info[1]
+            content = " ".join(func_info[2:])
+        else:
+            ret_type = func_info[0]
+            content = " ".join(func_info[1:])
+            
+        return specify_info, ret_type, content
+        
 
 # ========== 文件操作 ==========
 class FileManager:
@@ -314,23 +408,37 @@ def process_ddl(ddl_path: Path, interactive: bool = True):
     generator = CodeGenerator(table_info)
     
     # 生成DTO
-    dto_content = generator.generate_dto()
+    db_dir_name = ddl_path.parent.name
+    dto_content = generator.generate_dto(db_dir_name) 
     dto_path = DTO_DIR / ddl_path.parent.name / f"{table_info['table_name']}_dto.hpp"
     FileManager.write_file(dto_path, dto_content)
     
     # 生成Repository
-    repo_hpp, repo_cpp = generator.generate_repository()
-    repo_hpp_path = REPO_DIR / f"{table_info['table_name']}_repository.hpp"
-    repo_cpp_path = SRC_REPO_DIR / f"{table_info['table_name']}_repository.cpp"
-    FileManager.write_file(repo_hpp_path, repo_hpp)
+    repo_h, repo_cpp = generator.generate_repository(db_dir_name)
+    repo_h_path = REPO_DIR / db_dir_name / f"{table_info['table_name']}_repository.h"
+    repo_cpp_path = SRC_REPO_DIR / db_dir_name / f"{table_info['table_name']}_repository.cpp"
+    FileManager.write_file(repo_h_path, repo_h)
     FileManager.write_file(repo_cpp_path, repo_cpp)
     
     # 生成Controller
-    ctrl_hpp, ctrl_cpp = generator.generate_controller()
-    ctrl_hpp_path = CONTROLLER_DIR / f"{table_info['table_name']}_controller.hpp"
-    ctrl_cpp_path = SRC_CONTROLLER_DIR / f"{table_info['table_name']}_controller.cpp"
-    FileManager.write_file(ctrl_hpp_path, ctrl_hpp)
+    ctrl_h, ctrl_cpp = generator.generate_controller(db_dir_name)
+    ctrl_h_path = CONTROLLER_DIR / db_dir_name / f"{table_info['table_name']}_controller.h"
+    ctrl_cpp_path = SRC_CONTROLLER_DIR / db_dir_name / f"{table_info['table_name']}_controller.cpp"
+    FileManager.write_file(ctrl_h_path, ctrl_h)
     FileManager.write_file(ctrl_cpp_path, ctrl_cpp)
+
+    # 生成Service
+    service_func_list = [
+        "static crow::response add(const std::string &body)",
+        "static crow::response getByPage(const std::string &body)",
+        "static crow::response getAll()"
+    ]
+    srv_h, srv_cpp = generator.generate_service(db_dir_name, service_func_list)
+    srv_h_path = SERVICE_DIR / db_dir_name / f"{table_info['table_name']}_service.h"
+    srv_cpp_path = SRC_SERVICE_DIR / db_dir_name / f"{table_info['table_name']}_service.cpp"
+    FileManager.write_file(srv_h_path, srv_h)
+    FileManager.write_file(srv_cpp_path, srv_cpp)
+    
 
 def main():
     interactive = "--auto" not in sys.argv

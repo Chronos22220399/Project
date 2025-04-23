@@ -6,13 +6,13 @@ GoodsCategoryRepository::insert(const GoodsCategoryDTO &goods_category_dto) {
 }
 
 select_ret_type<GoodsCategoryDTO> GoodsCategoryRepository::getAllCategory() {
-  return _select(db::category{}.id >= 0);
+  return _select(db::goods_category{}.id >= 0);
 }
 
 select_ret_type<GoodsCategoryDTO>
 GoodsCategoryRepository::getCategoryByPage(count_type page_size,
                                            count_type offset) {
-  return _select_from(db::category{}.id >= 0, page_size, offset);
+  return _select_from(db::goods_category{}.id >= 0, page_size, offset);
 }
 
 count_type GoodsCategoryRepository::count() { return _count(); }

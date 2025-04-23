@@ -54,17 +54,17 @@ inline void to_json(nlohmann::json &j, const GoodsCategoryDTO &gc) {
 
 // 反射映射 GoodsCategoryDTO 和 db::category 表字段
 namespace model {
-template <> struct ReflectTable<GoodsCategoryDTO, db::category> {
-  static constexpr auto map_members =
-      std::make_tuple(std::make_pair(&GoodsCategoryDTO::id, &db::category::id),
-                      std::make_pair(&GoodsCategoryDTO::category_id,
-                                     &db::category::category_id),
-                      std::make_pair(&GoodsCategoryDTO::category_name,
-                                     &db::category::category_name),
-                      std::make_pair(&GoodsCategoryDTO::category_description,
-                                     &db::category::category_description),
-                      std::make_pair(&GoodsCategoryDTO::parent_category_id,
-                                     &db::category::parent_category_id));
+template <> struct ReflectTable<GoodsCategoryDTO, db::goods_category> {
+  static constexpr auto map_members = std::make_tuple(
+      std::make_pair(&GoodsCategoryDTO::id, &db::goods_category::id),
+      std::make_pair(&GoodsCategoryDTO::category_id,
+                     &db::goods_category::category_id),
+      std::make_pair(&GoodsCategoryDTO::category_name,
+                     &db::goods_category::category_name),
+      std::make_pair(&GoodsCategoryDTO::category_description,
+                     &db::goods_category::category_description),
+      std::make_pair(&GoodsCategoryDTO::parent_category_id,
+                     &db::goods_category::parent_category_id));
 };
 
 // 从数据库行映射回 GoodsCategoryDTO

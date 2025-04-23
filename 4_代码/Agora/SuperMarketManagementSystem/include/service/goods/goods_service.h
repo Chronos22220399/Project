@@ -4,7 +4,7 @@
 
 class GoodsService {
 public:
-  static crow::response addGoods(const std::string &body);
-  static crow::response getGoodsByPage(const std::string &body);
-  static crow::response getAllGoods();
+  static crow::response add(const std::string &body);
+  static crow::response getByPage(const std::string &body);
+  static crow::response getAll();
 };

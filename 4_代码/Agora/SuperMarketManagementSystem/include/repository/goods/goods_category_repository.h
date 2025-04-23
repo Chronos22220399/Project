@@ -2,7 +2,7 @@
 #include <model/dto/goods/goods_category_dto.hpp>
 
 class GoodsCategoryRepository
-    : protected model::GenericModel<GoodsCategoryDTO, db::category> {
+    : protected model::GenericModel<GoodsCategoryDTO, db::goods_category> {
 public:
   static insert_ret_type insert(const GoodsCategoryDTO &goods_category_dto);
 

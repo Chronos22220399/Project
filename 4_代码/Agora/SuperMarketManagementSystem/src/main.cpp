@@ -1,5 +1,5 @@
 #include <crow.h>
-#include <repository/goods_repository.h>
+#include <repository/goods/goods_repository.h>
 #include <router/init_router.h>
 using namespace std;
 
@@ -17,7 +17,7 @@ void insert_test_data() {
     dto.image_url = "http://example.com/image" + std::to_string(i) + ".jpg";
     dto.description = "这是第 " + std::to_string(i) + " 个测试商品";
 
-    auto result = GoodsRepository::insert(dto);
+    auto result = GoodsRepository::create(dto);
     if (!result) {
       std::cerr << "插入第 " << i << " 条数据失败: " << std::endl;
     }
