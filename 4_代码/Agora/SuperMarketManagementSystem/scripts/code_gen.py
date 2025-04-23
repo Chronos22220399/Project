@@ -181,7 +181,7 @@ template <typename {self.table['table_name'].capitalize()}Row> struct ReflectTab
             {self._generate_orm_mapping_rev()}
         }};           
     }}
-}}
+}};
 }} // namespace model
 """
     
@@ -302,7 +302,7 @@ public:
 """
         
         cpp_content = f"""#include <controller/{db_dir_name}/{to_snake_case(self.controller_name)}.h>
-#include <service/{self.table['table_name']}/{self.table['table_name']}.h>
+#include <service/{self.table['table_name']}/{to_snake_case(self.service_name)}.h>
 
 void {self.controller_name}::registerRoutes(crow::SimpleApp& app) {{
     CROW_ROUTE(app, "/api/{self.table['table_name']}/add")
@@ -368,7 +368,7 @@ using json = nlohmann::json;
             func_info = func_sig.split(' ')
             _, ret_type, content = self._get_func_info(func_info)
             # 构造出函数定义
-            func_define = ret_type + " " + f"{self.service_name}" + "::" + content + " {\n}"; 
+            func_define = ret_type + " " + f"{self.service_name}" + "::" + content + " {\n\treturn crow::response(200);\n }"; 
             
             func_define_list.append(func_define)
             func_define = "\n\n".join(func_define_list)
