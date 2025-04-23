@@ -1,5 +1,5 @@
 #include <model/dto/goods/goods_dto.hpp>
-#include <repository/goods_repository.h>
+#include <repository/goods/goods_repository.h>
 using namespace std;
 
 insert_ret_type GoodsRepository::insert(const GoodsDTO &goods_dto) {

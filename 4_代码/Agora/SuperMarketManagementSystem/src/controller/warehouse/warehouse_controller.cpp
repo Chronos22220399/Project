@@ -1,4 +1,4 @@
-#include <controller/warehouse_controller.h>
+#include <controller/warehouse/warehouse_controller.h>
 
 void WareHouseController::registerRoutes(crow::SimpleApp &app) {
   CROW_ROUTE(app, "/warehouse/add")

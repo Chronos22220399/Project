@@ -1,5 +1,5 @@
-#include <controller/goods_category_controller.h>
-#include <service/goods_category_service.h>
+#include <controller/goods/goods_category_controller.h>
+#include <service/goods/goods_category_service.h>
 
 void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   // add goods
