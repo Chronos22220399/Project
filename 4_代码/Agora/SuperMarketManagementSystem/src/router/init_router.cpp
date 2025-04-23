@@ -1,5 +1,5 @@
-#include <controller/goods_category_controller.h>
-#include <controller/goods_controller.h>
+#include <controller/goods/goods_category_controller.h>
+#include <controller/goods/goods_controller.h>
 #include <router/init_router.h>
 
 // init all the routers

@@ -10,7 +10,7 @@ const std::vector<std::string> required_fields = {
     "goods_name",      "category_id", "supplier_id", "unit_id",
     "shelf_life_days", "barcode",     "image_url",   "description"};
 
-crow::response GoodsService::addGoods(const std::string &body) {
+crow::response GoodsService::add(const std::string &body) {
   auto j_opt = utils::try_parse_json(body);
   if (!j_opt)
     return crow::response(400, "Invalid JSON");
@@ -22,12 +22,12 @@ crow::response GoodsService::addGoods(const std::string &body) {
     }
   }
 
-  bool success = GoodsRepository::insert(GoodsDTO::from_json(j));
+  bool success = GoodsRepository::create(GoodsDTO::from_json(j));
   return success ? crow::response(200) : crow::response(500);
 }
 
-crow::response GoodsService::getAllGoods() {
-  auto goods_list = GoodsRepository::getAllGoods();
+crow::response GoodsService::getAll() {
+  auto goods_list = GoodsRepository::getAll();
   try {
     json res;
     res["success"] = true;
@@ -45,7 +45,7 @@ crow::response GoodsService::getAllGoods() {
 // params:
 // page: int = default 1
 // page_size: int = default 10
-crow::response GoodsService::getGoodsByPage(const std::string &body) {
+crow::response GoodsService::getByPage(const std::string &body) {
   auto j_opt = utils::try_parse_json(body);
   if (!j_opt)
     return crow::response(400, "Invalid JSON");
@@ -63,7 +63,7 @@ crow::response GoodsService::getGoodsByPage(const std::string &body) {
   try {
     // 获取货物总数
     count_type total = GoodsRepository::count();
-    auto goods_list = GoodsRepository::getGoodsByPage(page_size, offset);
+    auto goods_list = GoodsRepository::getByPage(page_size, offset);
 
     json res;
     res["success"] = true;

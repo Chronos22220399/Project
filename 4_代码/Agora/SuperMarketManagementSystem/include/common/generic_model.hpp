@@ -1,3 +1,4 @@
+#pragma once
 #include <common/common_utils.hpp>
 #include <common/database_utils.hpp>
 #include <common/uni_define.h>

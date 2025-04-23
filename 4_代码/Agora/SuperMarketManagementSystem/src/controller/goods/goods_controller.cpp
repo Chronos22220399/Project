@@ -3,21 +3,20 @@
 
 void GoodsController::registerRoutes(crow::SimpleApp &app) {
   // add goods
-  CROW_ROUTE(app, "/goods/add")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsService::addGoods(req.body);
-      });
+  CROW_ROUTE(app, "/api/goods/add")
+      .methods("POST"_method)(
+          [](const crow::request &req) { return GoodsService::add(req.body); });
 
   // get goods
-  CROW_ROUTE(app, "/goods/get")
+  CROW_ROUTE(app, "/api/goods/get")
       .methods("POST"_method)([](const crow::request &req) {
-        return GoodsService::getGoodsByPage(req.body);
+        return GoodsService::getByPage(req.body);
       });
 
   // get all goods
-  CROW_ROUTE(app, "/goods/get_all")
+  CROW_ROUTE(app, "/api/goods/get_all")
       .methods("GET"_method)(
-          [](const crow::request &req) { return GoodsService::getAllGoods(); });
+          [](const crow::request &req) { return GoodsService::getAll(); });
 
   // other routes
 }

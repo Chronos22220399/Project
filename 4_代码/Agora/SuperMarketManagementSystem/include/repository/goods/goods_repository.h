@@ -3,9 +3,9 @@
 
 class GoodsRepository : protected model::GenericModel<GoodsDTO, db::goods> {
 public:
-  static insert_ret_type insert(const GoodsDTO &goods_dto);
-  static select_ret_type<GoodsDTO> getAllGoods();
-  static select_ret_type<GoodsDTO> getGoodsByPage(count_type page_size,
-                                                  count_type offset);
+  static insert_ret_type create(const GoodsDTO &goods_dto);
+  static select_ret_type<GoodsDTO> getAll();
+  static select_ret_type<GoodsDTO> getByPage(count_type page_size,
+                                             count_type offset);
   static count_type count();
 };
