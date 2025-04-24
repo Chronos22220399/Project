@@ -4,12 +4,15 @@
 class GoodsCategoryRepository
     : protected model::GenericModel<GoodsCategoryDTO, db::goods_category> {
 public:
-  static insert_ret_type insert(const GoodsCategoryDTO &goods_category_dto);
+  // CRUD Operations
+  static insert_ret_type create(const GoodsCategoryDTO &goods_category_dto);
+  static select_ret_type<GoodsCategoryDTO> get(id_type id);
+  static update_ret_type update(const GoodsCategoryDTO &goods_category_dto);
+  static delete_ret_type remove(id_type id);
 
-  static select_ret_type<GoodsCategoryDTO> getAllCategory();
-
-  static select_ret_type<GoodsCategoryDTO>
-  getCategoryByPage(count_type page_size, count_type offset);
-
+  // Custom Queries
+  static select_ret_type<GoodsCategoryDTO> getAll();
+  static select_ret_type<GoodsCategoryDTO> getByPage(count_type page_size,
+                                                     count_type offset);
   static count_type count();
 };

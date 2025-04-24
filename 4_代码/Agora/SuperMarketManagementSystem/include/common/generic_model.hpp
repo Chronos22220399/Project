@@ -2,20 +2,59 @@
 #include <common/common_utils.hpp>
 #include <common/database_utils.hpp>
 #include <common/uni_define.h>
+#include <sqlpp11/chrono.h>
+#include <sqlpp11/data_types.h>
 #include <sqlpp11/insert.h>
 #include <sqlpp11/select.h>
 #include <sqlpp11/sqlpp11.h>
+#include <type_traits>
 
 namespace model {
 namespace details {
 
+// return std::make_tuple([&]() {
+// (std::forward<Table>(table).*std::get<Is>(Reflect::map_members).second =
+//        std::forward<Model>(model).*std::get<Is>(Reflect::map_members).first)
+// })()...;
+
+// 修改后的通用模型处理逻辑
 template <typename Reflect, typename Model, typename Table, size_t... Is>
 auto assign_table_impl(Model &&model, Table &&table,
                        std::index_sequence<Is...>) {
-  return std::make_tuple(
-      (std::forward<Table>(table).*std::get<Is>(Reflect::map_members).second =
-           std::forward<Model>(model).*
-           std::get<Is>(Reflect::map_members).first)...);
+  return std::make_tuple([&] {
+    using TableRowType =
+        std::decay_t<decltype(std::forward<Table>(table).*
+                              std::get<Is>(Reflect::map_members).second)>;
+
+    auto &&model_value =
+        std::forward<Model>(model).*std::get<Is>(Reflect::map_members).first;
+    auto &&table_column =
+        std::forward<Table>(table).*std::get<Is>(Reflect::map_members).second;
+
+    // 关键修改：统一使用sqlpp::value处理所有基础类型
+    // static_assert(std::is_same_v<TableTowType, sqlpp::time_point>, "");
+    if constexpr (std::is_same_v<TableRowType, sqlpp::time_point>) {
+      return table_column = sqlpp::value(model_value);
+    } else {
+      // 使用条件编译处理不同字符串类型
+      using ModelValueType = std::decay_t<decltype(model_value)>;
+      if constexpr (sqlpp::is_text_t<TableRowType>::value) {
+        return table_column = sqlpp::value(std::string(model_value));
+      } else {
+        return table_column = sqlpp::value(model_value);
+      }
+    }
+  }()...);
+}
+
+// 增强类型安全的assign_table入口
+template <typename Reflect, typename Model, typename Table, size_t Start = 0>
+auto assign_table(Model &&model, Table &&table) {
+  constexpr auto size = std::tuple_size_v<decltype(Reflect::map_members)>;
+  static_assert(Start <= size, "Start index out of range");
+  return details::assign_table_impl<Reflect>(
+      std::forward<Model>(model), std::forward<Table>(table),
+      std::make_index_sequence<size - Start>{});
 }
 } // namespace details
 

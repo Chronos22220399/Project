@@ -23,3 +23,6 @@ check_and_install "/usr/include/zlib.h" "pacman -S --nonconfirm zlib"
 
 # sqlpp11
 check_and_install "/usr/include/sqlpp11" "bash ./scripts/install-sqlpp11.sh"
+
+# sqdlog
+check_and_install "/usr/include/spdlog" "pacman -S --nonconfirm spdlog"

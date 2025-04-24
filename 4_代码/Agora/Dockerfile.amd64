@@ -35,6 +35,7 @@ RUN pacman -Syu --noconfirm --needed && \
   fmt \
   libsodium \
   nlohmann-json \
+  boost \
   && pacman -Sc --noconfirm
 
 # 创建 builder 用户并将其入组
