@@ -1,7 +1,7 @@
 #pragma once
 #include <crow.h>
 
-class SupplierController {
+class GoodsPriceController {
 public:
     static void registerRoutes(crow::SimpleApp& app);
 };

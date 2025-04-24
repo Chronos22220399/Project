@@ -5,19 +5,19 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   // add goods
   CROW_ROUTE(app, "/goods_category/add")
       .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::addCategory(req.body);
+        return GoodsCategoryService::add(req.body);
       });
 
   // get all category
   CROW_ROUTE(app, "/goods_category/get_all")
       .methods("GET"_method)([](const crow::request &req) {
-        return GoodsCategoryService::getAllCategory();
+        return GoodsCategoryService::getAll();
       });
 
   // get goods
   CROW_ROUTE(app, "/goods_category/get")
       .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::getCategoryByPage(req.body);
+        return GoodsCategoryService::getByPage(req.body);
       });
 
   // other routes

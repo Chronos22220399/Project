@@ -2,12 +2,16 @@
 
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
+#include <chrono>
 #include <crow.h>
 #include <filesystem>
 #include <functional>
 #include <future>
+#include <model/db/goods/goods_price.h>
 #include <nlohmann/json.hpp>
 #include <optional>
+#include <sqlpp11/data_types.h>
+#include <sqlpp11/sqlpp11.h>
 #include <vector>
 
 /**
@@ -154,4 +158,43 @@ inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {
     return std::nullopt;
   }
 }
+
+inline std::string to_string(const sqlpp::chrono::microsecond_point &tp) {
+  std::time_t time = std::chrono::system_clock::to_time_t(
+      std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp));
+  std::ostringstream oss;
+  oss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
+  return oss.str();
+}
+
+// 精确的类型转换函数
+inline sqlpp::chrono::microsecond_point from_string(const std::string &str) {
+  std::tm tm = {};
+  int microseconds = 0;
+  std::istringstream iss(str);
+  iss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+
+  // 处理微秒部分
+  char dot;
+  if (iss >> dot && dot == '.' && iss >> microseconds) {
+    microseconds = std::min(microseconds, 999999); // 确保不超过微秒范围
+  }
+
+  auto sys_time = std::chrono::system_clock::from_time_t(std::mktime(&tm)) +
+                  std::chrono::microseconds(microseconds);
+
+  // 确保返回类型精确匹配
+  return sqlpp::chrono::microsecond_point(
+      std::chrono::time_point_cast<sqlpp::chrono::microsecond_point::duration>(
+          sys_time));
+}
+
+template <typename T> inline auto to_sqlpp_value(T &&value) {
+  return sqlpp::value(std::forward<T>(value));
+}
+// 文本处理特化
+template <> inline auto to_sqlpp_value<std::string>(std::string &&value) {
+  return sqlpp::value(value); // 使用value而不是text
+}
+
 } // namespace utils

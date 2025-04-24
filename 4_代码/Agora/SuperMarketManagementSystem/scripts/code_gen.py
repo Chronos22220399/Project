@@ -83,6 +83,10 @@ class DDLAnalyzer:
             is_unique = "UNIQUE" in constraints
             is_nullable = "NOT NULL" not in constraints
             
+            # 防止底部的 FOREIGN 和 UNIQUE 被误认为是字段
+            if name in ['FOREIGN', 'UNIQUE']:
+                continue
+            
             columns.append({
                 "name": name,
                 "type": data_type,
@@ -114,11 +118,22 @@ class DDLAnalyzer:
 class CodeGenerator:
     def __init__(self, table_info: Dict):
         self.table = table_info
-        self.dto_name = to_camel_case(self.table["table_name"]) + "DTO"
-        self.repo_name = self.dto_name[:-3] + "Repository"
-        self.service_name = self.dto_name[:-3] + "Service"
-        self.controller_name = self.dto_name[:-3] + "Controller"
-    
+        _table_name_camel = to_camel_case(self.table['table_name'])
+        _table_name_snake = to_snake_case(_table_name_camel)
+        self.table_name = self.table['table_name']
+        self.dto_name_camel = _table_name_camel + "DTO"
+        self.dto_name_snake = _table_name_snake + "_dto"
+        self.repo_name_camel = _table_name_camel + "Repository"
+        self.repo_name_snake = to_snake_case(self.repo_name_camel)
+        self.service_name_camel = _table_name_camel + "Service"
+        self.service_name_snake = to_snake_case(self.service_name_camel)
+        self.controller_name_camel = _table_name_camel + "Controller"
+        self.controller_name_snake = to_snake_case(self.controller_name_camel)   
+
+        print(f"{self.table_name}\n{self.dto_name_camel}\n"
+              f"{self.dto_name_snake}\n{self.repo_name_camel}\n{self.repo_name_snake}\n{self.service_name_camel}\n"
+              f"{self.service_name_snake}\n{self.controller_name_camel}\n{self.controller_name_snake}\n")
+        
     # ---------- DTO生成 ----------
     def generate_dto(self, db_dir_name: str) -> str:
         fields = []
@@ -130,25 +145,25 @@ class CodeGenerator:
                 default = "0"  # 主键默认值
             elif col["is_foreign"]:
                 default = "0"  # 外键默认值
-                
+            
             fields.append(f"{cpp_type} {col['name']} = {default};")
         
         return f"""#pragma once
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/uni_define.h>
-#include <model/db/{db_dir_name}/{self.table['table_name']}.h>
+#include <model/db/{db_dir_name}/{self.table_name}.h>
 #include <nlohmann/json.hpp>
 #include <string>
 
-// DTO for {self.table['table_name']} table
-struct {self.dto_name} {{
+// DTO for {self.table_name} table
+struct {self.dto_name_camel} {{
     {chr(10).join(fields)}
 
     // JSON serialization/deserialization
-    static {self.dto_name} from_json(const nlohmann::json& j) {{
+    static {self.dto_name_camel} from_json(const nlohmann::json& j) {{
         try {{
-            return {self.dto_name}{{
+            return {self.dto_name_camel}{{
                 {self._generate_from_json()}
             }};
         }} catch (const std::exception& e) {{
@@ -168,16 +183,16 @@ struct {self.dto_name} {{
 // ORM mapping
 namespace model {{
 template <>
-struct ReflectTable<{self.dto_name}, db::{self.table['table_name']}> {{
+struct ReflectTable<{self.dto_name_camel}, db::{self.table_name}> {{
     static constexpr auto map_members = std::make_tuple(
         {self._generate_orm_mapping()}
     );
 }};
 
 // mapping
-template <typename {self.table['table_name'].capitalize()}Row> struct ReflectTableRow<{self.dto_name}, {self.table['table_name'].capitalize()}Row> {{
-    static {self.dto_name} assign_model({self.table['table_name'].capitalize()}Row &&row) {{
-        return {self.dto_name} {{
+template <typename {self.table_name.capitalize()}Row> struct ReflectTableRow<{self.dto_name_camel}, {self.table['table_name'].capitalize()}Row> {{
+    static {self.dto_name_camel} assign_model({self.table_name.capitalize()}Row &&row) {{
+        return {self.dto_name_camel} {{
             {self._generate_orm_mapping_rev()}
         }};           
     }}
@@ -201,8 +216,8 @@ template <typename {self.table['table_name'].capitalize()}Row> struct ReflectTab
         for col in self.table["columns"]:
             # 处理特殊类型（如日期需要格式化）
             value_expr = f"{col['name']}"
-            if col["type"] in ["DATE", "DATETIME"]:
-                value_expr = f"utils::format_datetime({col['name']})"
+            # if col["type"] in ["DATE", "DATETIME"]:
+            #     value_expr = f"utils::format_datetime({col['name']})"
                 
             entries.append(
                 f'{{"{col["name"]}", {value_expr}}}'  # 正确闭合的格式化字符串
@@ -210,32 +225,44 @@ template <typename {self.table['table_name'].capitalize()}Row> struct ReflectTab
         return ',\n'.join(entries)
     
     def _generate_orm_mapping(self) -> str:
-        return ',\n'.join( f'std::make_pair(&{self.dto_name}::{col["name"]}, '
-            f'&db::{self.table["table_name"]}::{col["name"]})'
+        return ',\n'.join( f'std::make_pair(&{self.dto_name_camel}::{col["name"]}, '
+            f'&db::{self.table_name}::{col["name"]})'
             for col in self.table["columns"]
         )
 
     def _generate_orm_mapping_rev(self) -> str:
-        ret = ',\n'.join(f'.{col["name"]} = row.{col["name"]}' for col in self.table["columns"])
-        return ret
+        # ret = ',\n'.join(f'.{col["name"]} = row.{col["name"]}' for col in self.table["columns"])
+        ret = ""
+        lines = []
+        for col in self.table["columns"]:
+            table_row_expr = f"row.{col["name"]}"
+            dto_row_expr = f"{col["name"]}"
+            if col["type"] in ["DATE", "DATETIME"]:
+                table_row_expr = f"utils::to_string({table_row_expr})"
+            
+            lines.append(
+                f'.{dto_row_expr} = {table_row_expr}'
+            )
+        ret = ',\n'.join(lines)
+        return ret 
 
     # ---------- Repository生成 ----------
     def generate_repository(self, db_dir_name: str) -> Tuple[str, str]:
         h_content = f"""#pragma once
-#include <model/dto/{db_dir_name}/{self.table['table_name']}_dto.hpp>
+#include <model/dto/{db_dir_name}/{self.dto_name_snake}.hpp>
 #include <common/generic_model.hpp>
 
-class {self.repo_name} : protected model::GenericModel<{self.dto_name}, db::{self.table['table_name']}> {{
+class {self.repo_name_camel} : protected model::GenericModel<{self.dto_name_camel}, db::{self.table_name}> {{
 public:
     // CRUD Operations
-    static insert_ret_type create(const {self.dto_name}& dto);
-    static select_ret_type<{self.dto_name}> get(id_type id);
-    static update_ret_type update(const {self.dto_name}& dto);
+    static insert_ret_type create(const {self.dto_name_camel}& {self.dto_name_camel});
+    static select_ret_type<{self.dto_name_camel}> get(id_type id);
+    static update_ret_type update(const {self.dto_name_camel}& {self.dto_name_snake});
     static delete_ret_type remove(id_type id);
     
     // Custom Queries
-    static select_ret_type<{self.dto_name}> getAll();
-    static select_ret_type<{self.dto_name}> getByPage(int page_size, int offset);
+    static select_ret_type<{self.dto_name_camel}> getAll();
+    static select_ret_type<{self.dto_name_camel}> getByPage(int page_size, int offset);
     static count_type count();
     
     // Foreign Key Relations
@@ -243,38 +270,38 @@ public:
 }};
 """
         
-        cpp_content = f"""#include <repository/{self.table['table_name']}/{to_snake_case(self.repo_name)}.h>
+        cpp_content = f"""#include <repository/{db_dir_name}/{self.repo_name_snake}.h>
 
 using namespace model;
 
 // CRUD Operations
-insert_ret_type {self.repo_name}::create(const {self.dto_name} &dto) {{
-    return _insert(dto);
+insert_ret_type {self.repo_name_camel}::create(const {self.dto_name_camel} &{self.dto_name_snake}) {{
+    return _insert({self.dto_name_snake});
 }};
 
-select_ret_type<{self.dto_name}> {self.repo_name}::get(id_type id) {{
-  return _select(db::{self.table['table_name']}{{}}.id == id);
+select_ret_type<{self.dto_name_camel}> {self.repo_name_camel}::get(id_type id) {{
+  return _select(db::{self.table_name}{{}}.id == id);
 }};
 
-update_ret_type {self.repo_name}::update(const {self.dto_name} &dto) {{
-    return _update(dto, db::{self.table['table_name']}{{}}.id == dto.id);
+update_ret_type {self.repo_name_camel}::update(const {self.dto_name_camel} &dto) {{
+    return _update(dto, db::{self.table_name}{{}}.id == dto.id);
 }};
 
-delete_ret_type {self.repo_name}::remove(id_type id) {{
-  return _remove(db::{self.table['table_name']}{{}}.id == id);
+delete_ret_type {self.repo_name_camel}::remove(id_type id) {{
+  return _remove(db::{self.table_name}{{}}.id == id);
 }}
 
 // Custom Queries
-select_ret_type<{self.dto_name}> {self.repo_name}::getAll() {{
-  return _select(db::{self.table['table_name']}{{}}.id >= 0);
+select_ret_type<{self.dto_name_camel}> {self.repo_name_camel}::getAll() {{
+  return _select(db::{self.table_name}{{}}.id >= 0);
 }}
 
-select_ret_type<{self.dto_name}> {self.repo_name}::getByPage(int page_size,
+select_ret_type<{self.dto_name_camel}> {self.repo_name_camel}::getByPage(int page_size,
                                                            int offset) {{
-  return _select_from(db::{self.table['table_name']}{{}}.id >= 0, page_size, offset);
+  return _select_from(db::{self.table_name}{{}}.id >= 0, page_size, offset);
 }}
 
-count_type {self.repo_name}::count() {{ return _count(); }}
+count_type {self.repo_name_camel}::count() {{ return _count(); }}
 
 // 其他方法实现...
 """
@@ -285,7 +312,7 @@ count_type {self.repo_name}::count() {{ return _count(); }}
         for fk in self.table["foreign_keys"]:
             ref_dto = to_camel_case(fk["ref_table"]) + "DTO"
             methods.append(
-                f"static select_ret_type<std::vector<{self.dto_name}>> "
+                f"static select_ret_type<std::vector<{self.dto_name_camel}>> "
                 f"getBy{to_camel_case(fk['column'])}(id_type {fk['column']});"
             )
         return '\n    '.join(methods)
@@ -295,29 +322,29 @@ count_type {self.repo_name}::count() {{ return _count(); }}
         h_content = f"""#pragma once
 #include <crow.h>
 
-class {self.controller_name} {{
+class {self.controller_name_camel} {{
 public:
     static void registerRoutes(crow::SimpleApp& app);
 }};
 """
         
-        cpp_content = f"""#include <controller/{db_dir_name}/{to_snake_case(self.controller_name)}.h>
-#include <service/{self.table['table_name']}/{to_snake_case(self.service_name)}.h>
+        cpp_content = f"""#include <controller/{db_dir_name}/{self.controller_name_snake}.h>
+#include <service/{db_dir_name}/{self.service_name_snake}.h>
 
-void {self.controller_name}::registerRoutes(crow::SimpleApp& app) {{
-    CROW_ROUTE(app, "/api/{self.table['table_name']}/add")
+void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
+    CROW_ROUTE(app, "/api/{self.table_name}/add")
         .methods("POST"_method)([](const crow::request& req) {{
-            return {self.service_name}::add(req.body);
+            return {self.service_name_camel}::add(req.body);
         }});
         
-    CROW_ROUTE(app, "/api/{self.table['table_name']}/getByPage")
+    CROW_ROUTE(app, "/api/{self.table_name}/getByPage")
         .methods("POST"_method)([](const crow::request& req) {{
-            return {self.service_name}::getByPage(req.body);
+            return {self.service_name_camel}::getByPage(req.body);
         }});
         
-    CROW_ROUTE(app, "/api/{self.table['table_name']}/getAll")
+    CROW_ROUTE(app, "/api/{self.table_name}/getAll")
         .methods("GET"_method)([]() {{
-            return {self.service_name}::getAll();
+            return {self.service_name_camel}::getAll();
         }});
         
     // 其他路由...
@@ -330,18 +357,17 @@ void {self.controller_name}::registerRoutes(crow::SimpleApp& app) {{
 #include <crow.h>
 #include <string>
 
-class {self.service_name} {{
+class {self.service_name_camel} {{
 public:
     {self._generate_func_statement(func_sig_list)}
 }};
 """
 
-        cpp_content = f"""
-#include <common/common_utils.hpp>      
+        cpp_content = f"""#include <common/common_utils.hpp>      
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
-#include <repository/{db_dir_name}/{self.table["table_name"]}_repository.h>
-#include <service/{db_dir_name}/{self.table["table_name"]}_service.h>
+#include <repository/{db_dir_name}/{self.repo_name_snake}.h>
+#include <service/{db_dir_name}/{self.service_name_snake}.h>
 
 using json = nlohmann::json;
 
@@ -368,7 +394,7 @@ using json = nlohmann::json;
             func_info = func_sig.split(' ')
             _, ret_type, content = self._get_func_info(func_info)
             # 构造出函数定义
-            func_define = ret_type + " " + f"{self.service_name}" + "::" + content + " {\n\treturn crow::response(200);\n }"; 
+            func_define = ret_type + " " + f"{self.service_name_camel}" + "::" + content + " {\n\treturn crow::response(200);\n }"; 
             
             func_define_list.append(func_define)
             func_define = "\n\n".join(func_define_list)

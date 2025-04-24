@@ -9,7 +9,7 @@ using json = nlohmann::json;
 const std::vector<std::string> required_fields = {
     "category_name", "category_description", "parent_category_id"};
 
-crow::response GoodsCategoryService::addCategory(const std::string &body) {
+crow::response GoodsCategoryService::add(const std::string &body) {
   auto j_opt = utils::try_parse_json(body);
   if (!j_opt)
     return crow::response(400, "Invalid JSON");
@@ -22,7 +22,7 @@ crow::response GoodsCategoryService::addCategory(const std::string &body) {
   }
 
   bool success =
-      GoodsCategoryRepository::insert(GoodsCategoryDTO::from_json(j));
+      GoodsCategoryRepository::create(GoodsCategoryDTO::from_json(j));
   return success ? crow::response(200) : crow::response(500);
 }
 
@@ -30,8 +30,7 @@ crow::response GoodsCategoryService::addCategory(const std::string &body) {
 // params:
 // page: int = default 1
 // page_size: int = default 10
-crow::response
-GoodsCategoryService::getCategoryByPage(const std::string &body) {
+crow::response GoodsCategoryService::getByPage(const std::string &body) {
   auto j_opt = utils::try_parse_json(body);
   if (!j_opt)
     return crow::response(400, "Invalid JSON");
@@ -50,7 +49,7 @@ GoodsCategoryService::getCategoryByPage(const std::string &body) {
     // 获取货物总数
     count_type total = GoodsCategoryRepository::count();
     auto goods_category_list =
-        GoodsCategoryRepository::getCategoryByPage(page_size, offset);
+        GoodsCategoryRepository::getByPage(page_size, offset);
     json res;
     res["success"] = true;
     res["total"] = total;
@@ -65,8 +64,8 @@ GoodsCategoryService::getCategoryByPage(const std::string &body) {
   }
 }
 
-crow::response GoodsCategoryService::getAllCategory() {
-  auto goods_category_list = GoodsCategoryRepository::getAllCategory();
+crow::response GoodsCategoryService::getAll() {
+  auto goods_category_list = GoodsCategoryRepository::getAll();
   try {
     json res;
     res["success"] = true;
