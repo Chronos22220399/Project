@@ -11,16 +11,16 @@ struct GoodsPriceDTO {
   id_type id = 0;
   id_type goods_id = 0;
   double price = 0.0;
-  std::string start_time = "";
+  datetime_type start_time = {};
   std::string note = "";
 
   // JSON serialization/deserialization
   static GoodsPriceDTO from_json(const nlohmann::json &j) {
     try {
       return GoodsPriceDTO{
-          .goods_id = j.at("goods_id"),
+          .goods_id = j.at("goods_id").get<id_type>(),
           .price = j.at("price"),
-          .start_time = j.at("start_time"),
+          .start_time = utils::string_to_time(j.at("start_time")),
           .note = j.at("note"),
       };
     } catch (const std::exception &e) {
@@ -34,7 +34,7 @@ struct GoodsPriceDTO {
     return {{"id", id},
             {"goods_id", goods_id},
             {"price", price},
-            {"start_time", start_time},
+            {"start_time", utils::time_to_string(start_time)},
             {"note", note}};
   }
 };
@@ -57,7 +57,7 @@ struct ReflectTableRow<GoodsPriceDTO, Goods_priceRow> {
     return GoodsPriceDTO{.id = row.id,
                          .goods_id = row.goods_id,
                          .price = row.price,
-                         .start_time = utils::to_string(row.start_time),
+                         .start_time = row.start_time,
                          .note = row.note};
   }
 };

@@ -26,8 +26,8 @@ TYPE_MAPPING = {
     "NUMERIC": "double",
     "BOOLEAN": "bool",
     "BLOB": "std::vector<uint8_t>",
-    "DATE": "std::string",
-    "DATETIME": "std::string",
+    "DATE": "datetime_type",
+    "DATETIME": "datetime_type",
     "TIMESTAMP": "std::string"
 }
 
@@ -205,10 +205,10 @@ template <typename {self.table_name.capitalize()}Row> struct ReflectTableRow<{se
         for col in self.table["columns"]:
             if col["is_primary"]:
                 continue  # 主键通常由数据库生成
-            if col["name"] == "category_id":
-                lines.append(f".category_id = utils::create_id(),")
-            else:
-                lines.append(f".{col['name']} = j.at(\"{col['name']}\"),")
+            # if col["name"] == "category_id":
+            #     lines.append(f".category_id = utils::create_id(),")
+            # else:
+            lines.append(f".{col['name']} = j.at(\"{col['name']}\").get<{col[""]}>(),")
         return '\n'.join(lines)
     
     def _generate_to_json(self) -> str:
@@ -216,8 +216,8 @@ template <typename {self.table_name.capitalize()}Row> struct ReflectTableRow<{se
         for col in self.table["columns"]:
             # 处理特殊类型（如日期需要格式化）
             value_expr = f"{col['name']}"
-            # if col["type"] in ["DATE", "DATETIME"]:
-            #     value_expr = f"utils::format_datetime({col['name']})"
+            if col["type"] in ["DATE", "DATETIME"]:
+                value_expr = f"utils::time_to_string({col['name']})"
                 
             entries.append(
                 f'{{"{col["name"]}", {value_expr}}}'  # 正确闭合的格式化字符串

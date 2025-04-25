@@ -3,6 +3,7 @@
 #include <boost/uuid/uuid_generators.hpp>
 #include <boost/uuid/uuid_io.hpp>
 #include <chrono>
+#include <common/uni_define.h>
 #include <crow.h>
 #include <filesystem>
 #include <functional>
@@ -159,34 +160,48 @@ inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {
   }
 }
 
-inline std::string to_string(const sqlpp::chrono::microsecond_point &tp) {
-  std::time_t time = std::chrono::system_clock::to_time_t(
-      std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp));
-  std::ostringstream oss;
-  oss << std::put_time(std::localtime(&time), "%Y-%m-%d %H:%M:%S");
-  return oss.str();
-}
-
-// 精确的类型转换函数
-inline sqlpp::chrono::microsecond_point from_string(const std::string &str) {
+// 字符串转时间点
+inline datetime_type string_to_time(const std::string &str) {
   std::tm tm = {};
   int microseconds = 0;
   std::istringstream iss(str);
+
+  // 解析基础时间
   iss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
 
   // 处理微秒部分
   char dot;
   if (iss >> dot && dot == '.' && iss >> microseconds) {
-    microseconds = std::min(microseconds, 999999); // 确保不超过微秒范围
+    microseconds = std::min(microseconds, 999999);
   }
 
+  // 构造时间点
   auto sys_time = std::chrono::system_clock::from_time_t(std::mktime(&tm)) +
                   std::chrono::microseconds(microseconds);
 
-  // 确保返回类型精确匹配
-  return sqlpp::chrono::microsecond_point(
-      std::chrono::time_point_cast<sqlpp::chrono::microsecond_point::duration>(
-          sys_time));
+  return datetime_type(
+      std::chrono::time_point_cast<datetime_type::duration>(sys_time));
+}
+
+// 时间点转字符串
+inline std::string time_to_string(const datetime_type &tp) {
+  const auto sys_time = std::chrono::system_clock::to_time_t(
+      std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp));
+
+  std::ostringstream oss;
+  oss << std::put_time(std::localtime(&sys_time), "%Y-%m-%d %H:%M:%S");
+
+  // 添加微秒
+  const auto us = std::chrono::duration_cast<std::chrono::microseconds>(
+                      tp.time_since_epoch())
+                      .count() %
+                  1000000;
+
+  if (us > 0) {
+    oss << "." << std::setw(6) << std::setfill('0') << us;
+  }
+
+  return oss.str();
 }
 
 template <typename T> inline auto to_sqlpp_value(T &&value) {
