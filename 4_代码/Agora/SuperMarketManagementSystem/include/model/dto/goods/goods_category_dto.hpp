@@ -30,7 +30,7 @@ struct GoodsCategoryDTO {
     try {
       return GoodsCategoryDTO{
           .id = 1, // 使用默认的 id，可以根据需求调整
-          .category_id = utils::create_id(),
+          .category_id = j.at("category_id").get<std::string>(),
           .category_name = j.at("category_name").get<std::string>(),
           .category_description =
               j.value("category_description", ""), // 默认值为空字符串

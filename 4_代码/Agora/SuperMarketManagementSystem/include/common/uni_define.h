@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <sqlpp11/data_types.h>
 #include <vector>
 
 /**
@@ -44,3 +45,4 @@ using insert_ret_type = bool;
 using update_ret_type = bool;
 using delete_ret_type = bool;
 using count_type = std::uint64_t;
+using datetime_type = sqlpp::chrono::microsecond_point;

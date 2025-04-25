@@ -38,7 +38,7 @@ struct GoodsDTO {
   static GoodsDTO from_json(const nlohmann::json &j) {
     try {
       return GoodsDTO{.id = 1,
-                      .goods_id = utils::create_id(),
+                      .goods_id = j.at("goods_id").get<std::string>(),
                       .category_id = j.at("category_id").get<id_type>(),
                       .supplier_id = j.at("supplier_id").get<id_type>(),
                       .unit_id = j.at("unit_id").get<id_type>(),
