@@ -147,9 +147,9 @@ template <size_t N, size_t L> auto make_index_sequence_from() {
  *
  * @return std::string 固定字符串 "1"（测试阶段固定）。
  */
-inline std::string create_id() {
+inline std::string create_id(const std::string &prefix) {
   boost::uuids::uuid uuid = boost::uuids::random_generator()();
-  return boost::uuids::to_string(uuid);
+  return prefix + boost::uuids::to_string(uuid);
 }
 
 inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {

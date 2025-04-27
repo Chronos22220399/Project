@@ -22,7 +22,10 @@ crow::response GoodsService::add(const std::string &body) {
     }
   }
 
-  bool success = GoodsRepository::create(GoodsDTO::from_json(j));
+  auto goods_dto = GoodsDTO::from_json(j);
+  goods_dto.goods_id = utils::create_id("G");
+
+  bool success = GoodsRepository::create(goods_dto);
   return success ? crow::response(200) : crow::response(500);
 }
 
