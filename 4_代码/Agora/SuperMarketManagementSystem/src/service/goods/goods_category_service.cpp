@@ -21,8 +21,10 @@ crow::response GoodsCategoryService::add(const std::string &body) {
     }
   }
 
-  bool success =
-      GoodsCategoryRepository::create(GoodsCategoryDTO::from_json(j));
+  auto gc_dto = GoodsCategoryDTO::from_json(j);
+  gc_dto.category_id = utils::create_id("GC");
+
+  bool success = GoodsCategoryRepository::create(gc_dto);
   return success ? crow::response(200) : crow::response(500);
 }
 

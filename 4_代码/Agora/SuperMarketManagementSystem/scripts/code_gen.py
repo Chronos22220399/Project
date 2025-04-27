@@ -139,7 +139,7 @@ class CodeGenerator:
         fields = []
         for col in self.table["columns"]:
             cpp_type = TYPE_MAPPING.get(col["type"], "std::string")
-            default = DEFAULT_VALUES.get(cpp_type, '""')
+            default = DEFAULT_VALUES.get(cpp_type, '{}')
             
             if col["is_primary"]:
                 default = "0"  # 主键默认值
@@ -203,12 +203,15 @@ template <typename {self.table_name.capitalize()}Row> struct ReflectTableRow<{se
     def _generate_from_json(self) -> str:
         lines = []
         for col in self.table["columns"]:
+            cpp_type = TYPE_MAPPING.get(col["type"], "std::string")
             if col["is_primary"]:
-                continue  # 主键通常由数据库生成
-            # if col["name"] == "category_id":
-            #     lines.append(f".category_id = utils::create_id(),")
-            # else:
-            lines.append(f".{col['name']} = j.at(\"{col['name']}\").get<{col[""]}>(),")
+                continue  # 主键由数据库生成
+            
+            value_expr: str = f"j.at(\"{col['name']}\").get<{cpp_type}>(),"
+            
+            if col["type"] in ["DATE", "DATETIME"]: 
+                value_expr = f"utils::string_to_time(j.at(\"{col['name']}\").get<std::string>()),"
+            lines.append(f".{col['name']} = {value_expr}")
         return '\n'.join(lines)
     
     def _generate_to_json(self) -> str:
@@ -237,8 +240,8 @@ template <typename {self.table_name.capitalize()}Row> struct ReflectTableRow<{se
         for col in self.table["columns"]:
             table_row_expr = f"row.{col["name"]}"
             dto_row_expr = f"{col["name"]}"
-            if col["type"] in ["DATE", "DATETIME"]:
-                table_row_expr = f"utils::to_string({table_row_expr})"
+            # if col["type"] in ["DATE", "DATETIME"]:
+            #     table_row_expr = f"utils::to_string({table_row_expr})"
             
             lines.append(
                 f'.{dto_row_expr} = {table_row_expr}'
@@ -425,7 +428,7 @@ class FileManager:
     def backup(path: Path):
         if path.exists():
             backup_path = path.with_name(
-                f"{path.stem}.bak_{timestamp()}{path.suffix}"
+                f"{path.stem}{path.suffix}.bak_{timestamp()}"
             )
             path.rename(backup_path)
             print(f"Backup created: {backup_path}")
