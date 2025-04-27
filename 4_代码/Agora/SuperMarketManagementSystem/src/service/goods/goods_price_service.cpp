@@ -35,7 +35,7 @@ crow::response GoodsPriceService::add(const std::string &body) {
   // 检查商品是否已经存在，若不存在则返回
   bool goods_not_exists = !GoodsRepository::exists(goods_id);
   if (goods_not_exists)
-    return crow::response(404, "Goods not found.");
+    return crow::response(405, "Goods not found.");
 
   auto goods_price_dto = GoodsPriceDTO::from_json(j);
 

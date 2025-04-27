@@ -26,7 +26,8 @@ inline utils::ConfigManager configManager(config_file);
     config.debug = true;
     config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
     auto databasePath = configManager.getDatabasePath();
-    config.path_to_database = std::string(root_dir_path) + databasePath;
+    // config.path_to_database = std::string(root_dir_path) + databasePath;
+    config.path_to_database = databasePath;
   });
   static auto config_ptr =
       std::make_shared<sqlpp::sqlite3::connection_config>(config);

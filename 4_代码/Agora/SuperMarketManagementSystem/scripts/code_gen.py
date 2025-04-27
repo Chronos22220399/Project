@@ -265,8 +265,8 @@ public:
     static delete_ret_type remove(id_type id);
     
     // Custom Queries
-    static select_ret_type<{self.dto_name_camel}> getAll();
-    static select_ret_type<{self.dto_name_camel}> getByPage(int page_size, int offset);
+    static select_ret_type<{self.dto_name_camel}> get_all();
+    static select_ret_type<{self.dto_name_camel}> get_by_page(int page_size, int offset);
     static count_type count();
     
     // Foreign Key Relations

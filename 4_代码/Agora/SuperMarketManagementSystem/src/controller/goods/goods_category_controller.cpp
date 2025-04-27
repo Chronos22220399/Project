@@ -15,7 +15,7 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
       });
 
   // get goods
-  CROW_ROUTE(app, "/api/goods_category/get")
+  CROW_ROUTE(app, "/api/goods_category/get_by_page")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsCategoryService::getByPage(req.body);
       });
