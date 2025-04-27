@@ -212,4 +212,14 @@ template <> inline auto to_sqlpp_value<std::string>(std::string &&value) {
   return sqlpp::value(value); // 使用value而不是text
 }
 
+template <typename Elem, typename Container>
+bool in(const Elem &elem, const Container &container) {
+  for (auto &e : container) {
+    if (e == elem) {
+      return true;
+    }
+  }
+  return false;
+}
+
 } // namespace utils

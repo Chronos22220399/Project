@@ -2,12 +2,16 @@
 #include <crow.h>
 #include <string>
 
-class GoodsService {
+class PromotionService {
 public:
+  // Implemented
   static crow::response add(const std::string &body);
+
+  static crow::response update(const std::string &body);
+
+  static crow::response remove(const std::string &body);
+
+  // Not implemented
   static crow::response getByPage(const std::string &body);
   static crow::response getAll();
-
-  // 获取详细商品信息
-  static crow::response getGoodsDetailInfoById(const std::string &body);
 };

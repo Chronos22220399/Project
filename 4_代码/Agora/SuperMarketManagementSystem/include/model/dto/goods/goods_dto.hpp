@@ -1,11 +1,19 @@
 #pragma once
+// stl
+#include <iostream>
+#include <string>
+// third_party
+#include <nlohmann/json.hpp>
+// table
+#include <model/db/common/unit.h>
+#include <model/db/goods/goods.h>
+#include <model/db/goods/goods_category.h>
+#include <model/db/goods/inventory.h>
+#include <model/db/warehouse/warehouse.h>
+// tools
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/uni_define.h>
-#include <iostream>
-#include <model/db/goods/goods.h>
-#include <nlohmann/json.hpp>
-#include <string>
 
 // CREATE TABLE goods (
 //     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,17 +63,17 @@ struct GoodsDTO {
   }
 };
 
-inline void to_json(nlohmann::json &j, const GoodsDTO &g) {
-  j = nlohmann::json{{"id", g.id},
-                     {"goods_id", g.goods_id},
-                     {"category_id", g.category_id},
-                     {"supplier_id", g.supplier_id},
-                     {"unit_id", g.unit_id},
-                     {"goods_name", g.goods_name},
-                     {"shelf_life_days", g.shelf_life_days},
-                     {"barcode", g.barcode},
-                     {"image_url", g.image_url},
-                     {"description", g.description}};
+inline void to_json(nlohmann::json &j, const GoodsDTO &goods_dto) {
+  j = nlohmann::json{{"id", goods_dto.id},
+                     {"goods_id", goods_dto.goods_id},
+                     {"category_id", goods_dto.category_id},
+                     {"supplier_id", goods_dto.supplier_id},
+                     {"unit_id", goods_dto.unit_id},
+                     {"goods_name", goods_dto.goods_name},
+                     {"shelf_life_days", goods_dto.shelf_life_days},
+                     {"barcode", goods_dto.barcode},
+                     {"image_url", goods_dto.image_url},
+                     {"description", goods_dto.description}};
 }
 
 namespace model {
@@ -101,3 +109,27 @@ template <typename GoodsRow> struct ReflectTableRow<GoodsDTO, GoodsRow> {
 };
 
 } // namespace model
+
+struct GoodsDetailInfo {
+  std::string goods_id;
+  std::string goods_name;
+  date_cnt_type shelf_life_days;
+  std::string unit;
+  id_type quantity;
+  std::string warehouse_id;
+  std::string warehouse_name;
+  std::string location;
+  std::string category;
+};
+
+inline void to_json(nlohmann::json &j, const GoodsDetailInfo &info) {
+  j = nlohmann::json{{"goods_id", info.goods_id},
+                     {"goods_name", info.goods_name},
+                     {"shelf_life_days", info.shelf_life_days},
+                     {"unit", info.unit},
+                     {"quantity", info.quantity},
+                     {"warehouse_id", info.warehouse_id},
+                     {"warehouse_name", info.warehouse_name},
+                     {"location", info.location},
+                     {"category", info.category}};
+}
