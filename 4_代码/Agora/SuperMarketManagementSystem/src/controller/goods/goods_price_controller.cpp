@@ -7,12 +7,12 @@ void GoodsPriceController::registerRoutes(crow::SimpleApp &app) {
         return GoodsPriceService::add(req.body);
       });
 
-  CROW_ROUTE(app, "/api/goods_price/getByPage")
+  CROW_ROUTE(app, "/api/goods_price/get_by_page")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsPriceService::getByPage(req.body);
       });
 
-  CROW_ROUTE(app, "/api/goods_price/getAll").methods("GET"_method)([]() {
+  CROW_ROUTE(app, "/api/goods_price/get_all").methods("GET"_method)([]() {
     return GoodsPriceService::getAll();
   });
 
