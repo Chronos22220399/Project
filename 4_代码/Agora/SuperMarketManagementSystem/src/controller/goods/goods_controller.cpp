@@ -18,5 +18,10 @@ void GoodsController::registerRoutes(crow::SimpleApp &app) {
       .methods("GET"_method)(
           [](const crow::request &req) { return GoodsService::getAll(); });
 
+  CROW_ROUTE(app, "/api/inventory/get_goods_detail_info_by_id")
+      .methods("POST"_method)([](const crow::request &req) {
+        return GoodsService::getGoodsDetailInfoById(req.body);
+      });
+
   // other routes
 }

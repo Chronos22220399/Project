@@ -11,10 +11,8 @@ const std::vector<std::string> required_fields = {
     "shelf_life_days", "barcode",     "image_url",   "description"};
 
 crow::response GoodsService::add(const std::string &body) {
-  auto j_opt = utils::try_parse_json(body);
-  if (!j_opt)
-    return crow::response(400, "Invalid JSON");
-  const json &j = j_opt.value();
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
 
   for (const auto &field : required_fields) {
     if (!j.contains(field)) {
@@ -49,10 +47,8 @@ crow::response GoodsService::getAll() {
 // page: int = default 1
 // page_size: int = default 10
 crow::response GoodsService::getByPage(const std::string &body) {
-  auto j_opt = utils::try_parse_json(body);
-  if (!j_opt)
-    return crow::response(400, "Invalid JSON");
-  const json &j = j_opt.value();
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
 
   int page = j.value("page", 1);
   int page_size = j.value("page_size", 10);
@@ -80,4 +76,31 @@ crow::response GoodsService::getByPage(const std::string &body) {
     LOG("Error: {}", e.what());
     return crow::response(500, fmt::format("Error: {}", e.what()));
   }
+}
+
+// id_type goods_id;
+// std::string goods_name;
+// id_type quantity;
+// std::string unit;
+// id_type warehouse_id;
+// std::string warehouse_name;
+// std::string location;
+// date_cnt_type shelf_life_days;
+crow::response GoodsService::getGoodsDetailInfoById(const std::string &body) {
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
+
+  int goods_id = j.value("goods_id", -1);
+  if (goods_id == -1) {
+    return crow::response(400, "Missing goods id");
+  }
+
+  auto data = GoodsRepository::getGoodsDetailInfoById(goods_id);
+
+  json res;
+  res["success"] = true;
+  res["total"] = data.size();
+  res["data"] = data;
+
+  return crow::response(200, res);
 }

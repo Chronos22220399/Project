@@ -36,7 +36,7 @@ DEFAULT_VALUES = {
     "std::string": '""',
     "double": "0.0",
     "bool": "false",
-    "std::vector<uint8_t>": "{}"
+    "std::vector<uint8_t>": "{}",
 }
 
 # ========== 工具函数 ==========
@@ -173,12 +173,13 @@ struct {self.dto_name_camel} {{
         }}
     }}
     
-    nlohmann::json to_json() const {{
-        return {{
-            {self._generate_to_json()}
-        }};
-    }}
 }};
+
+inline void to_json(nlohmann::json &j, const {self.dto_name_camel}& {self.dto_name_snake}) {{
+    j = nlohmann::json{{
+        {self._generate_to_json()}
+    }};
+}}
 
 // ORM mapping
 namespace model {{
@@ -218,9 +219,9 @@ template <typename {self.table_name.capitalize()}Row> struct ReflectTableRow<{se
         entries = []
         for col in self.table["columns"]:
             # 处理特殊类型（如日期需要格式化）
-            value_expr = f"{col['name']}"
+            value_expr = f"{self.dto_name_snake}.{col['name']}"
             if col["type"] in ["DATE", "DATETIME"]:
-                value_expr = f"utils::time_to_string({col['name']})"
+                value_expr = f"utils::time_to_string({self.dto_name_snake}.{col['name']})"
                 
             entries.append(
                 f'{{"{col["name"]}", {value_expr}}}'  # 正确闭合的格式化字符串
@@ -255,7 +256,7 @@ template <typename {self.table_name.capitalize()}Row> struct ReflectTableRow<{se
 #include <model/dto/{db_dir_name}/{self.dto_name_snake}.hpp>
 #include <common/generic_model.hpp>
 
-class {self.repo_name_camel} : protected model::GenericModel<{self.dto_name_camel}, db::{self.table_name}> {{
+class {self.repo_name_camel} : public model::GenericModel<{self.dto_name_camel}, db::{self.table_name}> {{
 public:
     // CRUD Operations
     static insert_ret_type create(const {self.dto_name_camel}& {self.dto_name_camel});
@@ -315,7 +316,7 @@ count_type {self.repo_name_camel}::count() {{ return _count(); }}
         for fk in self.table["foreign_keys"]:
             ref_dto = to_camel_case(fk["ref_table"]) + "DTO"
             methods.append(
-                f"static select_ret_type<std::vector<{self.dto_name_camel}>> "
+                f"static select_ret_type<{self.dto_name_camel}> "
                 f"getBy{to_camel_case(fk['column'])}(id_type {fk['column']});"
             )
         return '\n    '.join(methods)
@@ -397,7 +398,7 @@ using json = nlohmann::json;
             func_info = func_sig.split(' ')
             _, ret_type, content = self._get_func_info(func_info)
             # 构造出函数定义
-            func_define = ret_type + " " + f"{self.service_name_camel}" + "::" + content + " {\n\treturn crow::response(200);\n }"; 
+            func_define = ret_type + " " + f"{self.service_name_camel}" + "::" + content + " {\n\treturn crow::response(501, \"Not implemented yet.\");\n }"; 
             
             func_define_list.append(func_define)
             func_define = "\n\n".join(func_define_list)

@@ -42,18 +42,18 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
     };
-    struct name
+    struct promotion_name
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "name";
+        static constexpr const char _literal[] =  "promotion_name";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T name;
-            T& operator()() { return name; }
-            const T& operator()() const { return name; }
+            T promotion_name;
+            T& operator()() { return promotion_name; }
+            const T& operator()() const { return promotion_name; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
@@ -143,7 +143,7 @@ namespace db
   struct promotion: sqlpp::table_t<promotion,
                promotion_::id,
                promotion_::promotion_id,
-               promotion_::name,
+               promotion_::promotion_name,
                promotion_::description,
                promotion_::type,
                promotion_::start_time,

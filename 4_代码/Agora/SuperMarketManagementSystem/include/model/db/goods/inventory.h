@@ -74,30 +74,13 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
     };
-    struct unit
-    {
-      struct _alias_t
-      {
-        static constexpr const char _literal[] =  "unit";
-        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
-        template<typename T>
-        struct _member_t
-          {
-            T unit;
-            T& operator()() { return unit; }
-            const T& operator()() const { return unit; }
-          };
-      };
-      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
-    };
   } // namespace inventory_
 
   struct inventory: sqlpp::table_t<inventory,
                inventory_::id,
                inventory_::goods_id,
                inventory_::warehouse_id,
-               inventory_::quantity,
-               inventory_::unit>
+               inventory_::quantity>
   {
     struct _alias_t
     {

@@ -10,10 +10,8 @@ const std::vector<std::string> required_fields = {
     "category_name", "category_description", "parent_category_id"};
 
 crow::response GoodsCategoryService::add(const std::string &body) {
-  auto j_opt = utils::try_parse_json(body);
-  if (!j_opt)
-    return crow::response(400, "Invalid JSON");
-  const json &j = j_opt.value();
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
 
   for (const auto &field : required_fields) {
     if (!j.contains(field)) {
@@ -33,10 +31,8 @@ crow::response GoodsCategoryService::add(const std::string &body) {
 // page: int = default 1
 // page_size: int = default 10
 crow::response GoodsCategoryService::getByPage(const std::string &body) {
-  auto j_opt = utils::try_parse_json(body);
-  if (!j_opt)
-    return crow::response(400, "Invalid JSON");
-  const json &j = j_opt.value();
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
 
   int page = j.value("page", 1);
   int page_size = j.value("page_size", 10);

@@ -141,6 +141,10 @@ public:
           return rows.front().count;
         });
   }
+
+  template <typename Condition> static bool _exists(Condition &&condition) {
+    return !_select(std::forward<Condition>(condition)).empty();
+  }
 };
 } // namespace model
 
