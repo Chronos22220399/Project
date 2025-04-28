@@ -30,8 +30,7 @@ struct WarehouseDTO {
 };
 
 inline void to_json(nlohmann::json &j, const WarehouseDTO &warehouse_dto) {
-  j = nlohmann::json{{"id", warehouse_dto.id},
-                     {"warehouse_id", warehouse_dto.warehouse_id},
+  j = nlohmann::json{{"warehouse_id", warehouse_dto.warehouse_id},
                      {"warehouse_name", warehouse_dto.warehouse_name},
                      {"location", warehouse_dto.location}};
 }

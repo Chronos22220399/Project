@@ -14,8 +14,9 @@ public:
   static select_ret_type<GoodsDTO> getByPage(count_type page_size,
                                              count_type offset);
   static count_type count();
-  static bool exists(id_type goods_id);
+  static bool exists(const std::string &goods_id);
+  static bool exists(id_type id);
 
   static select_ret_type<GoodsDetailInfo>
-  getGoodsDetailInfoById(id_type goods_id);
+  getGoodsDetailInfoById(const std::string &goods_id);
 };

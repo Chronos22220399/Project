@@ -14,11 +14,7 @@ crow::response GoodsService::add(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
-  for (const auto &field : required_fields) {
-    if (!j.contains(field)) {
-      return crow::response(400, "Missing field: " + field);
-    }
-  }
+  CHECK_REQUIRED_FIELDS(j, required_fields);
 
   auto goods_dto = GoodsDTO::from_json(j);
   goods_dto.goods_id = utils::create_id("G");
@@ -90,10 +86,9 @@ crow::response GoodsService::getGoodsDetailInfoById(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
-  int goods_id = j.value("goods_id", -1);
-  if (goods_id == -1) {
-    return crow::response(400, "Missing goods id");
-  }
+  CHECK_REQUIRED_FIELD(j, "goods_id");
+
+  auto goods_id = j.at("goods_id").get<std::string>();
 
   auto data = GoodsRepository::getGoodsDetailInfoById(goods_id);
 
