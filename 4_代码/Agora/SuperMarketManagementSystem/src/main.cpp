@@ -1,3 +1,4 @@
+#include <chrono>
 #include <crow.h>
 #include <repository/goods/goods_repository.h>
 #include <repository/goods/promotion_repository.h>
@@ -27,7 +28,6 @@ using namespace std;
 
 int main() {
   PromotionDTO pdto{
-      .promotion_id = "P123",
       .promotion_name = "233",
       .description = "hhh",
       .type = "discount",
@@ -35,6 +35,8 @@ int main() {
       .end_time = {},
       .status = "active",
   };
+
+  pdto.promotion_id = utils::create_id("P-");
 
   bool success = PromotionRepository::create(pdto);
   // bool success =

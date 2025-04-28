@@ -22,7 +22,10 @@ check_and_install "/usr/include/crow" "yay -S crow"
 check_and_install "/usr/include/zlib.h" "pacman -S --nonconfirm zlib"
 
 # sqlpp11
-check_and_install "/usr/include/sqlpp11" "bash ./scripts/install-sqlpp11.sh"
+check_and_install "/usr/local/include/sqlpp11" "bash ./scripts/install-sqlpp11.sh"
 
 # sqdlog
 check_and_install "/usr/include/spdlog" "pacman -S --nonconfirm spdlog"
+
+# yazi
+check_and_install "/bin/yazi" "pacman -S --nonconfirm yazi"
