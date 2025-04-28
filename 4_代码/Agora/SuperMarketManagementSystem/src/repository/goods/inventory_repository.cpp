@@ -1,34 +1,56 @@
 #include <repository/goods/inventory_repository.h>
 
-using namespace model;
-
-// CRUD Operations
+// 通用 CRUD（internal）
 insert_ret_type InventoryRepository::create(const InventoryDTO &inventory_dto) {
   return _insert(inventory_dto);
-};
+}
 
-select_ret_type<InventoryDTO> InventoryRepository::get(id_type id) {
+select_ret_type<InventoryDTO> InventoryRepository::getById(id_type id) {
   return _select(db::inventory{}.id == id);
-};
+}
 
-update_ret_type InventoryRepository::update(const InventoryDTO &dto) {
-  return _update(dto, db::inventory{}.id == dto.id);
-};
+update_ret_type
+InventoryRepository::updateById(id_type id, const InventoryDTO &inventory_dto) {
+  return _update(inventory_dto, db::inventory{}.id == id);
+}
 
-delete_ret_type InventoryRepository::remove(id_type id) {
+delete_ret_type InventoryRepository::removeById(id_type id) {
   return _remove(db::inventory{}.id == id);
 }
 
-// Custom Queries
+bool InventoryRepository::existsById(id_type id) {
+  return _exists(db::inventory{}.id == id);
+}
+
+// 面向业务 CRUD（external）
+select_ret_type<InventoryDTO>
+InventoryRepository::getByGoodsRKId(id_type goods_rk_id) {
+  return _select(db::inventory{}.goods_rk_id == goods_rk_id);
+}
+
+select_ret_type<InventoryDTO>
+InventoryRepository::getByWarehouseRKId(id_type warehouse_rk_id) {
+  return _select(db::inventory{}.warehouse_rk_id == warehouse_rk_id);
+}
+
+update_ret_type
+InventoryRepository::updateByGoodsRKId(id_type goods_rk_id,
+                                       const InventoryDTO &inventory_dto) {
+  return _update(inventory_dto, db::inventory{}.goods_rk_id == goods_rk_id);
+}
+
+delete_ret_type InventoryRepository::removeByGoodsRKId(id_type goods_rk_id) {
+  return _remove(db::inventory{}.goods_rk_id == goods_rk_id);
+}
+
+// other
 select_ret_type<InventoryDTO> InventoryRepository::getAll() {
   return _select(db::inventory{}.id >= 0);
 }
 
-select_ret_type<InventoryDTO> InventoryRepository::getByPage(int page_size,
-                                                             int offset) {
+select_ret_type<InventoryDTO>
+InventoryRepository::getByPage(count_type page_size, count_type offset) {
   return _select_from(db::inventory{}.id >= 0, page_size, offset);
 }
 
 count_type InventoryRepository::count() { return _count(); }
-
-// 其他方法实现...

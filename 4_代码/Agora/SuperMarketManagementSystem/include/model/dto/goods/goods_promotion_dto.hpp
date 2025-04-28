@@ -9,8 +9,8 @@
 // DTO for goods_promotion table
 struct GoodsPromotionDTO {
   id_type id = 0;
-  id_type goods_id = 0;
-  id_type promotion_id = 0;
+  id_type goods_rk_id = 0;
+  id_type promotion_rk_id = 0;
   double discount_rate = 0.0;
   double full_threshold = 0.0;
   double reduce_amount = 0.0;
@@ -21,8 +21,8 @@ struct GoodsPromotionDTO {
   static GoodsPromotionDTO from_json(const nlohmann::json &j) {
     try {
       return GoodsPromotionDTO{
-          .goods_id = j.at("goods_id").get<id_type>(),
-          .promotion_id = j.at("promotion_id").get<id_type>(),
+          .goods_rk_id = j.at("goods_rk_id").get<id_type>(),
+          .promotion_rk_id = j.at("promotion_id").get<id_type>(),
           .discount_rate = j.at("discount_rate").get<double>(),
           .full_threshold = j.at("full_threshold").get<double>(),
           .reduce_amount = j.at("reduce_amount").get<double>(),
@@ -39,8 +39,8 @@ struct GoodsPromotionDTO {
 
 inline void to_json(nlohmann::json &j,
                     const GoodsPromotionDTO &goods_promotion_dto) {
-  j = nlohmann::json{{"goods_id", goods_promotion_dto.goods_id},
-                     {"promotion_id", goods_promotion_dto.promotion_id},
+  j = nlohmann::json{{"goods_rk_id", goods_promotion_dto.goods_rk_id},
+                     {"promotion_rk_id", goods_promotion_dto.promotion_rk_id},
                      {"discount_rate", goods_promotion_dto.discount_rate},
                      {"full_threshold", goods_promotion_dto.full_threshold},
                      {"reduce_amount", goods_promotion_dto.reduce_amount},
@@ -53,10 +53,10 @@ namespace model {
 template <> struct ReflectTable<GoodsPromotionDTO, db::goods_promotion> {
   static constexpr auto map_members = std::make_tuple(
       std::make_pair(&GoodsPromotionDTO::id, &db::goods_promotion::id),
-      std::make_pair(&GoodsPromotionDTO::goods_id,
-                     &db::goods_promotion::goods_id),
-      std::make_pair(&GoodsPromotionDTO::promotion_id,
-                     &db::goods_promotion::promotion_id),
+      std::make_pair(&GoodsPromotionDTO::goods_rk_id,
+                     &db::goods_promotion::goods_rk_id),
+      std::make_pair(&GoodsPromotionDTO::promotion_rk_id,
+                     &db::goods_promotion::promotion_rk_id),
       std::make_pair(&GoodsPromotionDTO::discount_rate,
                      &db::goods_promotion::discount_rate),
       std::make_pair(&GoodsPromotionDTO::full_threshold,
@@ -74,8 +74,8 @@ template <typename Goods_promotionRow>
 struct ReflectTableRow<GoodsPromotionDTO, Goods_promotionRow> {
   static GoodsPromotionDTO assign_model(Goods_promotionRow &&row) {
     return GoodsPromotionDTO{.id = row.id,
-                             .goods_id = row.goods_id,
-                             .promotion_id = row.promotion_id,
+                             .goods_rk_id = row.goods_rk_id,
+                             .promotion_rk_id = row.promotion_rk_id,
                              .discount_rate = row.discount_rate,
                              .full_threshold = row.full_threshold,
                              .reduce_amount = row.reduce_amount,

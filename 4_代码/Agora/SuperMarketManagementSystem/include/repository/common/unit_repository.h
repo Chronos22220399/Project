@@ -1,20 +1,27 @@
 #pragma once
-#include <model/dto/common/unit_dto.hpp>
 #include <common/generic_model.hpp>
+#include <model/dto/common/unit_dto.hpp>
 
-class UnitRepository : protected model::GenericModel<UnitDTO, db::unit> {
+class UnitRepository : public model::GenericModel<UnitDTO, db::unit> {
 public:
-    // CRUD Operations
-    static insert_ret_type create(const UnitDTO& UnitDTO);
-    static select_ret_type<UnitDTO> get(id_type id);
-    static update_ret_type update(const UnitDTO& unit_dto);
-    static delete_ret_type remove(id_type id);
-    
-    // Custom Queries
-    static select_ret_type<UnitDTO> getAll();
-    static select_ret_type<UnitDTO> getByPage(int page_size, int offset);
-    static count_type count();
-    
-    // Foreign Key Relations
-    
+  // 通用 CRUD（internal）
+  static insert_ret_type create(const UnitDTO &unit_dto);
+  static select_ret_type<UnitDTO> getById(id_type id);
+  static update_ret_type updateById(id_type id, const UnitDTO &unit_dto);
+  static delete_ret_type removeById(id_type id);
+  static bool existsById(id_type id);
+
+  // 面向业务 CRUD（external）
+  static select_ret_type<UnitDTO> getByUnitId(const std::string &unit_id);
+  static select_ret_type<UnitDTO> getByName(const std::string &unit_name);
+  static update_ret_type updateByUnitId(const std::string &unit_id,
+                                        const UnitDTO &unit_dto);
+  static delete_ret_type removeByUnitId(const std::string &unit_id);
+  static bool existsByUnitId(const std::string &unit_id);
+
+  // other
+  static select_ret_type<UnitDTO> getAll();
+  static select_ret_type<UnitDTO> getByPage(count_type page_size,
+                                            count_type offset);
+  static count_type count();
 };

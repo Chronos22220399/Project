@@ -11,7 +11,7 @@
 
 using json = nlohmann::json;
 
-const std::vector<std::string> required_fields = {"goods_id", "warehouse_id",
+const std::vector<std::string> required_fields = {"goods_rk_id", "warehouse_id",
                                                   "quantity"};
 
 crow::response InventoryService::add(const std::string &body) {
@@ -20,10 +20,10 @@ crow::response InventoryService::add(const std::string &body) {
 
   CHECK_REQUIRED_FIELDS(j, required_fields);
 
-  id_type goods_id = j.at("goods_id").get<id_type>();
+  auto goods_rk_id = j.at("goods_id").get<id_type>();
 
   // 检测是否存在商品
-  bool goods_not_exists = !GoodsRepository::exists(goods_id);
+  bool goods_not_exists = !GoodsRepository::existsById(goods_rk_id);
   if (goods_not_exists)
     return crow::response(404, "Goods not found.");
 

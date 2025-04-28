@@ -26,34 +26,34 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::must_not_insert, sqlpp::tag::must_not_update, sqlpp::tag::can_be_null>;
     };
-    struct goods_id
+    struct goods_rk_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "goods_id";
+        static constexpr const char _literal[] =  "goods_rk_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T goods_id;
-            T& operator()() { return goods_id; }
-            const T& operator()() const { return goods_id; }
+            T goods_rk_id;
+            T& operator()() { return goods_rk_id; }
+            const T& operator()() const { return goods_rk_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
     };
-    struct warehouse_id
+    struct warehouse_rk_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "warehouse_id";
+        static constexpr const char _literal[] =  "warehouse_rk_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T warehouse_id;
-            T& operator()() { return warehouse_id; }
-            const T& operator()() const { return warehouse_id; }
+            T warehouse_rk_id;
+            T& operator()() { return warehouse_rk_id; }
+            const T& operator()() const { return warehouse_rk_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
@@ -78,8 +78,8 @@ namespace db
 
   struct inventory: sqlpp::table_t<inventory,
                inventory_::id,
-               inventory_::goods_id,
-               inventory_::warehouse_id,
+               inventory_::goods_rk_id,
+               inventory_::warehouse_rk_id,
                inventory_::quantity>
   {
     struct _alias_t
