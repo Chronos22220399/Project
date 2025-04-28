@@ -1,0 +1,48 @@
+import requests
+import pytest
+import json
+
+def load_test_cases(json_file_path):
+    """加载 JSON 格式的测试用例文件"""
+    with open(json_file_path, 'r', encoding='utf-8') as f:
+        return json.load(f)
+
+@pytest.mark.parametrize("case_id, payload", [
+    (str(k), v) for k, v in load_test_cases("./jsons/test_user_login_cases.json").items()
+])
+def test_user_login(case_id, payload):
+    """测试用户登录接口的不同场景"""
+    url = "http://localhost:8888/user/login"
+    headers = {'Content-Type': 'application/json'}
+
+    print(f"\n=== 测试用例 {case_id} ===")
+    print(f"请求参数: {json.dumps(payload, ensure_ascii=False)}")
+    
+    try:
+        # 发送 POST 请求
+        if isinstance(payload, str):
+            response = requests.post(url, data=payload, headers=headers)
+        else:
+            response = requests.post(url, json=payload, headers=headers)
+        
+        print(f"状态码: {response.status_code}")
+        
+        # 处理成功响应
+        if response.status_code == 200:
+            data = response.json()
+            user_info = data.get("user_info", {})
+            print(f"登录成功 -> 用户ID: {user_info.get('user_id', 'N/A')}, 用户名: {user_info.get('username', 'N/A')}")
+            assert "user_id" in user_info, "响应中缺少用户ID字段"
+        
+        # 处理错误响应
+        elif response.status_code in [400, 401]:
+            error_data = response.json()
+            print(f"登录失败 -> 错误信息: {error_data.get('message', '未知错误')}")
+            assert "message" in error_data, "响应中缺少错误信息字段"
+        
+        # 断言状态码有效性
+        assert response.status_code in [200, 400, 401, 500], f"未预期的状态码: {response.status_code}"
+    
+    except Exception as e:
+        print(f"请求异常: {str(e)}")
+        pytest.fail(f"测试用例 {case_id} 执行失败: {str(e)}")
