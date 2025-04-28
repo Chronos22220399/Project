@@ -69,3 +69,6 @@ RUN ls -al
 # 可注释掉，进入容器后自行通过 install-all.sh 或 scripts/install-sqlpp11.sh 安装
 RUN chmod +x ./scripts/install-sqlpp11.sh && \
   bash ./scripts/install-sqlpp11.sh
+
+# RUN chmod +x ./install-all.sh && \
+#   bash ./install-all.sh
