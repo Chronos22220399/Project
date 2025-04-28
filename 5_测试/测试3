@@ -1,0 +1,49 @@
+import requests
+import pytest
+import json
+import os
+
+def load_test_cases(json_file_path):
+    """加载 JSON 格式的测试用例文件"""
+    try:
+        with open(json_file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        pytest.fail(f"测试用例文件未找到: {json_file_path}")
+    except json.JSONDecodeError as e:
+        pytest.fail(f"JSON 文件解析失败: {json_file_path}，错误信息: {str(e)}")
+
+@pytest.mark.parametrize("case_id, payload, expected", [
+    (case_id, case_data["payload"], case_data["expected"])
+    for case_id, case_data in load_test_cases("./jsons/test_user_login_cases.json").items()
+])
+def test_user_login(case_id, payload, expected):
+    # 发送 POST 请求到登录接口
+    response = requests.post("http://localhost:8888/user/login", json=payload)
+    
+    # 打印调试信息
+    print(f"\n--- 测试用例 {case_id} ---")
+    print(f"请求负载: {json.dumps(payload, ensure_ascii=False)}")
+    print(f"实际状态码: {response.status_code} (预期: {expected['status_code']})")
+    print(f"响应内容: {response.text}")
+    
+    # 断言状态码
+    assert response.status_code == expected["status_code"], \
+        f"状态码不符！预期: {expected['status_code']}，实际: {response.status_code}"
+    
+    # 断言响应内容（如果定义了预期关键字）
+    if "response_contains" in expected:
+        for keyword in expected["response_contains"]:
+            assert keyword in response.text, \
+                f"响应中缺失关键字: '{keyword}'"
+    
+    # 断言 Token 有效性（针对成功登录场景）
+    if expected.get("validate_token", False):
+        token = response.json().get("token")
+        assert token is not None, "响应中未返回 Token"
+        # 假设存在验证 Token 的接口
+        validate_response = requests.get(
+            "http://localhost:8888/user/validate_token",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert validate_response.status_code == 200, "Token 验证失败"
