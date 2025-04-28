@@ -1,0 +1,39 @@
+import requests
+import pytest
+import json
+import os
+
+# 加载 JSON 测试用例文件
+def load_test_cases(json_file_path):
+    try:
+        with open(json_file_path, 'r', encoding='utf-8') as f:
+            return json.load(f)
+    except FileNotFoundError:
+        pytest.fail(f"测试用例文件未找到: {json_file_path}")
+    except json.JSONDecodeError:
+        pytest.fail(f"JSON 文件格式错误: {json_file_path}")
+
+# 参数化测试用例
+@pytest.mark.parametrize("case_id, payload, expected", [
+    (case_id, case_data["payload"], case_data["expected"]) 
+    for case_id, case_data in load_test_cases("./jsons/test_register_user_cases.json").items()
+])
+def test_register_user(case_id, payload, expected):
+    # 发送 POST 请求
+    response = requests.post("http://localhost:8888/user/register", json=payload)
+    
+    # 打印测试结果
+    print(f"\n--- 测试用例 {case_id} ---")
+    print(f"请求负载: {payload}")
+    print(f"状态码: {response.status_code}")
+    print(f"响应内容: {response.text}")
+    
+    # 断言状态码
+    assert response.status_code == expected["status_code"], \
+        f"预期状态码 {expected['status_code']}, 实际状态码 {response.status_code}"
+    
+    # 断言响应内容（如果存在预期内容）
+    if "response_contains" in expected:
+        for keyword in expected["response_contains"]:
+            assert keyword in response.text, \
+                f"响应中未找到关键字: {keyword}"
