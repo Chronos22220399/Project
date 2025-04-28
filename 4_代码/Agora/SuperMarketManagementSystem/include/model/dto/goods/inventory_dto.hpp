@@ -33,8 +33,7 @@ struct InventoryDTO {
 };
 
 inline void to_json(nlohmann::json &j, const InventoryDTO &inventory_dto) {
-  j = nlohmann::json{{"id", inventory_dto.id},
-                     {"goods_id", inventory_dto.goods_id},
+  j = nlohmann::json{{"goods_id", inventory_dto.goods_id},
                      {"warehouse_id", inventory_dto.warehouse_id},
                      {"quantity", inventory_dto.quantity}};
 }

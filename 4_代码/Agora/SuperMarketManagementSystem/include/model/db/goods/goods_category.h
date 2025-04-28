@@ -26,50 +26,50 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::must_not_insert, sqlpp::tag::must_not_update, sqlpp::tag::can_be_null>;
     };
-    struct category_id
+    struct goods_category_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "category_id";
+        static constexpr const char _literal[] =  "goods_category_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T category_id;
-            T& operator()() { return category_id; }
-            const T& operator()() const { return category_id; }
+            T goods_category_id;
+            T& operator()() { return goods_category_id; }
+            const T& operator()() const { return goods_category_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
     };
-    struct category_name
+    struct goods_category_name
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "category_name";
+        static constexpr const char _literal[] =  "goods_category_name";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T category_name;
-            T& operator()() { return category_name; }
-            const T& operator()() const { return category_name; }
+            T goods_category_name;
+            T& operator()() { return goods_category_name; }
+            const T& operator()() const { return goods_category_name; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
     };
-    struct category_description
+    struct goods_category_description
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "category_description";
+        static constexpr const char _literal[] =  "goods_category_description";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T category_description;
-            T& operator()() { return category_description; }
-            const T& operator()() const { return category_description; }
+            T goods_category_description;
+            T& operator()() { return goods_category_description; }
+            const T& operator()() const { return goods_category_description; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
@@ -94,9 +94,9 @@ namespace db
 
   struct goods_category: sqlpp::table_t<goods_category,
                goods_category_::id,
-               goods_category_::category_id,
-               goods_category_::category_name,
-               goods_category_::category_description,
+               goods_category_::goods_category_id,
+               goods_category_::goods_category_name,
+               goods_category_::goods_category_description,
                goods_category_::parent_category_id>
   {
     struct _alias_t

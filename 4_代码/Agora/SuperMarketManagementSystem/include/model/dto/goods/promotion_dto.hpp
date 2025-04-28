@@ -41,7 +41,6 @@ struct PromotionDTO {
 
 inline void to_json(nlohmann::json &j, const PromotionDTO &promotion_dto) {
   j = nlohmann::json{
-      {"id", promotion_dto.id},
       {"promotion_id", promotion_dto.promotion_id},
       {"promotion_name", promotion_dto.promotion_name},
       {"description", promotion_dto.description},

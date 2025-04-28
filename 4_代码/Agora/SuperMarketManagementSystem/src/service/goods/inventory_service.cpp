@@ -18,11 +18,7 @@ crow::response InventoryService::add(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
-  for (const auto &field : required_fields) {
-    if (!j.contains(field)) {
-      return crow::response(400, "Missing field: " + field);
-    }
-  }
+  CHECK_REQUIRED_FIELDS(j, required_fields);
 
   id_type goods_id = j.at("goods_id").get<id_type>();
 

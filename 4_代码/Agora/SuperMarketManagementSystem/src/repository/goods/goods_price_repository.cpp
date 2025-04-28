@@ -8,10 +8,6 @@ GoodsPriceRepository::create(const GoodsPriceDTO &goods_price_dto) {
   return _insert(goods_price_dto);
 };
 
-select_ret_type<GoodsPriceDTO> GoodsPriceRepository::get(id_type id) {
-  return _select(db::goods_price{}.id == id);
-};
-
 update_ret_type GoodsPriceRepository::update(const GoodsPriceDTO &dto) {
   return _update(dto, db::goods_price{}.id == dto.id);
 };
@@ -32,8 +28,9 @@ select_ret_type<GoodsPriceDTO> GoodsPriceRepository::getByPage(int page_size,
 
 count_type GoodsPriceRepository::count() { return _count(); }
 
+// 给其他表根据外键查询用
 bool GoodsPriceRepository::exists(id_type goods_id) {
-  return _exists(db::goods_price{}.goods_id == goods_id);
+  return _exists(db::goods_price{}.id == goods_id);
 }
 
 delete_ret_type GoodsPriceRepository::remove_by_goods_id(id_type goods_id) {

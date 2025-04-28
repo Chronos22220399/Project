@@ -18,13 +18,9 @@ crow::response GoodsPriceService::add(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
-  for (const auto &field : required_fields) {
-    if (!j.contains(field)) {
-      return crow::response(400, "Missing field: " + field);
-    }
-  }
+  CHECK_REQUIRED_FIELDS(j, required_fields);
 
-  id_type goods_id = j.at("goods_id").get<id_type>();
+  auto goods_id = j.at("goods_id").get<id_type>();
 
   // 检查商品价格是否已存在，若存在则直接返回并告知原因，对于一个已存在的商品价格，我们只能查找、修改或删除
   bool price_exists = GoodsPriceRepository::exists(goods_id);
@@ -47,13 +43,9 @@ crow::response GoodsPriceService::update(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
-  for (const auto &field : required_fields) {
-    if (!j.contains(field)) {
-      return crow::response(400, "Missing field: " + field);
-    }
-  }
+  CHECK_REQUIRED_FIELDS(j, required_fields);
 
-  id_type goods_id = j.at("goods_id").get<id_type>();
+  auto goods_id = j.at("goods_id").get<id_type>();
 
   // 检查商品价格是否已存在，若不存在则直接返回并告知原因
   bool price_exists = GoodsPriceRepository::exists(goods_id);

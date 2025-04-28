@@ -18,9 +18,9 @@ select_ret_type<GoodsDTO> GoodsRepository::getByPage(count_type page_size,
 count_type GoodsRepository::count() { return _count(); }
 
 select_ret_type<GoodsDetailInfo>
-GoodsRepository::getGoodsDetailInfoById(id_type goods_id) {
+GoodsRepository::getGoodsDetailInfoById(const std::string &goods_id) {
   auto data = utils::DataBaseHelper::execute<select_ret_type<GoodsDetailInfo>>(
-      [](const utils::pooled_conn_ptr_type &conn, id_type goods_id) {
+      [](const utils::pooled_conn_ptr_type &conn, const std::string &goods_id) {
         select_ret_type<GoodsDetailInfo> gi_list;
 
         db::goods goods{};
@@ -35,7 +35,7 @@ GoodsRepository::getGoodsDetailInfoById(id_type goods_id) {
                                   goods.shelf_life_days, inventory.quantity,
                                   unit.unit_name, warehouse.warehouse_id,
                                   warehouse.warehouse_name, warehouse.location,
-                                  category.category_name)
+                                  category.goods_category_name)
                         .from(inventory.join(goods)
                                   .on(goods.id == inventory.goods_id)
                                   .join(warehouse)
@@ -44,7 +44,7 @@ GoodsRepository::getGoodsDetailInfoById(id_type goods_id) {
                                   .on(unit.id == goods.unit_id)
                                   .join(category)
                                   .on(category.id == goods.category_id))
-                        .where(inventory.goods_id == goods_id));
+                        .where(goods.goods_id == goods_id));
 
         for (auto &row : rows) {
           gi_list.push_back(
@@ -55,7 +55,7 @@ GoodsRepository::getGoodsDetailInfoById(id_type goods_id) {
                               .warehouse_id = row.warehouse_id,
                               .warehouse_name = row.warehouse_name,
                               .location = row.location,
-                              .category = row.category_name});
+                              .category = row.goods_category_name});
         }
         return gi_list;
       },
@@ -63,6 +63,10 @@ GoodsRepository::getGoodsDetailInfoById(id_type goods_id) {
   return data;
 }
 
-bool GoodsRepository::exists(id_type goods_id) {
-  return _exists(db::goods{}.id == goods_id);
+bool GoodsRepository::exists(const std::string &goods_id) {
+  return _exists(db::goods{}.goods_id == goods_id);
+}
+
+bool GoodsRepository::exists(id_type id) {
+  return _exists(db::goods{}.id == id);
 }

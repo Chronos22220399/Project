@@ -13,14 +13,10 @@ crow::response GoodsCategoryService::add(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
-  for (const auto &field : required_fields) {
-    if (!j.contains(field)) {
-      return crow::response(400, "Missing field: " + field);
-    }
-  }
+  CHECK_REQUIRED_FIELDS(j, required_fields);
 
   auto gc_dto = GoodsCategoryDTO::from_json(j);
-  gc_dto.category_id = utils::create_id("GC");
+  gc_dto.goods_category_id = utils::create_id("GC");
 
   bool success = GoodsCategoryRepository::create(gc_dto);
   return success ? crow::response(200) : crow::response(500);

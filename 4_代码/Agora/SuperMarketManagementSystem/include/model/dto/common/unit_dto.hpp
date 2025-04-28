@@ -28,8 +28,7 @@ struct UnitDTO {
 };
 
 inline void to_json(nlohmann::json &j, const UnitDTO &unit_dto) {
-  j = nlohmann::json{{"id", unit_dto.id},
-                     {"unit_id", unit_dto.unit_id},
+  j = nlohmann::json{{"unit_id", unit_dto.unit_id},
                      {"unit_name", unit_dto.unit_name}};
 }
 

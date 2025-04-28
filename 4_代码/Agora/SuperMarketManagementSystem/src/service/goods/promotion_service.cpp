@@ -60,6 +60,7 @@ crow::response PromotionService::remove(const std::string &body) {
 
   auto criteria = j.at("criteria").get<std::string>();
   bool success;
+
   if (criteria == "promotion_id") {
     CHECK_REQUIRED_FIELD(j, "promotion_id");
     auto promotion_id = j.at("promotion_id").get<id_type>();
@@ -72,6 +73,24 @@ crow::response PromotionService::remove(const std::string &body) {
                                            promotion_name);
   }
   return success ? crow::response(200) : crow::response(500);
+}
+
+// 因为更新时只能根据 id 查找
+crow::response update(const std::string &body) {
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
+
+  auto promotion_id = j.at("promotion_id").get<std::string>();
+
+  // 检查商品价格是否已存在，若不存在则直接返回并告知原因
+  // bool price_exists = GoodsPriceRepository::exists(goods_id);
+  // if (price_exists)
+  //   return crow::response(404, "Goods price not found.");
+  //
+  // auto goods_price_dto = GoodsPriceDTO::from_json(j);
+  //
+  // bool success = GoodsPriceRepository::update(goods_price_dto);
+  // return success ? crow::response(200) : crow::response(500);
 }
 
 // Not implemented

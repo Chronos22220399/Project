@@ -34,7 +34,6 @@ struct GoodsPriceDTO {
 
 inline void to_json(nlohmann::json &j, const GoodsPriceDTO &goods_price_dto) {
   j = nlohmann::json{
-      {"id", goods_price_dto.id},
       {"goods_id", goods_price_dto.goods_id},
       {"price", goods_price_dto.price},
       {"start_time", utils::time_to_string(goods_price_dto.start_time)},

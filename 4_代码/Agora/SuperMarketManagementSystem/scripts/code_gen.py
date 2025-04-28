@@ -118,16 +118,16 @@ class DDLAnalyzer:
 class CodeGenerator:
     def __init__(self, table_info: Dict):
         self.table = table_info
-        _table_name_camel = to_camel_case(self.table['table_name'])
-        _table_name_snake = to_snake_case(_table_name_camel)
+        self.table_name_camel = to_camel_case(self.table['table_name'])
+        self.table_name_snake = to_snake_case(self.table_name_camel)
         self.table_name = self.table['table_name']
-        self.dto_name_camel = _table_name_camel + "DTO"
-        self.dto_name_snake = _table_name_snake + "_dto"
-        self.repo_name_camel = _table_name_camel + "Repository"
+        self.dto_name_camel = self.table_name_camel + "DTO"
+        self.dto_name_snake = self.table_name_snake + "_dto"
+        self.repo_name_camel = self.table_name_camel + "Repository"
         self.repo_name_snake = to_snake_case(self.repo_name_camel)
-        self.service_name_camel = _table_name_camel + "Service"
+        self.service_name_camel = self.table_name_camel + "Service"
         self.service_name_snake = to_snake_case(self.service_name_camel)
-        self.controller_name_camel = _table_name_camel + "Controller"
+        self.controller_name_camel = self.table_name_camel + "Controller"
         self.controller_name_snake = to_snake_case(self.controller_name_camel)   
 
         print(f"{self.table_name}\n{self.dto_name_camel}\n"
@@ -260,14 +260,15 @@ class {self.repo_name_camel} : public model::GenericModel<{self.dto_name_camel},
 public:
     // CRUD Operations
     static insert_ret_type create(const {self.dto_name_camel}& {self.dto_name_camel});
-    static select_ret_type<{self.dto_name_camel}> get(id_type id);
+    static select_ret_type<{self.dto_name_camel}> get(const std::string &{self.table_name_snake}_name);
     static update_ret_type update(const {self.dto_name_camel}& {self.dto_name_snake});
-    static delete_ret_type remove(id_type id);
+    static delete_ret_type remove(const std::string &{self.table_name_snake}_id);
     
     // Custom Queries
     static select_ret_type<{self.dto_name_camel}> get_all();
     static select_ret_type<{self.dto_name_camel}> get_by_page(int page_size, int offset);
     static count_type count();
+    
     
     // Foreign Key Relations
     {self._generate_foreign_key_methods()}
@@ -283,16 +284,16 @@ insert_ret_type {self.repo_name_camel}::create(const {self.dto_name_camel} &{sel
     return _insert({self.dto_name_snake});
 }};
 
-select_ret_type<{self.dto_name_camel}> {self.repo_name_camel}::get(id_type id) {{
-  return _select(db::{self.table_name}{{}}.id == id);
+select_ret_type<{self.dto_name_camel}> {self.repo_name_camel}::get(const std::string& {self.table_name_snake}_name) {{
+  return _select(db::{self.table_name}{{}}.{self.table_name_snake}_name == {self.table_name_snake}_name);
 }};
 
 update_ret_type {self.repo_name_camel}::update(const {self.dto_name_camel} &dto) {{
-    return _update(dto, db::{self.table_name}{{}}.id == dto.id);
+    return _update(dto, db::{self.table_name}{{}}.{self.table_name_snake}_id == dto.{self.table_name_snake}_id);
 }};
 
-delete_ret_type {self.repo_name_camel}::remove(id_type id) {{
-  return _remove(db::{self.table_name}{{}}.id == id);
+delete_ret_type {self.repo_name_camel}::remove(const std::string& {self.table_name_snake}_id) {{
+  return _remove(db::{self.table_name}{{}}.{self.table_name_snake}_id == {self.table_name_snake}_id);
 }}
 
 // Custom Queries

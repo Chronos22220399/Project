@@ -45,7 +45,7 @@ struct GoodsDTO {
 
   static GoodsDTO from_json(const nlohmann::json &j) {
     try {
-      return GoodsDTO{.id = 1,
+      return GoodsDTO{.id = 0,
                       .goods_id = j.at("goods_id").get<std::string>(),
                       .category_id = j.at("category_id").get<id_type>(),
                       .supplier_id = j.at("supplier_id").get<id_type>(),
@@ -64,8 +64,7 @@ struct GoodsDTO {
 };
 
 inline void to_json(nlohmann::json &j, const GoodsDTO &goods_dto) {
-  j = nlohmann::json{{"id", goods_dto.id},
-                     {"goods_id", goods_dto.goods_id},
+  j = nlohmann::json{{"goods_id", goods_dto.goods_id},
                      {"category_id", goods_dto.category_id},
                      {"supplier_id", goods_dto.supplier_id},
                      {"unit_id", goods_dto.unit_id},
