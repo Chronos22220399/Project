@@ -34,9 +34,9 @@
 struct GoodsDTO {
   id_type id;
   std::string goods_id;
-  id_type category_id;
-  id_type supplier_id;
-  id_type unit_id;
+  id_type category_rk_id;
+  id_type supplier_rk_id;
+  id_type unit_rk_id;
   std::string goods_name;
   date_cnt_type shelf_life_days;
   std::string barcode;
@@ -47,9 +47,9 @@ struct GoodsDTO {
     try {
       return GoodsDTO{.id = 0,
                       .goods_id = j.at("goods_id").get<std::string>(),
-                      .category_id = j.at("category_id").get<id_type>(),
-                      .supplier_id = j.at("supplier_id").get<id_type>(),
-                      .unit_id = j.at("unit_id").get<id_type>(),
+                      .category_rk_id = j.at("category_rk_id").get<id_type>(),
+                      .supplier_rk_id = j.at("supplier_rk_id").get<id_type>(),
+                      .unit_rk_id = j.at("unit_rk_id").get<id_type>(),
                       .goods_name = j.at("goods_name").get<std::string>(),
                       .shelf_life_days = j.at("shelf_life_days").get<id_type>(),
                       .barcode = j.at("barcode").get<std::string>(),
@@ -65,9 +65,9 @@ struct GoodsDTO {
 
 inline void to_json(nlohmann::json &j, const GoodsDTO &goods_dto) {
   j = nlohmann::json{{"goods_id", goods_dto.goods_id},
-                     {"category_id", goods_dto.category_id},
-                     {"supplier_id", goods_dto.supplier_id},
-                     {"unit_id", goods_dto.unit_id},
+                     {"category_rk_id", goods_dto.category_rk_id},
+                     {"supplier_rk_id", goods_dto.supplier_rk_id},
+                     {"unit_rk_id", goods_dto.unit_rk_id},
                      {"goods_name", goods_dto.goods_name},
                      {"shelf_life_days", goods_dto.shelf_life_days},
                      {"barcode", goods_dto.barcode},
@@ -82,9 +82,9 @@ template <> struct ReflectTable<GoodsDTO, db::goods> {
   static constexpr auto map_members = std::make_tuple(
       std::make_pair(&GoodsDTO::id, &db::goods::id),
       std::make_pair(&GoodsDTO::goods_id, &db::goods::goods_id),
-      std::make_pair(&GoodsDTO::category_id, &db::goods::category_id),
-      std::make_pair(&GoodsDTO::supplier_id, &db::goods::supplier_id),
-      std::make_pair(&GoodsDTO::unit_id, &db::goods::unit_id),
+      std::make_pair(&GoodsDTO::category_rk_id, &db::goods::category_rk_id),
+      std::make_pair(&GoodsDTO::supplier_rk_id, &db::goods::supplier_rk_id),
+      std::make_pair(&GoodsDTO::unit_rk_id, &db::goods::unit_rk_id),
       std::make_pair(&GoodsDTO::goods_name, &db::goods::goods_name),
       std::make_pair(&GoodsDTO::shelf_life_days, &db::goods::shelf_life_days),
       std::make_pair(&GoodsDTO::barcode, &db::goods::barcode),
@@ -96,9 +96,9 @@ template <> struct ReflectTable<GoodsDTO, db::goods> {
 template <typename GoodsRow> struct ReflectTableRow<GoodsDTO, GoodsRow> {
   static GoodsDTO assign_model(GoodsRow &&row) {
     return GoodsDTO{.goods_id = row.goods_id,
-                    .category_id = row.category_id,
-                    .supplier_id = row.supplier_id,
-                    .unit_id = row.unit_id,
+                    .category_rk_id = row.category_rk_id,
+                    .supplier_rk_id = row.supplier_rk_id,
+                    .unit_rk_id = row.unit_rk_id,
                     .goods_name = row.goods_name,
                     .shelf_life_days = row.shelf_life_days,
                     .barcode = row.barcode,

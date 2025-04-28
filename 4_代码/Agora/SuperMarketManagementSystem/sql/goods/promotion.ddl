@@ -9,3 +9,4 @@ CREATE TABLE IF NOT EXISTS promotion (
     end_time DATETIME,
     status TEXT CHECK(status IN ('active', 'expired', 'draft'))
 );
+

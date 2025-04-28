@@ -5,18 +5,24 @@
 class GoodsPriceRepository
     : protected model::GenericModel<GoodsPriceDTO, db::goods_price> {
 public:
-  // CUD Operations
-  static insert_ret_type create(const GoodsPriceDTO &GoodsPriceDTO);
-  static update_ret_type update(const GoodsPriceDTO &goods_price_dto);
-  static delete_ret_type remove(id_type id);
+  // 通用 CRUD（internal）
+  static insert_ret_type create(const GoodsPriceDTO &goods_price_dto);
+  static select_ret_type<GoodsPriceDTO> getById(id_type id);
+  static update_ret_type updateById(id_type id,
+                                    const GoodsPriceDTO &goods_price_dto);
+  static delete_ret_type removeById(id_type id);
+  static bool existsById(id_type id);
 
-  // Custom Queries
+  // 面向业务 CRUD（external）
+  static select_ret_type<GoodsPriceDTO> getByGoodsRKId(id_type goods_rk_id);
+  static update_ret_type
+  updateByGoodsRKId(id_type goods_rk_id, const GoodsPriceDTO &goods_price_dto);
+  static delete_ret_type removeByGoodsRKId(id_type goods_rk_id);
+  static bool existsByGoodsRKId(id_type goods_rk_id);
+
+  // other
   static select_ret_type<GoodsPriceDTO> getAll();
-  static select_ret_type<GoodsPriceDTO> getByPage(int page_size, int offset);
+  static select_ret_type<GoodsPriceDTO> getByPage(count_type page_size,
+                                                  count_type offset);
   static count_type count();
-  static bool exists(id_type goods_id);
-  static delete_ret_type remove_by_goods_id(id_type id);
-
-  // Foreign Key Relations
-  static select_ret_type<GoodsPriceDTO> getByGoodsId(id_type goods_id);
 };

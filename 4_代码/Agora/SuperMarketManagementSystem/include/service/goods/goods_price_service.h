@@ -11,7 +11,7 @@ public:
   // Implemented
   static crow::response add(const std::string &body);
 
-  static crow::response update(const std::string &body);
+  static crow::response updateByGoodsRKId(const std::string &body);
 
-  static crow::response remove(const std::string &body);
+  static crow::response removeByGoodsRKId(const std::string &body);
 };

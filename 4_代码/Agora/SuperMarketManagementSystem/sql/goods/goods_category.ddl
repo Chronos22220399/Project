@@ -5,5 +5,5 @@ CREATE TABLE IF NOT EXISTS goods_category (
     goods_category_name TEXT NOT NULL,
     goods_category_description TEXT,
     parent_category_id INTEGER DEFAULT NULL,
-    FOREIGN KEY (parent_category_id) REFERENCES category(id)
+    FOREIGN KEY (parent_category_id) REFERENCES goods_category(id)
 );

@@ -7,8 +7,8 @@
 using json = nlohmann::json;
 
 const std::vector<std::string> required_fields = {
-    "goods_name",      "category_id", "supplier_id", "unit_id",
-    "shelf_life_days", "barcode",     "image_url",   "description"};
+    "goods_name",      "category_rk_id", "supplier_rk_id", "unit_rk_id",
+    "shelf_life_days", "barcode",        "image_url",      "description"};
 
 crow::response GoodsService::add(const std::string &body) {
   nlohmann::json j;
@@ -90,7 +90,7 @@ crow::response GoodsService::getGoodsDetailInfoById(const std::string &body) {
 
   auto goods_id = j.at("goods_id").get<std::string>();
 
-  auto data = GoodsRepository::getGoodsDetailInfoById(goods_id);
+  auto data = GoodsRepository::getGoodsDetailInfoByGoodsId(goods_id);
 
   json res;
   res["success"] = true;

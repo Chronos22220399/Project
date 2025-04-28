@@ -42,50 +42,50 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
     };
-    struct category_id
+    struct category_rk_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "category_id";
+        static constexpr const char _literal[] =  "category_rk_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T category_id;
-            T& operator()() { return category_id; }
-            const T& operator()() const { return category_id; }
+            T category_rk_id;
+            T& operator()() { return category_rk_id; }
+            const T& operator()() const { return category_rk_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::can_be_null>;
     };
-    struct supplier_id
+    struct supplier_rk_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "supplier_id";
+        static constexpr const char _literal[] =  "supplier_rk_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T supplier_id;
-            T& operator()() { return supplier_id; }
-            const T& operator()() const { return supplier_id; }
+            T supplier_rk_id;
+            T& operator()() { return supplier_rk_id; }
+            const T& operator()() const { return supplier_rk_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::can_be_null>;
     };
-    struct unit_id
+    struct unit_rk_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "unit_id";
+        static constexpr const char _literal[] =  "unit_rk_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T unit_id;
-            T& operator()() { return unit_id; }
-            const T& operator()() const { return unit_id; }
+            T unit_rk_id;
+            T& operator()() { return unit_rk_id; }
+            const T& operator()() const { return unit_rk_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::can_be_null>;
@@ -175,9 +175,9 @@ namespace db
   struct goods: sqlpp::table_t<goods,
                goods_::id,
                goods_::goods_id,
-               goods_::category_id,
-               goods_::supplier_id,
-               goods_::unit_id,
+               goods_::category_rk_id,
+               goods_::supplier_rk_id,
+               goods_::unit_rk_id,
                goods_::goods_name,
                goods_::shelf_life_days,
                goods_::barcode,

@@ -3,20 +3,28 @@
 
 class GoodsRepository : protected model::GenericModel<GoodsDTO, db::goods> {
 public:
-  // CRUD Operations
+  // 通用 CRUD（internal）
   static insert_ret_type create(const GoodsDTO &goods_dto);
-  static select_ret_type<GoodsDTO> get(id_type id);
-  static update_ret_type update(const GoodsDTO &goods_price_dto);
-  static delete_ret_type remove(id_type id);
+  static select_ret_type<GoodsDTO> getById(id_type id);
+  static update_ret_type updateByGoodsId(id_type id, const GoodsDTO &goods_dto);
+  static delete_ret_type removeById(id_type id);
+  static bool existsById(id_type id);
 
-  // Custom Queries
+  // 面向业务 CRUD（external）
+  static select_ret_type<GoodsDTO> getByGoodsId(const std::string &goods_id);
+  static select_ret_type<GoodsDTO> getByName(const std::string &goods_name);
+  static update_ret_type updateByGoodsId(const std::string &goods_id,
+                                         const GoodsDTO &goods_dto);
+  static delete_ret_type removeByGoodsId(const std::string &goods_id);
+  static bool existsByGoodsId(const std::string &goods_id);
+
+  // other
   static select_ret_type<GoodsDTO> getAll();
   static select_ret_type<GoodsDTO> getByPage(count_type page_size,
                                              count_type offset);
   static count_type count();
-  static bool exists(const std::string &goods_id);
-  static bool exists(id_type id);
 
+  // 多表查询商品详细信息
   static select_ret_type<GoodsDetailInfo>
-  getGoodsDetailInfoById(const std::string &goods_id);
+  getGoodsDetailInfoByGoodsId(const std::string &goods_id);
 };
