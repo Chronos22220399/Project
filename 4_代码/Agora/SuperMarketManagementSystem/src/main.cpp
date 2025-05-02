@@ -25,9 +25,19 @@ using namespace std;
 //     }
 //   }
 // }
+//
 
+void testPromotionCreation();
 int main() {
-  PromotionDTO pdto{
+  testPromotionCreation();
+  // testCrowServer();
+  // testGoodsRepository();
+  return 0;
+}
+
+void testPromotionCreation() {
+  PromotionDTO promotion{
+      .promotion_id = utils::create_id("P-"),
       .promotion_name = "233",
       .description = "hhh",
       .type = "discount",
@@ -36,24 +46,25 @@ int main() {
       .status = "active",
   };
 
-  pdto.promotion_id = utils::create_id("P-");
+  bool createSuccess = PromotionRepository::create(promotion);
+  cout << "创建促销活动结果: " << boolalpha << createSuccess << endl;
 
-  bool success = PromotionRepository::create(pdto);
-  // bool success =
-  //     PromotionRepository::updateByPromotionId(pdto.promotion_id, pdto);
-  cout << "修改结果为: " << success << endl;
-
-  // crow::SimpleApp app;
-  //
-  // std::uint16_t port = utils::configManager.getPort();
-  //
-  // initRouters(app);
-  // app.multithreaded().port(port).run();
-  // cout << GoodsRepository::count() << endl;
-  // auto goods_list = GoodsRepository::getGoodsByPage(10, 0);
-  // for (auto goods : goods_list) {
-  //   fmt::println("goods_id: {}\tgoods_name: {}, description: {}",
-  //                goods.goods_id, goods.goods_name, goods.description);
-  // }
-  return 0;
+  bool updateSuccess = PromotionRepository::updateByPromotionId(
+      promotion.promotion_id, promotion);
+  cout << "更新促销活动结果: " << boolalpha << updateSuccess << endl;
 }
+
+// void testCrowServer() {
+//   crow::SimpleApp app;
+//   initRouters(app);
+//   app.multithreaded().port(utils::configManager.getPort()).run();
+// }
+
+// void testGoodsRepository() {
+//   cout << "商品总数: " << GoodsRepository::count() << endl;
+//   auto goodsList = GoodsRepository::getGoodsByPage(10, 0);
+//   for (const auto& goods : goodsList) {
+//     fmt::println("商品ID: {}\t名称: {}\t描述: {}",
+//                  goods.goods_id, goods.goods_name, goods.description);
+//   }
+// }
