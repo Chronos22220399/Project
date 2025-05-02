@@ -4,7 +4,7 @@
 void InventoryController::registerRoutes(crow::SimpleApp &app) {
   CROW_ROUTE(app, "/api/inventory/add")
       .methods("POST"_method)([](const crow::request &req) {
-        return InventoryService::add(req.body);
+        return InventoryService::create(req.body);
       });
 
   CROW_ROUTE(app, "/api/inventory/get_by_page")

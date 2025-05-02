@@ -1,8 +1,12 @@
 #include <chrono>
+#include <common/global_id_cache.hpp>
 #include <crow.h>
-#include <repository/goods/goods_repository.h>
+#include <future>
+#include <iostream>
 #include <repository/goods/promotion_repository.h>
+#include <repository/warehouse/warehouse_repository.h>
 #include <router/init_router.h>
+#include <vector>
 using namespace std;
 
 // void insert_test_data() {
@@ -28,37 +32,66 @@ using namespace std;
 //
 
 void testPromotionCreation();
+void testGoodsCreation();
+void testWarehouseCreation();
+
+void testCrowServer();
+
 int main() {
-  testPromotionCreation();
-  // testCrowServer();
-  // testGoodsRepository();
+  auto &cache = GlobalIdCache::getInstance();
+  // regist goods
+  cache.registForward("goods", &GoodsRepository::getInternalId);
+  cache.registReverse("goods", &GoodsRepository::getExternalId);
+
+  // regist warehouse
+  cache.registForward("warehouse", &WarehouseRepository::getInternalId);
+  cache.registReverse("warehouse", &WarehouseRepository::getExternalId);
+
+  // 先确保测试数据存在
+  // const std::string wh_id = "WH-d337cae7-d53b-4be0-9e5d-8de553b65a14";
+  // id_type expected_id = WarehouseRepository::getId(wh_id);
+
+  testCrowServer();
   return 0;
 }
 
-void testPromotionCreation() {
-  PromotionDTO promotion{
-      .promotion_id = utils::create_id("P-"),
-      .promotion_name = "233",
-      .description = "hhh",
-      .type = "discount",
-      .start_time = {},
-      .end_time = {},
-      .status = "active",
-  };
+void testWarehouseCreation() {
+  WarehouseDTO warehouse{.id = 0,
+                         .warehouse_id = utils::create_id("WH-"),
+                         .warehouse_name = "Sample Warehouse",
+                         .location = "Beijing"};
 
-  bool createSuccess = PromotionRepository::create(promotion);
-  cout << "创建促销活动结果: " << boolalpha << createSuccess << endl;
+  bool createSuccess = WarehouseRepository::create(warehouse);
+  cout << "创建仓库结果: " << boolalpha << createSuccess << endl;
 
-  bool updateSuccess = PromotionRepository::updateByPromotionId(
-      promotion.promotion_id, promotion);
-  cout << "更新促销活动结果: " << boolalpha << updateSuccess << endl;
+  bool updateSuccess = WarehouseRepository::updateByWarehouseId(
+      warehouse.warehouse_id, warehouse);
+  cout << "更新仓库结果: " << boolalpha << updateSuccess << endl;
 }
 
-// void testCrowServer() {
-//   crow::SimpleApp app;
-//   initRouters(app);
-//   app.multithreaded().port(utils::configManager.getPort()).run();
-// }
+void testGoodsCreation() {
+  GoodsDTO goods{
+      .goods_id = utils::create_id("G-"),
+      .category_rk_id = 0,
+      .goods_name = "Sample Goods",
+      .shelf_life_days = 10,
+      .barcode = "123",
+      .image_url = "none",
+      .description = "This is a sample goods description.",
+  };
+
+  bool createSuccess = GoodsRepository::create(goods);
+  cout << "创建商品结果: " << boolalpha << createSuccess << endl;
+
+  bool updateSuccess = GoodsRepository::updateByGoodsId(goods.goods_id, goods);
+  cout << "更新商品结果: " << boolalpha << updateSuccess << endl;
+}
+
+void testCrowServer() {
+  crow::SimpleApp app;
+  initRouters(app);
+  app.multithreaded().port(utils::configManager.getPort()).run();
+}
 
 // void testGoodsRepository() {
 //   cout << "商品总数: " << GoodsRepository::count() << endl;

@@ -27,4 +27,9 @@ public:
   // 多表查询商品详细信息
   static select_ret_type<GoodsDetailInfo>
   getGoodsDetailInfoByGoodsId(const std::string &goods_id);
+
+  // 获取 internal id 用于缓存正向映射
+  static id_type getInternalId(const std::string &goods_id);
+  // 获取 external id 用于缓存逆向映射
+  static std::string getExternalId(id_type id);
 };

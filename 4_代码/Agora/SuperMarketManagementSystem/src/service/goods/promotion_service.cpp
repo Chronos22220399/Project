@@ -27,7 +27,7 @@ const std::vector<std::string> required_status = {"active", "expired", "draft"};
 
 } // namespace detail
 
-crow::response PromotionService::add(const std::string &body) {
+crow::response PromotionService::create(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 

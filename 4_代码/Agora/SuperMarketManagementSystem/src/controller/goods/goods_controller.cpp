@@ -4,8 +4,9 @@
 void GoodsController::registerRoutes(crow::SimpleApp &app) {
   // add goods
   CROW_ROUTE(app, "/api/goods/add")
-      .methods("POST"_method)(
-          [](const crow::request &req) { return GoodsService::add(req.body); });
+      .methods("POST"_method)([](const crow::request &req) {
+        return GoodsService::create(req.body);
+      });
 
   // get goods
   CROW_ROUTE(app, "/api/goods/get_by_page")

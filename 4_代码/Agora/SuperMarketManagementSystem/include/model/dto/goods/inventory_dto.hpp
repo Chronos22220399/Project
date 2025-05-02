@@ -1,6 +1,7 @@
 #pragma once
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
+#include <common/global_id_cache.hpp>
 #include <common/uni_define.h>
 
 // third_party
@@ -15,27 +16,15 @@ struct InventoryDTO {
   id_type goods_rk_id = 0;
   id_type warehouse_rk_id = 0;
   id_type quantity = 0;
-
-  // JSON serialization/deserialization
-  static InventoryDTO from_json(const nlohmann::json &j) {
-    try {
-      return InventoryDTO{
-          .goods_rk_id = j.at("goods_rk_id").get<id_type>(),
-          .warehouse_rk_id = j.at("warehouse_rk_id").get<id_type>(),
-          .quantity = j.at("quantity").get<id_type>(),
-      };
-    } catch (const std::exception &e) {
-      std::cerr << "[from_json error] " << e.what() << "\n"
-                << "Input JSON: " << j.dump(2) << std::endl;
-      throw;
-    }
-  }
 };
 
 inline void to_json(nlohmann::json &j, const InventoryDTO &inventory_dto) {
-  j = nlohmann::json{{"goods_rk_id", inventory_dto.goods_rk_id},
-                     {"warehouse_rk_id", inventory_dto.warehouse_rk_id},
-                     {"quantity", inventory_dto.quantity}};
+  j = nlohmann::json{
+      {"goods_id", GlobalIdCache::getInstance().getExternalId(
+                       "goods", inventory_dto.goods_rk_id)},
+      {"warehouse_id", GlobalIdCache::getInstance().getExternalId(
+                           "warehouse", inventory_dto.warehouse_rk_id)},
+      {"quantity", inventory_dto.quantity}};
 }
 
 // ORM mapping

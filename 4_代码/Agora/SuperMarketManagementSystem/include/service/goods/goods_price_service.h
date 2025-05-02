@@ -9,7 +9,7 @@ public:
   static crow::response getAll();
 
   // Implemented
-  static crow::response add(const std::string &body);
+  static crow::response create(const std::string &body);
 
   static crow::response updateByGoodsRKId(const std::string &body);
 

@@ -337,9 +337,9 @@ public:
 #include <service/{db_dir_name}/{self.service_name_snake}.h>
 
 void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
-    CROW_ROUTE(app, "/api/{self.table_name}/add")
+    CROW_ROUTE(app, "/api/{self.table_name}/create")
         .methods("POST"_method)([](const crow::request& req) {{
-            return {self.service_name_camel}::add(req.body);
+            return {self.service_name_camel}::create(req.body);
         }});
         
     CROW_ROUTE(app, "/api/{self.table_name}/getByPage")

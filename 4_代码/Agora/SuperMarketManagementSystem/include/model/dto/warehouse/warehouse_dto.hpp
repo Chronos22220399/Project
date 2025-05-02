@@ -7,6 +7,7 @@
 #include <string>
 
 // DTO for warehouse table
+
 struct WarehouseDTO {
   id_type id = 0;
   std::string warehouse_id = "";

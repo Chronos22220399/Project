@@ -5,7 +5,7 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   // add goods
   CROW_ROUTE(app, "/api/goods_category/add")
       .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::add(req.body);
+        return GoodsCategoryService::create(req.body);
       });
 
   // get all category
@@ -21,9 +21,15 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
       });
 
   // delete category by
-  CROW_ROUTE(app, "/api/goods_category/delete")
+  CROW_ROUTE(app, "/api/goods_category/remove")
       .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::deleteById(req.body);
+        return GoodsCategoryService::removeByGoodsCategoryId(req.body);
+      });
+
+  // update category
+  CROW_ROUTE(app, "/api/goods_category/update")
+      .methods("POST"_method)([](const crow::request &req) {
+        return GoodsCategoryService::updateByGoodsCategoryId(req.body);
       });
 
   // other routes

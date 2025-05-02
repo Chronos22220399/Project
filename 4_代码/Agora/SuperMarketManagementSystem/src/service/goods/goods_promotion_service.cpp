@@ -6,7 +6,7 @@
 
 using json = nlohmann::json;
 
-crow::response GoodsPromotionService::add(const std::string &body) {
+crow::response GoodsPromotionService::create(const std::string &body) {
   return crow::response(501, "Not implemented yet.");
 }
 

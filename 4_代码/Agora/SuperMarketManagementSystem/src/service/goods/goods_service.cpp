@@ -10,7 +10,7 @@ const std::vector<std::string> required_fields = {
     "goods_name",      "category_rk_id", "supplier_rk_id", "unit_rk_id",
     "shelf_life_days", "barcode",        "image_url",      "description"};
 
-crow::response GoodsService::add(const std::string &body) {
+crow::response GoodsService::create(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 

@@ -33,4 +33,9 @@ public:
   static select_ret_type<WarehouseDTO> getByPage(count_type page_size,
                                                  count_type offset);
   static count_type count();
+
+  // 获取 id 用于缓存映射
+  static id_type getInternalId(const std::string &warehouse_id);
+  // 获取 external id 用于缓存映射
+  static std::string getExternalId(id_type id);
 };
