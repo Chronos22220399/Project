@@ -4,8 +4,8 @@
 
 class InventoryService {
 public:
-  static crow::response add(const std::string &body);
+  static crow::response create(const std::string &body);
+  // static crow::response getByGoodRKId(const std::string &body);
   static crow::response getByPage(const std::string &body);
   static crow::response getAll();
-  static crow::response getByGoodsId(const std::string &body);
 };

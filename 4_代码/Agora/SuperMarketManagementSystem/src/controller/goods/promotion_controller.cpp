@@ -4,7 +4,7 @@
 void PromotionController::registerRoutes(crow::SimpleApp &app) {
   CROW_ROUTE(app, "/api/promotion/add")
       .methods("POST"_method)([](const crow::request &req) {
-        return PromotionService::add(req.body);
+        return PromotionService::create(req.body);
       });
 
   CROW_ROUTE(app, "/api/promotion/get_by_page")

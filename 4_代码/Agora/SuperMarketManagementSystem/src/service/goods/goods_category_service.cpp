@@ -9,7 +9,7 @@ using json = nlohmann::json;
 const std::vector<std::string> required_fields = {
     "category_name", "category_description", "parent_category_id"};
 
-crow::response GoodsCategoryService::add(const std::string &body) {
+crow::response GoodsCategoryService::create(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
@@ -19,6 +19,56 @@ crow::response GoodsCategoryService::add(const std::string &body) {
   gc_dto.goods_category_id = utils::create_id("GC");
 
   bool success = GoodsCategoryRepository::create(gc_dto);
+  return success ? crow::response(200) : crow::response(500);
+}
+
+crow::response
+GoodsCategoryService::getByGoodsCategoryId(const std::string &body) {
+  return crow::response(501, "Not implemet yet.");
+}
+
+crow::response
+GoodsCategoryService::removeByGoodsCategoryId(const std::string &body) {
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
+
+  // 检测是否存在 goods_category_id 字段
+  CHECK_REQUIRED_FIELD(j, "goods_category_id");
+
+  auto goods_category_id = j.at("goods_category_id").get<std::string>();
+
+  // 检查是否存在 goods_category_id 所对应的商品分类
+  bool category_not_exists =
+      !GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id);
+  if (category_not_exists)
+    return crow::response(404, "Goods category not found.");
+
+  // 删除商品分类
+  bool success =
+      GoodsCategoryRepository::removeByGoodsCategoryId(goods_category_id);
+  return success ? crow::response(200) : crow::response(500);
+}
+
+crow::response
+GoodsCategoryService::updateByGoodsCategoryId(const std::string &body) {
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
+
+  CHECK_REQUIRED_FIELDS(j, required_fields);
+
+  auto goods_category_id = j.at("goods_category_id").get<std::string>();
+
+  // 检查是否存在 goods_category_id 所对应的商品分类
+  bool category_not_exists =
+      !GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id);
+  if (category_not_exists)
+    return crow::response(404, "Goods category not found.");
+
+  auto goods_category_dto = GoodsCategoryDTO::from_json(j);
+
+  // 删除商品分类
+  bool success = GoodsCategoryRepository::updateByGoodsCategoryId(
+      goods_category_id, goods_category_dto);
   return success ? crow::response(200) : crow::response(500);
 }
 

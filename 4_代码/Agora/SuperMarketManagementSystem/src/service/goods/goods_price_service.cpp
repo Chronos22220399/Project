@@ -14,7 +14,7 @@ const std::vector<std::string> required_fields = {"goods_rk_id", "price",
                                                   "start_time"};
 
 // Implemented
-crow::response GoodsPriceService::add(const std::string &body) {
+crow::response GoodsPriceService::create(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
@@ -64,8 +64,7 @@ crow::response GoodsPriceService::removeByGoodsRKId(const std::string &body) {
   CHECK_AND_GET_JSON(j);
 
   // 检测是否存在 goods_id 字段
-  if (!j.contains("goods_id"))
-    return crow::response(400, "Missing field: goods_id");
+  CHECK_REQUIRED_FIELD(j, "goods_rk_id");
 
   id_type goods_rk_id = j.at("goods_rk_id").get<id_type>();
 

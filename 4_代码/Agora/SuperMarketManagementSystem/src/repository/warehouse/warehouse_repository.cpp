@@ -72,3 +72,30 @@ WarehouseRepository::getByPage(count_type page_size, count_type offset) {
 }
 
 count_type WarehouseRepository::count() { return _count(); }
+
+// 获取 internal id 用于缓存映射
+id_type WarehouseRepository::getInternalId(const std::string &warehouse_id) {
+  auto result = utils::DataBaseHelper::execute<id_type>(
+      [&warehouse_id](const utils::pooled_conn_ptr_type &conn_) {
+        db::warehouse warehouse{};
+        auto rows =
+            (*conn_)(select(warehouse.id)
+                         .from(warehouse)
+                         .where(warehouse.warehouse_id == warehouse_id));
+        return rows.empty() ? 0 : rows.front().id;
+      });
+  return result;
+}
+
+// 获取 external id 用于缓存映射
+std::string WarehouseRepository::getExternalId(id_type id) {
+  auto result = utils::DataBaseHelper::execute<std::string>(
+      [id](const utils::pooled_conn_ptr_type &conn_) {
+        db::warehouse warehouse{};
+        auto rows = (*conn_)(select(warehouse.warehouse_id)
+                                 .from(warehouse)
+                                 .where(warehouse.id == id));
+        return rows.empty() ? std::string() : rows.front().warehouse_id;
+      });
+  return result;
+}

@@ -44,12 +44,14 @@ if (EnableTest)
     GIT_REPOSITORY https://github.com/google/googletest.git
     GIT_TAG release-1.12.1)
   FetchContent_MakeAvailable(googletest)
+  
+  enable_testing()
+  file(GLOB TEST_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/include/*.hpp")
+
+  # 测试全局 id 缓存
+  add_executable(global_id_cache_test test/global_id_cache_test.cc)
+  target_link_libraries(global_id_cache_test GTest::gtest_main)
+  include(GoogleTest)
+  gtest_add_tests(TARGET global_id_cache_test)
 endif()
 
-# enable_testing()
-# file(GLOB UTILS_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/src/Utils/*.cpp")
-# add_executable(hello_test test/hello_test.cc)
-# target_link_libraries(hello_test GTest::gtest_main)
-# include(GoogleTest)
-# gtest_add_tests(TARGET hello_test)
-# gtest_add_tests(TARGET jwt_test)

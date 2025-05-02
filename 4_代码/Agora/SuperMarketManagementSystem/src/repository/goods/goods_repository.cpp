@@ -9,7 +9,8 @@ select_ret_type<GoodsDTO> GoodsRepository::getById(id_type id) {
   return _select(db::goods{}.id == id);
 }
 
-update_ret_type GoodsRepository::updateByGoodsId(id_type id, const GoodsDTO &goods_dto) {
+update_ret_type GoodsRepository::updateByGoodsId(id_type id,
+                                                 const GoodsDTO &goods_dto) {
   return _update(goods_dto, db::goods{}.id == id);
 }
 
@@ -22,15 +23,18 @@ bool GoodsRepository::existsById(id_type id) {
 }
 
 // 面向业务 CRUD（external）
-select_ret_type<GoodsDTO> GoodsRepository::getByGoodsId(const std::string &goods_id) {
+select_ret_type<GoodsDTO>
+GoodsRepository::getByGoodsId(const std::string &goods_id) {
   return _select(db::goods{}.goods_id == goods_id);
 }
 
-select_ret_type<GoodsDTO> GoodsRepository::getByName(const std::string &goods_name) {
+select_ret_type<GoodsDTO>
+GoodsRepository::getByName(const std::string &goods_name) {
   return _select(db::goods{}.goods_name == goods_name);
 }
 
-update_ret_type GoodsRepository::updateByGoodsId(const std::string &goods_id, const GoodsDTO &goods_dto) {
+update_ret_type GoodsRepository::updateByGoodsId(const std::string &goods_id,
+                                                 const GoodsDTO &goods_dto) {
   return _update(goods_dto, db::goods{}.goods_id == goods_id);
 }
 
@@ -47,20 +51,18 @@ select_ret_type<GoodsDTO> GoodsRepository::getAll() {
   return _select(db::goods{}.id >= 0);
 }
 
-select_ret_type<GoodsDTO> GoodsRepository::getByPage(count_type page_size, count_type offset) {
+select_ret_type<GoodsDTO> GoodsRepository::getByPage(count_type page_size,
+                                                     count_type offset) {
   return _select_from(db::goods{}.id >= 0, page_size, offset);
 }
 
-count_type GoodsRepository::count() {
-  return _count();
-}
+count_type GoodsRepository::count() { return _count(); }
 
 // 多表查询商品详细信息
 select_ret_type<GoodsDetailInfo>
 GoodsRepository::getGoodsDetailInfoByGoodsId(const std::string &goods_id) {
   auto data = utils::DataBaseHelper::execute<select_ret_type<GoodsDetailInfo>>(
-      [](const utils::pooled_conn_ptr_type &conn,
-         const std::string &goods_id) {
+      [](const utils::pooled_conn_ptr_type &conn, const std::string &goods_id) {
         select_ret_type<GoodsDetailInfo> gi_list;
 
         db::goods goods{};
@@ -70,21 +72,21 @@ GoodsRepository::getGoodsDetailInfoByGoodsId(const std::string &goods_id) {
         db::goods_category category{};
 
         // 获取商品详细信息
-        auto rows = (*conn)(
-            sqlpp::select(goods.goods_id, goods.goods_name,
-                          goods.shelf_life_days, inventory.quantity,
-                          unit.unit_name, warehouse.warehouse_id,
-                          warehouse.warehouse_name, warehouse.location,
-                          category.goods_category_name)
-                .from(inventory.join(goods)
-                          .on(goods.id == inventory.goods_rk_id)
-                          .join(warehouse)
-                          .on(warehouse.id == inventory.warehouse_rk_id)
-                          .join(unit)
-                          .on(unit.id == goods.unit_rk_id)
-                          .join(category)
-                          .on(category.id == goods.category_rk_id))
-                .where(goods.goods_id == goods_id));
+        auto rows =
+            (*conn)(sqlpp::select(goods.goods_id, goods.goods_name,
+                                  goods.shelf_life_days, inventory.quantity,
+                                  unit.unit_name, warehouse.warehouse_id,
+                                  warehouse.warehouse_name, warehouse.location,
+                                  category.goods_category_name)
+                        .from(inventory.join(goods)
+                                  .on(goods.id == inventory.goods_rk_id)
+                                  .join(warehouse)
+                                  .on(warehouse.id == inventory.warehouse_rk_id)
+                                  .join(unit)
+                                  .on(unit.id == goods.unit_rk_id)
+                                  .join(category)
+                                  .on(category.id == goods.category_rk_id))
+                        .where(goods.goods_id == goods_id));
 
         // 将查询结果转化为 GoodsDetailInfo 对象并填充到 gi_list
         for (auto &row : rows) {
@@ -102,4 +104,28 @@ GoodsRepository::getGoodsDetailInfoByGoodsId(const std::string &goods_id) {
       },
       goods_id);
   return data;
+}
+
+// 获取 id 用于缓存映射
+id_type GoodsRepository::getInternalId(const std::string &goods_id) {
+  auto result = utils::DataBaseHelper::execute<id_type>(
+      [&goods_id](const utils::pooled_conn_ptr_type &conn_) {
+        db::goods goods{};
+        auto rows = (*conn_)(
+            select(goods.id).from(goods).where(goods.goods_id == goods_id));
+        return rows.empty() ? 0 : rows.front().id;
+      });
+  return result;
+}
+
+// 获取 external id 用于缓存逆向映射
+std::string GoodsRepository::getExternalId(id_type id) {
+  auto result = utils::DataBaseHelper::execute<std::string>(
+      [id](const utils::pooled_conn_ptr_type &conn_) {
+        db::goods goods{};
+        auto rows =
+            (*conn_)(select(goods.goods_id).from(goods).where(goods.id == id));
+        return rows.empty() ? std::string() : rows.front().goods_id;
+      });
+  return result;
 }
