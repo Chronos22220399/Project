@@ -139,28 +139,45 @@ using make_even_index_sequence =
  * @return std::index_sequence<N, N+1, ..., N+L-1>
  */
 template <size_t N, size_t L> auto make_index_sequence_from() {
+  // 调用 details 命名空间中的辅助函数生成索引序列
   return details::make_index_sequence_from<N>(std::make_index_sequence<L>{});
 }
 
 /**
  * @brief 生成一个伪造的全局唯一 ID（用于测试或占位）。
  *
- * @return std::string 固定字符串 "1"（测试阶段固定）。
+ * @return std::string 有 boost::uuid 得到的 uuid（测试阶段固定）。
  */
 inline std::string create_id(const std::string &prefix) {
+  // 使用 Boost 库生成随机 UUID
   boost::uuids::uuid uuid = boost::uuids::random_generator()();
+  // 将 UUID 转换为字符串并添加前缀
   return prefix + boost::uuids::to_string(uuid);
 }
 
+/**
+ * @brief 尝试解析 JSON 字符串。
+ *
+ * @param body JSON 格式的字符串。
+ * @return std::optional<nlohmann::json> 如果解析成功，返回 JSON 对象；否则返回
+ * std::nullopt。
+ */
 inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {
   try {
+    // 使用 nlohmann::json 解析字符串
     return nlohmann::json::parse(body);
   } catch (...) {
+    // 捕获所有异常并返回空值
     return std::nullopt;
   }
 }
 
-// 字符串转时间点
+/**
+ * @brief 将字符串转换为时间点。
+ *
+ * @param str 时间字符串，格式为 "YYYY-MM-DD HH:MM:SS.ffffff"。
+ * @return datetime_type 转换后的时间点。
+ */
 inline datetime_type string_to_time(const std::string &str) {
   std::tm tm = {};
   int microseconds = 0;
@@ -172,6 +189,7 @@ inline datetime_type string_to_time(const std::string &str) {
   // 处理微秒部分
   char dot;
   if (iss >> dot && dot == '.' && iss >> microseconds) {
+    // 限制微秒值的最大值为 999999
     microseconds = std::min(microseconds, 999999);
   }
 
@@ -179,46 +197,82 @@ inline datetime_type string_to_time(const std::string &str) {
   auto sys_time = std::chrono::system_clock::from_time_t(std::mktime(&tm)) +
                   std::chrono::microseconds(microseconds);
 
+  // 转换为自定义的 datetime_type 类型
   return datetime_type(
       std::chrono::time_point_cast<datetime_type::duration>(sys_time));
 }
 
-// 时间点转字符串
+/**
+ * @brief 将时间点转换为字符串。
+ *
+ * @param tp 时间点。
+ * @return std::string 转换后的时间字符串，格式为 "YYYY-MM-DD HH:MM:SS.ffffff"。
+ */
 inline std::string time_to_string(const datetime_type &tp) {
   const auto sys_time = std::chrono::system_clock::to_time_t(
       std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp));
 
   std::ostringstream oss;
+  // 格式化基础时间部分
   oss << std::put_time(std::localtime(&sys_time), "%Y-%m-%d %H:%M:%S");
 
-  // 添加微秒
+  // 添加微秒部分
   const auto us = std::chrono::duration_cast<std::chrono::microseconds>(
                       tp.time_since_epoch())
                       .count() %
                   1000000;
 
   if (us > 0) {
+    // 格式化微秒部分为 6 位数字
     oss << "." << std::setw(6) << std::setfill('0') << us;
   }
 
   return oss.str();
 }
 
+/**
+ * @brief 将任意类型的值转换为 SQL++ 支持的值。
+ *
+ * @tparam T 值的类型。
+ * @param value 要转换的值。
+ * @return 转换后的 SQL++ 值。
+ */
 template <typename T> inline auto to_sqlpp_value(T &&value) {
+  // 使用 sqlpp::value 包装值
   return sqlpp::value(std::forward<T>(value));
 }
-// 文本处理特化
+
+/**
+ * @brief 将字符串类型的值转换为 SQL++ 支持的值（特化版本）。
+ *
+ * @param value 要转换的字符串值。
+ * @return 转换后的 SQL++ 值。
+ */
 template <> inline auto to_sqlpp_value<std::string>(std::string &&value) {
-  return sqlpp::value(value); // 使用value而不是text
+  // 使用 sqlpp::value 包装字符串值
+  return sqlpp::value(value); // 使用 value 而不是 text
 }
 
+/**
+ * @brief 检查元素是否存在于容器中。
+ *
+ * @tparam Elem 元素类型。
+ * @tparam Container 容器类型。
+ * @param elem 要检查的元素。
+ * @param container 容器。
+ * @return true 如果元素存在于容器中。
+ * @return false 如果元素不存在于容器中。
+ */
 template <typename Elem, typename Container>
 bool in(const Elem &elem, const Container &container) {
+  // 遍历容器中的每个元素
   for (auto &e : container) {
     if (e == elem) {
+      // 如果找到匹配的元素，返回 true
       return true;
     }
   }
+  // 如果未找到匹配的元素，返回 false
   return false;
 }
 
