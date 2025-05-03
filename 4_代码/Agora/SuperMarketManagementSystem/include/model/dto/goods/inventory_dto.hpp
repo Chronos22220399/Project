@@ -16,14 +16,24 @@ struct InventoryDTO {
   id_type goods_rk_id = 0;
   id_type warehouse_rk_id = 0;
   id_type quantity = 0;
+
+  static InventoryDTO from_json(const nlohmann::json &j) {
+    auto &cache = GlobalIdCache::getInstance();
+    return InventoryDTO{
+        .goods_rk_id =
+            cache.getInternalId("goods", j.at("goods_id").get<std::string>()),
+        .warehouse_rk_id = cache.getInternalId(
+            "warehosue", j.at("warehosue_id").get<std::string>()),
+        .quantity = j.at("quantity").get<id_type>()};
+  }
 };
 
 inline void to_json(nlohmann::json &j, const InventoryDTO &inventory_dto) {
+  auto &cache = GlobalIdCache::getInstance();
   j = nlohmann::json{
-      {"goods_id", GlobalIdCache::getInstance().getExternalId(
-                       "goods", inventory_dto.goods_rk_id)},
-      {"warehouse_id", GlobalIdCache::getInstance().getExternalId(
-                           "warehouse", inventory_dto.warehouse_rk_id)},
+      {"goods_id", cache.getExternalId("goods", inventory_dto.goods_rk_id)},
+      {"warehouse_id",
+       cache.getExternalId("warehouse", inventory_dto.warehouse_rk_id)},
       {"quantity", inventory_dto.quantity}};
 }
 

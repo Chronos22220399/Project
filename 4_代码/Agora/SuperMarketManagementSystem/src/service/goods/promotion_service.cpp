@@ -27,6 +27,7 @@ const std::vector<std::string> required_status = {"active", "expired", "draft"};
 
 } // namespace detail
 
+// MARK: create
 crow::response PromotionService::create(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
@@ -51,31 +52,55 @@ crow::response PromotionService::create(const std::string &body) {
   return success ? crow::response(200) : crow::response(500);
 }
 
-// 删除时可以在 body 中指定 criteria: promotion_id, promotion_name 选择删除标准
-crow::response PromotionService::removeByPromotionId(const std::string &body) {
+// MARK: read
+crow::response PromotionService::getByPage(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
-  CHECK_REQUIRED_FIELD(j, "criteria");
-
-  auto criteria = j.at("criteria").get<std::string>();
-  bool success;
-
-  if (criteria == "promotion_id") {
-    CHECK_REQUIRED_FIELD(j, "promotion_id");
-    auto promotion_id = j.at("promotion_id").get<std::string>();
-    // 无需检查
-    success = PromotionRepository::removeByPromotionId(promotion_id);
-  } else if (criteria == "promotion_name") {
-    CHECK_REQUIRED_FIELD(j, "promotion_name");
-    auto promotion_name = j.at("promotion_name").get<std::string>();
-    success = PromotionRepository::_remove(db::promotion{}.promotion_name ==
-                                           promotion_name);
+  int page = j.value("page", 1);
+  int page_size = j.value("page_size", 10);
+  if (page <= 0 || page_size <= 0) {
+    return crow::response(400, "Invalid page or page_size");
   }
-  return success ? crow::response(200) : crow::response(500);
+
+  auto offset = (page - 1) * page_size;
+
+  try {
+    count_type total = PromotionRepository::count();
+    auto promotions = PromotionRepository::getByPage(page_size, offset);
+
+    nlohmann::json res;
+    res["success"] = true;
+    res["total"] = total;
+    res["page"] = page;
+    res["page_size"] = page_size;
+    res["data"] = promotions;
+
+    return crow::response(200, res.dump());
+  } catch (const std::exception &e) {
+    LOG("PromotionService error: {}", e.what());
+    return crow::response(500, fmt::format("Error: {}", e.what()));
+  }
 }
 
-crow::response updateByPromotionId(const std::string &body) {
+crow::response PromotionService::getAll() {
+  try {
+    auto promotions = PromotionRepository::getAll();
+
+    nlohmann::json res;
+    res["success"] = true;
+    res["total"] = promotions.size();
+    res["data"] = promotions;
+
+    return crow::response(200, res.dump());
+  } catch (const std::exception &e) {
+    LOG("PromotionService error: {}", e.what());
+    return crow::response(500, fmt::format("Error: {}", e.what()));
+  }
+}
+
+// MARK: update
+crow::response PromotionService::updateByPromotionId(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
@@ -89,11 +114,16 @@ crow::response updateByPromotionId(const std::string &body) {
   return success ? crow::response(200) : crow::response(500);
 }
 
-// Not implemented
-crow::response PromotionService::getByPage(const std::string &body) {
-  return crow::response(501, "Not implemented yet.");
-}
+// MARK: delete
+crow::response PromotionService::removeByPromotionId(const std::string &body) {
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
 
-crow::response PromotionService::getAll() {
-  return crow::response(501, "Not implemented yet.");
+  CHECK_REQUIRED_FIELD(j, "promotion_id");
+
+  auto promotion_id = j.at("promotion_id").get<std::string>();
+  // 无需检查，删除失败返回 false
+  bool success = PromotionRepository::removeByPromotionId(promotion_id);
+
+  return success ? crow::response(200) : crow::response(500);
 }

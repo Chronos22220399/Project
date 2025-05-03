@@ -2,11 +2,13 @@
 #include <service/goods/goods_price_service.h>
 
 void GoodsPriceController::registerRoutes(crow::SimpleApp &app) {
-  CROW_ROUTE(app, "/api/goods_price/add")
+  // MARK: create
+  CROW_ROUTE(app, "/api/goods_price/create")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsPriceService::create(req.body);
       });
 
+  // MARK: read
   CROW_ROUTE(app, "/api/goods_price/get_by_page")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsPriceService::getByPage(req.body);
@@ -16,5 +18,16 @@ void GoodsPriceController::registerRoutes(crow::SimpleApp &app) {
     return GoodsPriceService::getAll();
   });
 
+  // MARK: update
+  CROW_ROUTE(app, "/api/goods_price/update")
+      .methods("POST"_method)([](const crow::request &req) {
+        return GoodsPriceService::updateByGoodsId(req.body);
+      });
+
+  // MARK: delete
+  CROW_ROUTE(app, "/api/goods_price/remove")
+      .methods("POST"_method)([](const crow::request &req) {
+        return GoodsPriceService::removeByGoodsId(req.body);
+      });
   // 其他路由...
 }

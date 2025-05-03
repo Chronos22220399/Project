@@ -3,7 +3,7 @@
 
 void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   // add goods
-  CROW_ROUTE(app, "/api/goods_category/add")
+  CROW_ROUTE(app, "/api/goods_category/create")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsCategoryService::create(req.body);
       });

@@ -54,3 +54,29 @@ PromotionRepository::getByPage(count_type page_size, count_type offset) {
 }
 
 count_type PromotionRepository::count() { return _count(); }
+
+id_type PromotionRepository::getInternalId(const std::string &promotion_id) {
+  auto result = utils::DataBaseHelper::execute<id_type>(
+      [&promotion_id](const utils::pooled_conn_ptr_type &conn_) {
+        db::promotion promotion{};
+        auto rows =
+            (*conn_)(select(promotion.id)
+                         .from(promotion)
+                         .where(promotion.promotion_id == promotion_id));
+        return rows.empty() ? 0 : rows.front().id;
+      });
+  return result;
+}
+
+// 获取 external id 用于缓存逆向映射
+std::string PromotionRepository::getExternalId(id_type id) {
+  auto result = utils::DataBaseHelper::execute<std::string>(
+      [id](const utils::pooled_conn_ptr_type &conn_) {
+        db::promotion promotion{};
+        auto rows = (*conn_)(select(promotion.promotion_id)
+                                 .from(promotion)
+                                 .where(promotion.id == id));
+        return rows.empty() ? std::string() : rows.front().promotion_id;
+      });
+  return result;
+}

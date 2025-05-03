@@ -1,9 +1,14 @@
 #pragma once
+// tools
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
+#include <common/global_id_cache.hpp>
 #include <common/uni_define.h>
+// model
 #include <model/db/goods/goods_price.h>
+// third_party
 #include <nlohmann/json.hpp>
+// stl
 #include <string>
 
 // DTO for goods_price table
@@ -16,9 +21,11 @@ struct GoodsPriceDTO {
 
   // JSON serialization/deserialization
   static GoodsPriceDTO from_json(const nlohmann::json &j) {
+    auto &cache = GlobalIdCache::getInstance();
     try {
       return GoodsPriceDTO{
-          .goods_rk_id = j.at("goods_rk_id").get<id_type>(),
+          .goods_rk_id =
+              cache.getInternalId("table", j.at("goods_id").get<std::string>()),
           .price = j.at("price").get<double>(),
           .start_time =
               utils::string_to_time(j.at("start_time").get<std::string>()),
@@ -33,8 +40,9 @@ struct GoodsPriceDTO {
 };
 
 inline void to_json(nlohmann::json &j, const GoodsPriceDTO &goods_price_dto) {
+  auto &cache = GlobalIdCache::getInstance();
   j = nlohmann::json{
-      {"goods_rk_id", goods_price_dto.goods_rk_id},
+      {"goods_id", cache.getExternalId("goods", goods_price_dto.goods_rk_id)},
       {"price", goods_price_dto.price},
       {"start_time", utils::time_to_string(goods_price_dto.start_time)},
       {"note", goods_price_dto.note}};
