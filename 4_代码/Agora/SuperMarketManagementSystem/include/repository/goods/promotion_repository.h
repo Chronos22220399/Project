@@ -26,4 +26,9 @@ public:
   static select_ret_type<PromotionDTO> getByPage(count_type page_size,
                                                  count_type offset);
   static count_type count();
+
+  // 获取 internal id 用于缓存正向映射
+  static id_type getInternalId(const std::string &promotion_id);
+  // 获取 external id 用于缓存逆向映射
+  static std::string getExternalId(id_type id);
 };

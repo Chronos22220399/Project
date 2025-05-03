@@ -63,3 +63,31 @@ GoodsCategoryRepository::getByPage(count_type page_size, count_type offset) {
 }
 
 count_type GoodsCategoryRepository::count() { return _count(); }
+
+// 获取 internal id 用于缓存正向映射
+id_type
+GoodsCategoryRepository::getInternalId(const std::string &goods_category_id) {
+  auto result = utils::DataBaseHelper::execute<id_type>(
+      [&goods_category_id](const utils::pooled_conn_ptr_type &conn_) {
+        db::goods_category goods_category{};
+        auto rows = (*conn_)(
+            select(goods_category.id)
+                .from(goods_category)
+                .where(goods_category.goods_category_id == goods_category_id));
+        return rows.empty() ? 0 : rows.front().id;
+      });
+  return result;
+}
+
+// 获取 external id 用于缓存逆向映射
+std::string GoodsCategoryRepository::getExternalId(id_type id) {
+  auto result = utils::DataBaseHelper::execute<std::string>(
+      [id](const utils::pooled_conn_ptr_type &conn_) {
+        db::goods_category goods_category{};
+        auto rows = (*conn_)(select(goods_category.goods_category_id)
+                                 .from(goods_category)
+                                 .where(goods_category.id == id));
+        return rows.empty() ? std::string() : rows.front().goods_category_id;
+      });
+  return result;
+}

@@ -2,19 +2,18 @@
 #include <service/goods/goods_service.h>
 
 void GoodsController::registerRoutes(crow::SimpleApp &app) {
-  // add goods
-  CROW_ROUTE(app, "/api/goods/add")
+  // MARK: create
+  CROW_ROUTE(app, "/api/goods/create")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsService::create(req.body);
       });
 
-  // get goods
+  // MARK: read
   CROW_ROUTE(app, "/api/goods/get_by_page")
       .methods("POST"_method)([](const crow::request &req) {
         return GoodsService::getByPage(req.body);
       });
 
-  // get all goods
   CROW_ROUTE(app, "/api/goods/get_all")
       .methods("GET"_method)(
           [](const crow::request &req) { return GoodsService::getAll(); });

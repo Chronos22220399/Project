@@ -2,7 +2,7 @@
 #include <service/common/unit_service.h>
 
 void UnitController::registerRoutes(crow::SimpleApp &app) {
-  CROW_ROUTE(app, "/api/unit/add")
+  CROW_ROUTE(app, "/api/unit/create")
       .methods("POST"_method)([](const crow::request &req) {
         return UnitService::create(req.body);
       });

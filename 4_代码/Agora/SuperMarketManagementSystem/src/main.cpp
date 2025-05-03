@@ -42,7 +42,12 @@ int main() {
   // regist goods
   cache.registForward("goods", &GoodsRepository::getInternalId);
   cache.registReverse("goods", &GoodsRepository::getExternalId);
-
+  // regist goods_category
+  cache.registForward("goods_category", &GoodsRepository::getInternalId);
+  cache.registReverse("goods_category", &GoodsRepository::getExternalId);
+  // regist promotion
+  cache.registForward("promotion", &PromotionRepository::getInternalId);
+  cache.registReverse("promotion", &PromotionRepository::getExternalId);
   // regist warehouse
   cache.registForward("warehouse", &WarehouseRepository::getInternalId);
   cache.registReverse("warehouse", &WarehouseRepository::getExternalId);

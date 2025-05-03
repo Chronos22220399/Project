@@ -1,8 +1,13 @@
+// tools
 #include <common/common_utils.hpp>
+#include <common/global_id_cache.hpp>
+// repo
+#include <repository/goods/goods_repository.h>
+// service
+#include <service/goods/goods_service.h>
+// third_party
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
-#include <repository/goods/goods_repository.h>
-#include <service/goods/goods_service.h>
 
 using json = nlohmann::json;
 
@@ -10,6 +15,7 @@ const std::vector<std::string> required_fields = {
     "goods_name",      "category_rk_id", "supplier_rk_id", "unit_rk_id",
     "shelf_life_days", "barcode",        "image_url",      "description"};
 
+// MARK: create
 crow::response GoodsService::create(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
@@ -20,9 +26,16 @@ crow::response GoodsService::create(const std::string &body) {
   goods_dto.goods_id = utils::create_id("G");
 
   bool success = GoodsRepository::create(goods_dto);
-  return success ? crow::response(200) : crow::response(500);
+
+  if (success) {
+    auto &cache = GlobalIdCache::getInstance();
+    cache.update("goods", goods_dto.goods_id, goods_dto.id);
+    return crow::response(200);
+  }
+  return crow::response(500);
 }
 
+// MARK: read
 crow::response GoodsService::getAll() {
   auto goods_list = GoodsRepository::getAll();
   try {
@@ -38,10 +51,6 @@ crow::response GoodsService::getAll() {
   }
 }
 
-// method: GET
-// params:
-// page: int = default 1
-// page_size: int = default 10
 crow::response GoodsService::getByPage(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);

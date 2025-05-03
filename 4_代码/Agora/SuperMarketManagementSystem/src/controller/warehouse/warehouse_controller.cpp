@@ -2,7 +2,7 @@
 #include <service/warehouse/warehouse_service.h>
 
 void WarehouseController::registerRoutes(crow::SimpleApp &app) {
-  CROW_ROUTE(app, "/api/warehouse/add")
+  CROW_ROUTE(app, "/api/warehouse/create")
       .methods("POST"_method)([](const crow::request &req) {
         return WarehouseService::create(req.body);
       });
