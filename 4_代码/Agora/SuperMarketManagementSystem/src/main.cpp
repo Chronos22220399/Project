@@ -1,12 +1,19 @@
+// stl
 #include <chrono>
-#include <common/global_id_cache.hpp>
-#include <crow.h>
 #include <future>
 #include <iostream>
+#include <vector>
+// third_party
+#include <crow.h>
+// tools
+#include <common/global_id_cache.hpp>
+// repos
+#include <repository/goods/goods_category_repository.h>
+#include <repository/goods/goods_repository.h>
 #include <repository/goods/promotion_repository.h>
 #include <repository/warehouse/warehouse_repository.h>
+// router
 #include <router/init_router.h>
-#include <vector>
 using namespace std;
 
 // void insert_test_data() {
@@ -51,6 +58,9 @@ int main() {
   // regist warehouse
   cache.registForward("warehouse", &WarehouseRepository::getInternalId);
   cache.registReverse("warehouse", &WarehouseRepository::getExternalId);
+  // regist
+  // regist supplier
+  // cache.registForward("supplier", &Supplier)
 
   // 先确保测试数据存在
   // const std::string wh_id = "WH-d337cae7-d53b-4be0-9e5d-8de553b65a14";
@@ -77,7 +87,7 @@ void testWarehouseCreation() {
 void testGoodsCreation() {
   GoodsDTO goods{
       .goods_id = utils::create_id("G-"),
-      .category_rk_id = 0,
+      .goods_category_rk_id = 0,
       .goods_name = "Sample Goods",
       .shelf_life_days = 10,
       .barcode = "123",

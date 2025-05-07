@@ -13,7 +13,10 @@
  */
 
 /// @brief 唯一标识符类型（通常用于数据库中的主键 ID）
-using id_type = long int;
+using in_id_type = long int;
+
+/// @brief 唯一标识符类型（用于外部使用的 ID）
+using ex_id_type = std::string;
 
 /// @brief 日期计数类型（用于表示天数等时间间隔）
 using date_cnt_type = long int;

@@ -5,10 +5,11 @@ class GoodsRepository : protected model::GenericModel<GoodsDTO, db::goods> {
 public:
   // 通用 CRUD（internal）
   static insert_ret_type create(const GoodsDTO &goods_dto);
-  static select_ret_type<GoodsDTO> getById(id_type id);
-  static update_ret_type updateByGoodsId(id_type id, const GoodsDTO &goods_dto);
-  static delete_ret_type removeById(id_type id);
-  static bool existsById(id_type id);
+  static select_ret_type<GoodsDTO> getById(in_id_type id);
+  static update_ret_type updateByGoodsId(in_id_type id,
+                                         const GoodsDTO &goods_dto);
+  static delete_ret_type removeById(in_id_type id);
+  static bool existsById(in_id_type id);
 
   // 面向业务 CRUD（external）
   static select_ret_type<GoodsDTO> getByGoodsId(const std::string &goods_id);
@@ -29,7 +30,7 @@ public:
   getGoodsDetailInfoByGoodsId(const std::string &goods_id);
 
   // 获取 internal id 用于缓存正向映射
-  static id_type getInternalId(const std::string &goods_id);
+  static in_id_type getInternalId(const std::string &goods_id);
   // 获取 external id 用于缓存逆向映射
-  static std::string getExternalId(id_type id);
+  static std::string getExternalId(in_id_type id);
 };

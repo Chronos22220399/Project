@@ -42,18 +42,18 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
     };
-    struct category_rk_id
+    struct goods_category_rk_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "category_rk_id";
+        static constexpr const char _literal[] =  "goods_category_rk_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T category_rk_id;
-            T& operator()() { return category_rk_id; }
-            const T& operator()() const { return category_rk_id; }
+            T goods_category_rk_id;
+            T& operator()() { return goods_category_rk_id; }
+            const T& operator()() const { return goods_category_rk_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::can_be_null>;
@@ -175,7 +175,7 @@ namespace db
   struct goods: sqlpp::table_t<goods,
                goods_::id,
                goods_::goods_id,
-               goods_::category_rk_id,
+               goods_::goods_category_rk_id,
                goods_::supplier_rk_id,
                goods_::unit_rk_id,
                goods_::goods_name,

@@ -5,20 +5,21 @@ insert_ret_type WarehouseRepository::create(const WarehouseDTO &warehouse_dto) {
   return _insert(warehouse_dto);
 }
 
-select_ret_type<WarehouseDTO> WarehouseRepository::getById(id_type id) {
+select_ret_type<WarehouseDTO> WarehouseRepository::getById(in_id_type id) {
   return _select(db::warehouse{}.id == id);
 }
 
 update_ret_type
-WarehouseRepository::updateById(id_type id, const WarehouseDTO &warehouse_dto) {
+WarehouseRepository::updateById(in_id_type id,
+                                const WarehouseDTO &warehouse_dto) {
   return _update(warehouse_dto, db::warehouse{}.id == id);
 }
 
-delete_ret_type WarehouseRepository::removeById(id_type id) {
+delete_ret_type WarehouseRepository::removeById(in_id_type id) {
   return _remove(db::warehouse{}.id == id);
 }
 
-bool WarehouseRepository::existsById(id_type id) {
+bool WarehouseRepository::existsById(in_id_type id) {
   return _exists(db::warehouse{}.id == id);
 }
 
@@ -74,8 +75,8 @@ WarehouseRepository::getByPage(count_type page_size, count_type offset) {
 count_type WarehouseRepository::count() { return _count(); }
 
 // 获取 internal id 用于缓存映射
-id_type WarehouseRepository::getInternalId(const std::string &warehouse_id) {
-  auto result = utils::DataBaseHelper::execute<id_type>(
+in_id_type WarehouseRepository::getInternalId(const std::string &warehouse_id) {
+  auto result = utils::DataBaseHelper::execute<in_id_type>(
       [&warehouse_id](const utils::pooled_conn_ptr_type &conn_) {
         db::warehouse warehouse{};
         auto rows =
@@ -88,7 +89,7 @@ id_type WarehouseRepository::getInternalId(const std::string &warehouse_id) {
 }
 
 // 获取 external id 用于缓存映射
-std::string WarehouseRepository::getExternalId(id_type id) {
+std::string WarehouseRepository::getExternalId(in_id_type id) {
   auto result = utils::DataBaseHelper::execute<std::string>(
       [id](const utils::pooled_conn_ptr_type &conn_) {
         db::warehouse warehouse{};
