@@ -6,20 +6,21 @@ GoodsCategoryRepository::create(const GoodsCategoryDTO &goods_category_dto) {
   return _insert(goods_category_dto);
 }
 
-select_ret_type<GoodsCategoryDTO> GoodsCategoryRepository::getById(id_type id) {
+select_ret_type<GoodsCategoryDTO>
+GoodsCategoryRepository::getById(in_id_type id) {
   return _select(db::goods_category{}.id == id);
 }
 
 update_ret_type GoodsCategoryRepository::updateById(
-    id_type id, const GoodsCategoryDTO &goods_category_dto) {
+    in_id_type id, const GoodsCategoryDTO &goods_category_dto) {
   return _update(goods_category_dto, db::goods_category{}.id == id);
 }
 
-delete_ret_type GoodsCategoryRepository::removeById(id_type id) {
+delete_ret_type GoodsCategoryRepository::removeById(in_id_type id) {
   return _remove(db::goods_category{}.id == id);
 }
 
-bool GoodsCategoryRepository::existsById(id_type id) {
+bool GoodsCategoryRepository::existsById(in_id_type id) {
   return _exists(db::goods_category{}.id == id);
 }
 
@@ -65,9 +66,9 @@ GoodsCategoryRepository::getByPage(count_type page_size, count_type offset) {
 count_type GoodsCategoryRepository::count() { return _count(); }
 
 // 获取 internal id 用于缓存正向映射
-id_type
+in_id_type
 GoodsCategoryRepository::getInternalId(const std::string &goods_category_id) {
-  auto result = utils::DataBaseHelper::execute<id_type>(
+  auto result = utils::DataBaseHelper::execute<in_id_type>(
       [&goods_category_id](const utils::pooled_conn_ptr_type &conn_) {
         db::goods_category goods_category{};
         auto rows = (*conn_)(
@@ -80,7 +81,7 @@ GoodsCategoryRepository::getInternalId(const std::string &goods_category_id) {
 }
 
 // 获取 external id 用于缓存逆向映射
-std::string GoodsCategoryRepository::getExternalId(id_type id) {
+std::string GoodsCategoryRepository::getExternalId(in_id_type id) {
   auto result = utils::DataBaseHelper::execute<std::string>(
       [id](const utils::pooled_conn_ptr_type &conn_) {
         db::goods_category goods_category{};

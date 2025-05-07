@@ -5,20 +5,20 @@ insert_ret_type UnitRepository::create(const UnitDTO &unit_dto) {
   return _insert(unit_dto);
 }
 
-select_ret_type<UnitDTO> UnitRepository::getById(id_type id) {
+select_ret_type<UnitDTO> UnitRepository::getById(in_id_type id) {
   return _select(db::unit{}.id == id);
 }
 
-update_ret_type UnitRepository::updateById(id_type id,
+update_ret_type UnitRepository::updateById(in_id_type id,
                                            const UnitDTO &unit_dto) {
   return _update(unit_dto, db::unit{}.id == id);
 }
 
-delete_ret_type UnitRepository::removeById(id_type id) {
+delete_ret_type UnitRepository::removeById(in_id_type id) {
   return _remove(db::unit{}.id == id);
 }
 
-bool UnitRepository::existsById(id_type id) {
+bool UnitRepository::existsById(in_id_type id) {
   return _exists(db::unit{}.id == id);
 }
 

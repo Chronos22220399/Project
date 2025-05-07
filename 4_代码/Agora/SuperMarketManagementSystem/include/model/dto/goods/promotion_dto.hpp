@@ -8,7 +8,7 @@
 
 // DTO for promotion table
 struct PromotionDTO {
-  id_type id = 0;
+  in_id_type id = 0;
   std::string promotion_id = "";
   std::string promotion_name = "";
   std::string description = "";

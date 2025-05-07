@@ -13,8 +13,8 @@
 
 // DTO for goods_price table
 struct GoodsPriceDTO {
-  id_type id = 0;
-  id_type goods_rk_id = 0;
+  in_id_type id = 0;
+  in_id_type goods_rk_id = 0;
   double price = 0.0;
   datetime_type start_time = {};
   std::string note = "";
