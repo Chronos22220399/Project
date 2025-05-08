@@ -7,11 +7,11 @@ class WarehouseRepository
 public:
   // 通用 CRUD（internal）
   static insert_ret_type create(const WarehouseDTO &warehouse_dto);
-  static select_ret_type<WarehouseDTO> getById(id_type id);
-  static update_ret_type updateById(id_type id,
+  static select_ret_type<WarehouseDTO> getById(in_id_type id);
+  static update_ret_type updateById(in_id_type id,
                                     const WarehouseDTO &warehouse_dto);
-  static delete_ret_type removeById(id_type id);
-  static bool existsById(id_type id);
+  static delete_ret_type removeById(in_id_type id);
+  static bool existsById(in_id_type id);
 
   // 面向业务 CRUD（external）
   static select_ret_type<WarehouseDTO>
@@ -35,7 +35,7 @@ public:
   static count_type count();
 
   // 获取 id 用于缓存映射
-  static id_type getInternalId(const std::string &warehouse_id);
+  static in_id_type getInternalId(const std::string &warehouse_id);
   // 获取 external id 用于缓存映射
-  static std::string getExternalId(id_type id);
+  static std::string getExternalId(in_id_type id);
 };

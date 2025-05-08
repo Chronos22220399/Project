@@ -1,4 +1,5 @@
 // tools
+
 #include <common/common_utils.hpp>
 // third_party
 #include <fmt/format.h>
@@ -28,7 +29,7 @@ crow::response InventoryService::create(const std::string &body) {
 
   auto goods_id = j.at("goods_id").get<std::string>();
   auto warehouse_id = j.at("warehouse_id").get<std::string>();
-  auto quantity = j.at("quantity").get<id_type>();
+  auto quantity = j.at("quantity").get<in_id_type>();
 
   auto &cache = GlobalIdCache::getInstance();
   auto goods_rk_id = cache.getInternalId("goods", goods_id);

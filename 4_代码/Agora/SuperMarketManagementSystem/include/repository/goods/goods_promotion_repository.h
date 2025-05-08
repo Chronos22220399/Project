@@ -7,21 +7,22 @@ class GoodsPromotionRepository
 public:
   // 通用 CRUD（internal）
   static insert_ret_type create(const GoodsPromotionDTO &goods_promotion_dto);
-  static select_ret_type<GoodsPromotionDTO> getById(id_type id);
+  static select_ret_type<GoodsPromotionDTO> getById(in_id_type id);
   static update_ret_type
-  updateById(id_type id, const GoodsPromotionDTO &goods_promotion_dto);
-  static delete_ret_type removeById(id_type id);
-  static bool existsById(id_type id);
+  updateById(in_id_type id, const GoodsPromotionDTO &goods_promotion_dto);
+  static delete_ret_type removeById(in_id_type id);
+  static bool existsById(in_id_type id);
 
   // 面向业务 CRUD（external）
-  static select_ret_type<GoodsPromotionDTO> getByGoodsRKId(id_type goods_rk_id);
   static select_ret_type<GoodsPromotionDTO>
-  getByPromotionRKId(id_type promotion_rk_id);
+  getByGoodsRKId(in_id_type goods_rk_id);
+  static select_ret_type<GoodsPromotionDTO>
+  getByPromotionRKId(in_id_type promotion_rk_id);
   static update_ret_type
-  updateByGoodsRKId(id_type goods_rk_id,
+  updateByGoodsRKId(in_id_type goods_rk_id,
                     const GoodsPromotionDTO &goods_promotion_dto);
-  static delete_ret_type removeByGoodRKsId(id_type goods_rk_id);
-  static bool existsByGoodsRKId(id_type goods_rk_id);
+  static delete_ret_type removeByGoodRKsId(in_id_type goods_rk_id);
+  static bool existsByGoodsRKId(in_id_type goods_rk_id);
 
   // other
   static select_ret_type<GoodsPromotionDTO> getAll();

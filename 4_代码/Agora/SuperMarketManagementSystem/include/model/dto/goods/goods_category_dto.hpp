@@ -19,11 +19,11 @@
 
 // GoodsCategoryDTO 对应 category 表
 struct GoodsCategoryDTO {
-  id_type id;
+  in_id_type id;
   std::string goods_category_id;
   std::string goods_category_name;
   std::string goods_category_description;
-  id_type parent_category_id = 0; // 0 表示 NULL
+  in_id_type parent_category_id = 0; // 0 表示 NULL
 
   // 从 JSON 中反序列化 GoodsCategoryDTO
   static GoodsCategoryDTO from_json(const nlohmann::json &j) {
@@ -34,7 +34,7 @@ struct GoodsCategoryDTO {
           .goods_category_name = j.at("goods_category_name").get<std::string>(),
           .goods_category_description =
               j.value("goods_category_description", ""), // 默认值为空字符串
-          .parent_category_id = j.at("parent_category_id").get<id_type>()};
+          .parent_category_id = j.at("parent_category_id").get<in_id_type>()};
     } catch (const std::exception &e) {
       std::cerr << "[from_json error] " << e.what() << "\n"
                 << "Input JSON: " << j.dump(2) << std::endl;
