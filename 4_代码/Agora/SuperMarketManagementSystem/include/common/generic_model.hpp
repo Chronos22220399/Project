@@ -129,10 +129,14 @@ public:
     return utils::DataBaseHelper::execute<insert_ret_type>(
         [](const pooled_conn_ptr_type &conn, T &&model_) {
           Table table_{};
-          (*conn)(
+          // 插入数据
+          auto result = (*conn)(
               insert_into(table_).set(assign_table<Reflect, T, Table, Start>(
                   std::forward<T>(model_), std::forward<Table>(table_))));
-          return true;
+
+          // 获取最后插入的自增 ID（关键修改部分）
+          in_id_type last_insert_id = result;
+          return insert_ret_type{last_insert_id};
         },
         std::forward<T>(model));
   }

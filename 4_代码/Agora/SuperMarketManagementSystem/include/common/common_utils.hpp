@@ -177,6 +177,7 @@ inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {
  *
  * @param str 时间字符串，格式为 "YYYY-MM-DD HH:MM:SS.ffffff"。
  * @return datetime_type 转换后的时间点。
+ * @throws std::invalid_argument 如果时间字符串格式非法。
  */
 inline datetime_type string_to_time(const std::string &str) {
   std::tm tm = {};
@@ -185,6 +186,9 @@ inline datetime_type string_to_time(const std::string &str) {
 
   // 解析基础时间
   iss >> std::get_time(&tm, "%Y-%m-%d %H:%M:%S");
+  if (iss.fail()) {
+    throw std::invalid_argument("Invalid time format: " + str);
+  }
 
   // 处理微秒部分
   char dot;

@@ -13,5 +13,5 @@ public:
   static crow::response getByPage(const std::string &body);
   static crow::response getAll();
   // update
-  static crow::response update(const std::string &body);
+  static crow::response updateByGoodsId(const std::string &body);
 };
