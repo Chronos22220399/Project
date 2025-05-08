@@ -1,0 +1,35 @@
+/* 新增在文件最顶部：定义全局 CSS 变量 */
+:root {
+  --bg-color: #ffffff;
+  /* 默认亮色背景 */
+  --text-color: #213547;
+  /* 默认亮色文字 */
+  --button-bg: #f9f9f9;
+  /* 默认按钮背景 */
+}
+
+/* 暗色主题 */
+.dark {
+  --bg-color: #121212;
+  /* 暗色背景 */
+  --text-color: #ffffff;
+  /* 暗色文字 */
+  --button-bg: #1a1a1a;
+  /* 暗色按钮背景 */
+}
+
+/* 修改已有的 :root 定义 */
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: light dark;
+  color: var(--text-color);
+  /* 使用 CSS 变量 */
+  background-color: var(--bg-color);
+  /* 使用 CSS 变量 */
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
