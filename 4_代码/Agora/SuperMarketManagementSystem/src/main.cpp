@@ -76,7 +76,7 @@ void testWarehouseCreation() {
                          .warehouse_name = "Sample Warehouse",
                          .location = "Beijing"};
 
-  bool createSuccess = WarehouseRepository::create(warehouse);
+  bool createSuccess = WarehouseRepository::create(warehouse).has_value();
   cout << "创建仓库结果: " << boolalpha << createSuccess << endl;
 
   bool updateSuccess = WarehouseRepository::updateByWarehouseId(
@@ -95,7 +95,7 @@ void testGoodsCreation() {
       .description = "This is a sample goods description.",
   };
 
-  bool createSuccess = GoodsRepository::create(goods);
+  bool createSuccess = GoodsRepository::create(goods).has_value();
   cout << "创建商品结果: " << boolalpha << createSuccess << endl;
 
   bool updateSuccess = GoodsRepository::updateByGoodsId(goods.goods_id, goods);

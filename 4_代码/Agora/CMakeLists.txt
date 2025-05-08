@@ -15,6 +15,7 @@ set(COMPILE_OPTIONS
     -O0 -g -Wall # 打开所有警告
     # -Wextra      # 打开额外的警告 -Werror # 将警告视为错误
     -pedantic # 启用严格的 C++ 标准
+    -Wno-cpp
 )
 
 project(

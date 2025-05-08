@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS goods (
     barcode TEXT,
     image_url TEXT,
     description TEXT,
-    FOREIGN KEY (category_rk_id) REFERENCES goods_category(id),
+    FOREIGN KEY (goods_category_rk_id) REFERENCES goods_category(id),
     FOREIGN KEY (supplier_rk_id) REFERENCES supplier(id),
     FOREIGN KEY (unit_rk_id) REFERENCES unit(id)
 );

@@ -50,8 +50,6 @@ void GoodsController::registerRoutes(crow::SimpleApp &app) {
   //     "current_page": 2,    // 当前页码
   //     "page_size": 20,      // 实际使用的分页大小
   //     "total_pages": 12,    // 总页数
-  //     "has_prev": true,     // 是否有上一页
-  //     "has_next": true,     // 是否有下一页
   //     "items": [{
   //       "goods_id": "62d1a9d8e7b4b7712a6e3d7a",  // 外部ID(string)
   //       "goods_name": "商品示例",

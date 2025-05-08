@@ -10,6 +10,8 @@ file(
 
 option(EnableTest "Enable unit tests" OFF)
 
+add_compile_options(-Wno-cpp)
+
 find_package(fmt REQUIRED)
 find_package(SQLite3 REQUIRED)
 find_package(Sqlpp11 REQUIRED)

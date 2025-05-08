@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <optional>
 #include <sqlpp11/data_types.h>
 #include <vector>
 
@@ -31,7 +32,7 @@ using datetime_type = sqlpp::chrono::microsecond_point;
 template <typename Model> using select_ret_type = std::vector<Model>;
 
 /// @brief 插入操作返回类型（表示是否成功）
-using insert_ret_type = bool;
+using insert_ret_type = std::optional<in_id_type>;
 
 /// @brief 更新操作返回类型（表示是否成功）
 using update_ret_type = bool;
@@ -102,6 +103,11 @@ using delete_ret_type = bool;
     }                                                                          \
   }
 
+#define SET_SUC_JSON_DATA(data)                                                \
+  nlohmann::json {                                                             \
+    {"code", 200}, { "data", data }                                            \
+  }
+
 /**
  * @brief 创建一个包含错误代码和错误信息的 HTTP 响应。
  *
@@ -115,6 +121,9 @@ using delete_ret_type = bool;
 
 #define SET_EMPTY_DATA_RESPONSE(status_code)                                   \
   crow::response(status_code, SET_ONLYCODE_JSON(status_code).dump())
+
+#define SET_SUC_DATA_RESPONSE(data)                                            \
+  crow::response(200, SET_SUC_JSON_DATA(data).dump())
 
 /**
  * @brief 尝试解析 body 中的 JSON，如果解析失败则返回 400 错误。

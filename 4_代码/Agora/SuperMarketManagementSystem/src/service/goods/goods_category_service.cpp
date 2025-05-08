@@ -1,4 +1,5 @@
 #include <common/common_utils.hpp>
+#include <common/global_id_cache.hpp>
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
 #include <repository/goods/goods_category_repository.h>
@@ -14,7 +15,7 @@ const std::vector<std::string> required_fields = {
 // @param body - 请求体（JSON字符串），包含 category_name, category_description,
 // parent_category_id
 // @return crow::response
-//   成功: 200, JSON 包含 goods_category_id 和 create_time
+//   成功: 201, JSON 包含 goods_category_id 和 create_time
 //   失败: 400, JSON解析或字段缺失; 500, 数据库错误
 crow::response GoodsCategoryService::create(const std::string &body) {
   nlohmann::json j;
@@ -26,11 +27,17 @@ crow::response GoodsCategoryService::create(const std::string &body) {
     auto gc_dto = GoodsCategoryDTO::from_json(j);
     gc_dto.goods_category_id = utils::create_id("GC"); // 生成外部ID
 
-    if (GoodsCategoryRepository::create(gc_dto)) {
+    auto insert_res = GoodsCategoryRepository::create(gc_dto);
+    if (insert_res) {
       json res = {{"code", 201},
                   {"data",
                    {{"goods_category_id", gc_dto.goods_category_id},
                     {"create_time", utils::get_current_iso8601()}}}};
+
+      auto &cache = GlobalIdCache::getInstance();
+      cache.update("goods_category", gc_dto.goods_category_id,
+                   insert_res.value());
+
       return crow::response(201, res.dump());
     }
 
@@ -50,11 +57,12 @@ crow::response GoodsCategoryService::getAll() {
   try {
     auto goods_category_list = GoodsCategoryRepository::getAll();
 
-    nlohmann::json res = {{"success", true},
-                          {"total", goods_category_list.size()},
-                          {"data", goods_category_list}};
+    nlohmann::json data = {"data",
+                           {{"success", true},
+                            {"total", goods_category_list.size()},
+                            {"items", goods_category_list}}};
 
-    return crow::response(200, res.dump());
+    return SET_SUC_DATA_RESPONSE(data);
   } catch (const std::exception &e) {
     return SET_ERR_RESPONSE(500, e.what());
   }
@@ -83,13 +91,14 @@ crow::response GoodsCategoryService::getByPage(const std::string &body) {
     auto goods_category_list =
         GoodsCategoryRepository::getByPage(page_size, offset);
 
-    nlohmann::json res = {{"success", true},
-                          {"total", total},
-                          {"page", page},
-                          {"page_size", page_size},
-                          {"data", goods_category_list}};
+    nlohmann::json data = {"data",
+                           {{"success", true},
+                            {"total", total},
+                            {"page", page},
+                            {"page_size", page_size},
+                            {"items", goods_category_list}}};
 
-    return crow::response(200, res.dump());
+    return SET_SUC_DATA_RESPONSE(data);
   } catch (const std::exception &e) {
     return SET_ERR_RESPONSE(500, e.what());
   }
