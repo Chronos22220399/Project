@@ -276,4 +276,15 @@ bool in(const Elem &elem, const Container &container) {
   return false;
 }
 
+inline std::string get_current_iso8601() {
+  auto now = std::chrono::system_clock::now();
+  auto in_time_t = std::chrono::system_clock::to_time_t(now);
+
+  std::tm tm_buf;
+  gmtime_r(&in_time_t, &tm_buf);
+
+  std::stringstream ss;
+  ss << std::put_time(&tm_buf, "%Y-%m-%dT%H:%M:%SZ");
+  return ss.str();
+}
 } // namespace utils

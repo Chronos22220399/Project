@@ -8,7 +8,7 @@
 
 // DTO for unit table
 struct UnitDTO {
-  id_type id = 0;
+  in_id_type id = 0;
   std::string unit_id = "";
   std::string unit_name = "";
 

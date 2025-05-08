@@ -9,7 +9,7 @@
 // DTO for warehouse table
 
 struct WarehouseDTO {
-  id_type id = 0;
+  in_id_type id = 0;
   std::string warehouse_id = "";
   std::string warehouse_name = "";
   std::string location = "";

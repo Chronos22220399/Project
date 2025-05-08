@@ -6,10 +6,10 @@ class UnitRepository : public model::GenericModel<UnitDTO, db::unit> {
 public:
   // 通用 CRUD（internal）
   static insert_ret_type create(const UnitDTO &unit_dto);
-  static select_ret_type<UnitDTO> getById(id_type id);
-  static update_ret_type updateById(id_type id, const UnitDTO &unit_dto);
-  static delete_ret_type removeById(id_type id);
-  static bool existsById(id_type id);
+  static select_ret_type<UnitDTO> getById(in_id_type id);
+  static update_ret_type updateById(in_id_type id, const UnitDTO &unit_dto);
+  static delete_ret_type removeById(in_id_type id);
+  static bool existsById(in_id_type id);
 
   // 面向业务 CRUD（external）
   static select_ret_type<UnitDTO> getByUnitId(const std::string &unit_id);

@@ -9,73 +9,63 @@ using json = nlohmann::json;
 const std::vector<std::string> required_fields = {
     "category_name", "category_description", "parent_category_id"};
 
+// MARK: 商品分类创建服务
+//
+// @param body - 请求体（JSON字符串），包含 category_name, category_description,
+// parent_category_id
+// @return crow::response
+//   成功: 200, JSON 包含 goods_category_id 和 create_time
+//   失败: 400, JSON解析或字段缺失; 500, 数据库错误
 crow::response GoodsCategoryService::create(const std::string &body) {
   nlohmann::json j;
-  CHECK_AND_GET_JSON(j);
+  CHECK_AND_GET_JSON(j); // 检查并解析JSON，失败自动返回400
 
-  CHECK_REQUIRED_FIELDS(j, required_fields);
+  CHECK_REQUIRED_FIELDS(j, required_fields); // 检查必填字段
 
-  auto gc_dto = GoodsCategoryDTO::from_json(j);
-  gc_dto.goods_category_id = utils::create_id("GC");
+  try {
+    auto gc_dto = GoodsCategoryDTO::from_json(j);
+    gc_dto.goods_category_id = utils::create_id("GC"); // 生成外部ID
 
-  bool success = GoodsCategoryRepository::create(gc_dto);
-  return success ? crow::response(200) : crow::response(500);
+    if (GoodsCategoryRepository::create(gc_dto)) {
+      json res = {{"code", 201},
+                  {"data",
+                   {{"goods_category_id", gc_dto.goods_category_id},
+                    {"create_time", utils::get_current_iso8601()}}}};
+      return crow::response(201, res.dump());
+    }
+
+    return SET_ERR_RESPONSE(500, "DB_ERROR");
+
+  } catch (const std::exception &e) {
+    return SET_ERR_RESPONSE(500, e.what());
+  }
 }
 
-crow::response
-GoodsCategoryService::getByGoodsCategoryId(const std::string &body) {
-  return crow::response(501, "Not implemet yet.");
+// MARK: 商品分类-获取全部分类服务
+//
+// @return crow::response
+//   成功: 200, JSON 包含全部分类信息（含success, total, data）
+//   失败: 500, 数据库查询异常
+crow::response GoodsCategoryService::getAll() {
+  try {
+    auto goods_category_list = GoodsCategoryRepository::getAll();
+
+    nlohmann::json res = {{"success", true},
+                          {"total", goods_category_list.size()},
+                          {"data", goods_category_list}};
+
+    return crow::response(200, res.dump());
+  } catch (const std::exception &e) {
+    return SET_ERR_RESPONSE(500, e.what());
+  }
 }
 
-crow::response
-GoodsCategoryService::removeByGoodsCategoryId(const std::string &body) {
-  nlohmann::json j;
-  CHECK_AND_GET_JSON(j);
-
-  // 检测是否存在 goods_category_id 字段
-  CHECK_REQUIRED_FIELD(j, "goods_category_id");
-
-  auto goods_category_id = j.at("goods_category_id").get<std::string>();
-
-  // 检查是否存在 goods_category_id 所对应的商品分类
-  bool category_not_exists =
-      !GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id);
-  if (category_not_exists)
-    return crow::response(404, "Goods category not found.");
-
-  // 删除商品分类
-  bool success =
-      GoodsCategoryRepository::removeByGoodsCategoryId(goods_category_id);
-  return success ? crow::response(200) : crow::response(500);
-}
-
-crow::response
-GoodsCategoryService::updateByGoodsCategoryId(const std::string &body) {
-  nlohmann::json j;
-  CHECK_AND_GET_JSON(j);
-
-  CHECK_REQUIRED_FIELDS(j, required_fields);
-
-  auto goods_category_id = j.at("goods_category_id").get<std::string>();
-
-  // 检查是否存在 goods_category_id 所对应的商品分类
-  bool category_not_exists =
-      !GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id);
-  if (category_not_exists)
-    return crow::response(404, "Goods category not found.");
-
-  auto goods_category_dto = GoodsCategoryDTO::from_json(j);
-
-  // 删除商品分类
-  bool success = GoodsCategoryRepository::updateByGoodsCategoryId(
-      goods_category_id, goods_category_dto);
-  return success ? crow::response(200) : crow::response(500);
-}
-
-// method: GET
-// params:
-// page: int = default 1
-// page_size: int = default 10
+// MARK: 商品分类-分页查询服务
+//
+// @param body - 请求体（JSON字符串），可选包含 page, page_size 字段
+// @return crow::response
+//   成功: 200, JSON 包含分页后的分类信息（含success, total, page, page_size,
+//   data） 失败: 400, 分页参数非法; 500, 数据库查询异常
 crow::response GoodsCategoryService::getByPage(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
@@ -83,42 +73,91 @@ crow::response GoodsCategoryService::getByPage(const std::string &body) {
   int page = j.value("page", 1);
   int page_size = j.value("page_size", 10);
   if (page <= 0 || page_size <= 0) {
-    return crow::response(400, "Invalid page or page_size");
+    return SET_ERR_RESPONSE(400, "Invalid page or page_size");
   }
 
-  // 分页查询
   auto offset = (page - 1) * page_size;
 
   try {
-    // 获取货物总数
     count_type total = GoodsCategoryRepository::count();
     auto goods_category_list =
         GoodsCategoryRepository::getByPage(page_size, offset);
-    json res;
-    res["success"] = true;
-    res["total"] = total;
-    res["page"] = page;
-    res["page_size"] = page_size;
-    res["data"] = goods_category_list;
+
+    nlohmann::json res = {{"success", true},
+                          {"total", total},
+                          {"page", page},
+                          {"page_size", page_size},
+                          {"data", goods_category_list}};
 
     return crow::response(200, res.dump());
   } catch (const std::exception &e) {
-    LOG("Error: {}", e.what());
-    return crow::response(500, fmt::format("Error: {}", e.what()));
+    return SET_ERR_RESPONSE(500, e.what());
   }
 }
 
-crow::response GoodsCategoryService::getAll() {
-  auto goods_category_list = GoodsCategoryRepository::getAll();
-  try {
-    json res;
-    res["success"] = true;
-    res["total"] = goods_category_list.size();
-    res["data"] = goods_category_list;
+// MARK: 商品分类-删除服务
+//
+// @param body - 请求体（JSON字符串），包含 goods_category_id
+// @return crow::response
+//   成功: 200, 仅返回 code 字段
+//   失败: 400, JSON解析或字段缺失
+//         404, 分类不存在
+//         500, 数据库删除异常
+crow::response
+GoodsCategoryService::removeByGoodsCategoryId(const std::string &body) {
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
 
-    return crow::response(200, res.dump());
-  } catch (const std::exception &e) {
-    LOG("Error: {}", e.what());
-    return crow::response(500, fmt::format("Error: {}", e.what()));
+  // 检查必填字段
+  CHECK_REQUIRED_FIELD(j, "goods_category_id");
+
+  auto goods_category_id = j.at("goods_category_id").get<ex_id_type>();
+
+  // 判断分类是否存在
+  if (!GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id)) {
+    return SET_ERR_RESPONSE(404, "Goods category not found.");
   }
+
+  // 删除分类
+  bool success =
+      GoodsCategoryRepository::removeByGoodsCategoryId(goods_category_id);
+  return success ? SET_EMPTY_DATA_RESPONSE(200)
+                 : SET_ERR_RESPONSE(500, "DB_DELETE_ERROR");
+}
+
+// MARK: 商品分类-更新服务
+//
+// @param body - 请求体（JSON字符串），包含 goods_category_id, category_name,
+// category_description, parent_category_id
+// @return crow::response
+//   成功: 200, 仅返回 code 字段
+//   失败: 400, JSON解析或字段缺失
+//         404, 分类不存在
+//         500, 数据库更新异常
+crow::response
+GoodsCategoryService::updateByGoodsCategoryId(const std::string &body) {
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
+
+  CHECK_REQUIRED_FIELDS(j, required_fields);
+  CHECK_REQUIRED_FIELD(j, "goods_category_id");
+
+  auto goods_category_id = j.at("goods_category_id").get<ex_id_type>();
+
+  if (!GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id)) {
+    return SET_ERR_RESPONSE(404, "Goods category not found.");
+  }
+
+  auto goods_category_dto = GoodsCategoryDTO::from_json(j);
+
+  bool success = GoodsCategoryRepository::updateByGoodsCategoryId(
+      goods_category_id, goods_category_dto);
+
+  return success ? SET_EMPTY_DATA_RESPONSE(200)
+                 : SET_ERR_RESPONSE(500, "DB_UPDATE_ERROR");
+}
+
+crow::response
+GoodsCategoryService::getByGoodsCategoryId(const std::string &body) {
+  return crow::response(501, "Not implemet yet.");
 }

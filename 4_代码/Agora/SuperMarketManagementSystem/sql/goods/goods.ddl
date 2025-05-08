@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS goods (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     goods_id TEXT UNIQUE NOT NULL,
-    category_rk_id INTEGER,
+    goods_category_rk_id INTEGER,
     supplier_rk_id INTEGER,
     unit_rk_id INTEGER,
     goods_name TEXT NOT NULL,

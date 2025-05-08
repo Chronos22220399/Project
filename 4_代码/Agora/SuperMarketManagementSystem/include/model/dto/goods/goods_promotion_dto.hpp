@@ -8,25 +8,25 @@
 
 // DTO for goods_promotion table
 struct GoodsPromotionDTO {
-  id_type id = 0;
-  id_type goods_rk_id = 0;
-  id_type promotion_rk_id = 0;
+  in_id_type id = 0;
+  in_id_type goods_rk_id = 0;
+  in_id_type promotion_rk_id = 0;
   double discount_rate = 0.0;
   double full_threshold = 0.0;
   double reduce_amount = 0.0;
-  id_type buy_quantity = 0;
+  in_id_type buy_quantity = 0;
   std::string gift_product = "";
 
   // JSON serialization/deserialization
   static GoodsPromotionDTO from_json(const nlohmann::json &j) {
     try {
       return GoodsPromotionDTO{
-          .goods_rk_id = j.at("goods_rk_id").get<id_type>(),
-          .promotion_rk_id = j.at("promotion_id").get<id_type>(),
+          .goods_rk_id = j.at("goods_rk_id").get<in_id_type>(),
+          .promotion_rk_id = j.at("promotion_id").get<in_id_type>(),
           .discount_rate = j.at("discount_rate").get<double>(),
           .full_threshold = j.at("full_threshold").get<double>(),
           .reduce_amount = j.at("reduce_amount").get<double>(),
-          .buy_quantity = j.at("buy_quantity").get<id_type>(),
+          .buy_quantity = j.at("buy_quantity").get<in_id_type>(),
           .gift_product = j.at("gift_product").get<std::string>(),
       };
     } catch (const std::exception &e) {

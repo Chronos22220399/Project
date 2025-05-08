@@ -7,19 +7,19 @@ class InventoryRepository
 public:
   // 通用 CRUD（internal）
   static insert_ret_type create(const InventoryDTO &inventory_dto);
-  static select_ret_type<InventoryDTO> getById(id_type id);
-  static update_ret_type updateById(id_type id,
+  static select_ret_type<InventoryDTO> getById(in_id_type id);
+  static update_ret_type updateById(in_id_type id,
                                     const InventoryDTO &inventory_dto);
-  static delete_ret_type removeById(id_type id);
-  static bool existsById(id_type id);
+  static delete_ret_type removeById(in_id_type id);
+  static bool existsById(in_id_type id);
 
   // 面向业务 CRUD（external）
-  static select_ret_type<InventoryDTO> getByGoodsRKId(id_type goods_rk_id);
+  static select_ret_type<InventoryDTO> getByGoodsRKId(in_id_type goods_rk_id);
   static select_ret_type<InventoryDTO>
-  getByWarehouseRKId(id_type warehouse_rk_id);
-  static update_ret_type updateByGoodsRKId(id_type goods_rk_id,
+  getByWarehouseRKId(in_id_type warehouse_rk_id);
+  static update_ret_type updateByGoodsRKId(in_id_type goods_rk_id,
                                            const InventoryDTO &inventory_dto);
-  static delete_ret_type removeByGoodsRKId(id_type goods_id);
+  static delete_ret_type removeByGoodsRKId(in_id_type goods_id);
 
   // other
   static select_ret_type<InventoryDTO> getAll();
