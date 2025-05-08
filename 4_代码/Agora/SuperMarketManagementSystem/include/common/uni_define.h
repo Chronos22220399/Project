@@ -57,6 +57,65 @@ using delete_ret_type = bool;
   fmt::format("[{}:{}:{}]: {}", __FILE_NAME__, __FUNCTION__, __LINE__,         \
               __VA_ARGS__)
 
+#define SET_ONLYCODE_JSON(status_code)                                         \
+  nlohmann::json {                                                             \
+    {                                                                          \
+      "code", status_code                                                      \
+    }                                                                          \
+  }
+
+/**
+ * @brief 创建一个包含错误代码和错误信息的 JSON 对象。
+ *
+ * @param status_code 错误代码
+ * @param error 错误信息
+ *
+ * @note 使用示例：`auto err_json = SET_ERR_JSON(400, "Invalid Request");`
+ */
+#define SET_ERR_JSON(status_code, error)                                       \
+  nlohmann::json {                                                             \
+    {"code", status_code}, {                                                   \
+      "data", {                                                                \
+        {                                                                      \
+          "error", error                                                       \
+        }                                                                      \
+      }                                                                        \
+    }                                                                          \
+  }
+
+/**
+ * @brief 创建一个包含错误代码、错误信息和详细错误信息的 JSON 对象。
+ *
+ * @param status_code 错误代码
+ * @param error 错误信息
+ * @param error_detail 详细错误信息
+ *
+ * @note 使用示例：`auto err_json = SET_ERR_JSON_WITH_DETAIL(400, "Invalid
+ * Request", "Missing field 'name'");`
+ */
+#define SET_ERR_JSON_WITH_DETAIL(status_code, error, error_detail)             \
+  nlohmann::json {                                                             \
+    {"code", status_code}, {                                                   \
+      "data", {                                                                \
+        {"error", error}, { "detail", error_detail }                           \
+      }                                                                        \
+    }                                                                          \
+  }
+
+/**
+ * @brief 创建一个包含错误代码和错误信息的 HTTP 响应。
+ *
+ * @param status_code HTTP 状态码
+ * @param error 错误信息
+ *
+ * @note 使用示例：`auto response = SET_ERR_RESPONSE(400, "Invalid Request");`
+ */
+#define SET_ERR_RESPONSE(status_code, error)                                   \
+  crow::response(status_code, SET_ERR_JSON(status_code, error).dump())
+
+#define SET_EMPTY_DATA_RESPONSE(status_code)                                   \
+  crow::response(status_code, SET_ONLYCODE_JSON(status_code).dump())
+
 /**
  * @brief 尝试解析 body 中的 JSON，如果解析失败则返回 400 错误。
  *
@@ -71,7 +130,7 @@ using delete_ret_type = bool;
 #define CHECK_AND_GET_JSON(j)                                                  \
   auto j_opt = utils::try_parse_json(body);                                    \
   if (!j_opt)                                                                  \
-    return crow::response(400, "Invalid JSON");                                \
+    return crow::response(400, SET_ERR_JSON(400, "Invalid JSON"));             \
   j = std::move(j_opt.value());
 
 /**
@@ -87,7 +146,8 @@ using delete_ret_type = bool;
  */
 #define CHECK_REQUIRED_FIELD(j, field)                                         \
   if (!(j).contains((field)))                                                  \
-  return crow::response(400, fmt::format("Missing field: {}.", (field)))
+  return crow::response(                                                       \
+      400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field))))
 
 /**
  * @brief 批量检查 JSON 中是否包含所有指定字段，不存在则返回 400 错误。
@@ -104,6 +164,7 @@ using delete_ret_type = bool;
 #define CHECK_REQUIRED_FIELDS(j, container)                                    \
   for (const auto &field : (container)) {                                      \
     if (!(j).contains(field)) {                                                \
-      return crow::response(400, fmt::format("Missing field: {}.", field));    \
+      return crow::response(                                                   \
+          400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field)));   \
     }                                                                          \
   }
