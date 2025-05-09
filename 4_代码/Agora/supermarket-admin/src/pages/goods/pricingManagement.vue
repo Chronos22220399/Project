@@ -1,280 +1,263 @@
 <template>
-    <div class="page-container">
-        <h2>商品价格管理</h2>
+    <div class="goods-price-manager">
+        <h1>商品价格管理</h1>
 
-        <!-- 促销规则管理 -->
-        <div class="promotion-section">
-            <el-input v-model="newPromotion.name" placeholder="输入促销活动名称" class="input-box" />
-            <el-input v-model="newPromotion.discount" type="number" placeholder="输入促销折扣 (%)" class="input-box" />
-            <el-button type="primary" @click="addPromotion">添加折扣促销规则</el-button>
-
-            <!-- 满减规则 -->
-            <el-input v-model="newFullReduction.condition" type="number" placeholder="输入满减条件 (如满100)"
-                class="input-box" />
-            <el-input v-model="newFullReduction.discount" type="number" placeholder="输入满减金额 (如减20)" class="input-box" />
-            <el-button type="primary" @click="addFullReduction">添加满减规则</el-button>
-
-            <el-table :data="promotions" border style="width: 100%">
-                <el-table-column prop="name" label="促销规则"></el-table-column>
-                <el-table-column prop="discount" label="折扣（%）"></el-table-column>
-                <el-table-column label="操作">
-                    <template #default="{ row }">
-                        <el-button type="danger" @click="removePromotion(row)">删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
-
-            <el-table :data="fullReductions" border style="width: 100%">
-                <el-table-column prop="condition" label="满减条件"></el-table-column>
-                <el-table-column prop="discount" label="满减金额"></el-table-column>
-                <el-table-column label="操作">
-                    <template #default="{ row }">
-                        <el-button type="danger" @click="removeFullReduction(row)">删除</el-button>
-                    </template>
-                </el-table-column>
-            </el-table>
+        <!-- 商品价格创建 -->
+        <div class="card">
+            <h2>创建商品价格</h2>
+            <div class="form-grid">
+                <input v-model="goodsId" placeholder="商品ID" />
+                <input v-model="price" type="number" step="0.01" placeholder="价格" />
+                <input v-model="startTime" placeholder="生效时间 (ISO8601格式)" />
+                <input v-model="note" placeholder="备注" />
+                <button class="primary" @click="createPrice">创建价格</button>
+            </div>
         </div>
 
-        <!-- 商品价格表 -->
-        <el-table :data="products" border style="width: 100%">
-            <el-table-column prop="name" label="商品名称"></el-table-column>
-            <el-table-column label="成本价">
-                <template #default="{ row }">
-                    <el-input v-model.number="row.cost" placeholder="输入成本价" size="small" class="cost-input" />
-                </template>
-            </el-table-column>
-            <el-table-column label="促销折扣（%）">
-                <template #default="{ row }">
-                    <el-select v-model="row.promotion" multiple placeholder="选择促销" size="small"
-                        class="promotion-select">
-                        <el-option v-for="promotion in promotions" :key="promotion.name" :label="promotion.name"
-                            :value="promotion.discount"></el-option>
-                    </el-select>
-                </template>
-            </el-table-column>
+        <!-- 商品价格列表 -->
+        <div class="card">
+            <h2>商品价格列表</h2>
+            <ul class="price-list">
+                <li v-for="item in goodsPrices.items" :key="item.goods_price_id" class="price-item">
+                    <div>
+                        <p><strong>商品ID:</strong> {{ item.goods_id }}</p>
+                        <p><strong>价格:</strong> ¥{{ item.price }}</p>
+                        <p><strong>生效时间:</strong> {{ item.start_time }}</p>
+                        <p><strong>备注:</strong> {{ item.note || '—' }}</p>
+                    </div>
+                    <div class="actions">
+                        <button @click="editPrice(item)">修改</button>
+                        <button class="danger" @click="deletePrice(item.goods_price_id)">删除</button>
+                    </div>
+                </li>
+            </ul>
 
-            <el-table-column label="满减规则">
-                <template #default="{ row }">
-                    <el-select v-model="row.fullReduction" multiple placeholder="选择满减规则" size="small"
-                        class="full-reduction-select">
-                        <el-option v-for="fullReduction in fullReductions" :key="fullReduction.condition"
-                            :label="`满${fullReduction.condition}减${fullReduction.discount}`" :value="fullReduction" />
-                    </el-select>
-                </template>
-            </el-table-column>
-
-            <el-table-column label="最终价格">
-                <template #default="{ row }">
-                    <el-input v-model="row.price" placeholder="最终价格" size="small" disabled class="price-input" />
-                </template>
-            </el-table-column>
-            <el-table-column label="操作">
-                <template #default="{ row }">
-                    <el-button type="primary" @click="calculatePrice(row)">计算价格</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+            <!-- 分页控制 -->
+            <div class="pagination" v-if="goodsPrices.total > goodsPrices.page_size">
+                <button @click="prevPage" :disabled="goodsPrices.page === 1">上一页</button>
+                <span>第 {{ goodsPrices.page }} 页</span>
+                <button @click="nextPage"
+                    :disabled="goodsPrices.page * goodsPrices.page_size >= goodsPrices.total">下一页</button>
+            </div>
+        </div>
     </div>
 </template>
 
-<script setup lang="ts">
+<script>
+import axios from 'axios';
 
-import { ref } from "vue";
-import { ElMessage } from "element-plus";
+export default {
+    data() {
+        return {
+            goodsId: '',
+            price: '',
+            startTime: '',
+            note: '',
+            goodsPrices: {
+                items: [],
+                page: 1,
+                page_size: 10,
+                total: 0
+            }
+        };
+    },
+    methods: {
+        async createPrice() {
+            try {
+                const response = await axios.post('/api/goods_price/create', {
+                    goods_id: this.goodsId,
+                    price: this.price,
+                    start_time: this.startTime,
+                    note: this.note
+                });
+                if (response.data.code === 200) {
+                    alert('商品价格创建成功');
+                    this.clearForm();
+                    this.loadGoodsPrices();
+                } else {
+                    alert('创建失败');
+                }
+            } catch (error) {
+                console.error('请求失败', error);
+            }
+        },
 
-// 促销规则
-const promotions = ref([{ name: "双十一特惠", discount: 20 }, { name: "满减活动", discount: 10 }]);
-const newPromotion = ref({
-    name: "",
-    discount: 0
-});
+        async deletePrice(goodsPriceId) {
+            try {
+                const response = await axios.post('/api/goods_price/remove', {
+                    goods_id: goodsPriceId
+                });
+                if (response.data.code === 200) {
+                    alert('商品价格删除成功');
+                    this.loadGoodsPrices();
+                } else {
+                    alert('删除失败');
+                }
+            } catch (error) {
+                console.error('请求失败', error);
+            }
+        },
 
-// 满减规则
-const fullReductions = ref([
-    { condition: 100, discount: 20 },
-    { condition: 200, discount: 50 },
-    { condition: 50, discount: 10 } // 添加一个小额的满减规则
-]);
-const newFullReduction = ref({
-    condition: 0,
-    discount: 0
-});
+        async loadGoodsPrices() {
+            try {
+                const response = await axios.post('/api/goods_price/get_by_page', {
+                    page: this.goodsPrices.page,
+                    page_size: this.goodsPrices.page_size
+                });
+                if (response.data.code === 200) {
+                    this.goodsPrices = response.data.data;
+                } else {
+                    alert('加载商品价格失败');
+                }
+            } catch (error) {
+                console.error('请求失败', error);
+            }
+        },
 
-// 商品列表
-const products = ref([
-    { name: "牛奶", cost: 5, promotion: [], fullReduction: [], price: 5 },
-    { name: "面包", cost: 10, promotion: [], fullReduction: [], price: 10 },
-    { name: "水果", cost: 15, promotion: [], fullReduction: [], price: 15 },
-]);
+        nextPage() {
+            if (this.goodsPrices.page * this.goodsPrices.page_size < this.goodsPrices.total) {
+                this.goodsPrices.page += 1;
+                this.loadGoodsPrices();
+            }
+        },
 
-// 计算单个商品的最终价格
-const calculatePrice = (row: any) => {
-    let finalPrice = row.cost;  // 初始化最终价格为成本价
+        prevPage() {
+            if (this.goodsPrices.page > 1) {
+                this.goodsPrices.page -= 1;
+                this.loadGoodsPrices();
+            }
+        },
 
-    // 遍历促销活动，计算每个折扣
-    row.promotion.forEach((discount: number) => {
-        finalPrice *= (1 - discount / 100);  // 每个折扣依次应用
-    });
+        clearForm() {
+            this.goodsId = '';
+            this.price = '';
+            this.startTime = '';
+            this.note = '';
+        },
 
-    // 计算满减规则
-    row.fullReduction.forEach((rule: any) => {
-        finalPrice = finalPrice >= rule.condition ? finalPrice - rule.discount : finalPrice;
-    });
-
-    row.price = finalPrice;
-    ElMessage.success(`价格计算完成: ${row.name} 价格为 ¥${row.price.toFixed(2)}`);
-};
-
-// 添加折扣促销规则
-const addPromotion = () => {
-    if (newPromotion.value.name.trim() && newPromotion.value.discount > 0) {
-        promotions.value.push({
-            name: newPromotion.value.name,
-            discount: newPromotion.value.discount
-        });
-        ElMessage.success("折扣促销规则添加成功");
-        newPromotion.value.name = "";
-        newPromotion.value.discount = 0;
-    } else {
-        ElMessage.error("请输入促销活动名称和折扣");
+        editPrice(item) {
+            alert('修改功能未实现，可拓展为弹窗编辑');
+        }
+    },
+    mounted() {
+        this.loadGoodsPrices();
     }
-};
-
-// 删除折扣促销规则
-const removePromotion = (promotion: any) => {
-    promotions.value = promotions.value.filter((p) => p.name !== promotion.name);
-    ElMessage.success("折扣促销规则删除成功");
-};
-
-// 添加满减规则
-const addFullReduction = () => {
-    if (newFullReduction.value.condition > 0 && newFullReduction.value.discount > 0) {
-        fullReductions.value.push({
-            condition: newFullReduction.value.condition,
-            discount: newFullReduction.value.discount
-        });
-        ElMessage.success("满减规则添加成功");
-        newFullReduction.value.condition = 0;
-        newFullReduction.value.discount = 0;
-    } else {
-        ElMessage.error("请输入满减条件和金额");
-    }
-};
-
-// 删除满减规则
-const removeFullReduction = (fullReduction: any) => {
-    fullReductions.value = fullReductions.value.filter((fr) => fr.condition !== fullReduction.condition);
-    ElMessage.success("满减规则删除成功");
 };
 </script>
 
 <style scoped>
-.page-container {
+.goods-price-manager {
     padding: 20px;
-    background-color: #f5f5f5;
-    /* 背景色 */
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    /* 添加阴影 */
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+}
+
+h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.card {
+    background-color: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+    margin-bottom: 20px;
 }
 
 h2 {
-    font-size: 24px;
-    font-weight: 600;
-    margin-bottom: 20px;
-    color: #333;
-    /* 标题颜色 */
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #444;
 }
 
-.promotion-section {
-    background-color: #ffffff;
-    /* 背景色 */
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* 添加阴影 */
-    margin-bottom: 20px;
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 12px;
+    margin-bottom: 15px;
 }
 
-.input-box {
-    margin-right: 10px;
-    width: 220px;
-    /* 固定宽度 */
-    padding: 8px;
-    border-radius: 4px;
-    border: 1px solid #dcdfe6;
+.form-grid input {
+    padding: 8px 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
     font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
-.el-button {
-    margin-left: 10px;
-}
-
-.el-table {
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    /* 添加阴影 */
-}
-
-.el-table-column {
-    text-align: center;
-}
-
-.el-table th {
-    background-color: #f4f4f4;
+button {
+    padding: 8px 14px;
     font-size: 14px;
-    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.el-button.primary {
+button.primary {
     background-color: #409EFF;
-    border-color: #409EFF;
+    color: white;
 }
 
-.el-button.primary:hover {
+button.primary:hover {
     background-color: #66b1ff;
-    border-color: #66b1ff;
 }
 
-.el-button.danger {
+button.danger {
     background-color: #f56c6c;
-    border-color: #f56c6c;
+    color: white;
 }
 
-.el-button.danger:hover {
-    background-color: #f78989;
-    border-color: #f78989;
+button.danger:hover {
+    background-color: #ff7b7b;
 }
 
-.el-button.warning {
-    background-color: #e6a23c;
-    border-color: #e6a23c;
+.price-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
-.el-button.warning:hover {
-    background-color: #f7bc77;
-    border-color: #f7bc77;
+.price-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    transition: background-color 0.2s;
 }
 
-.el-button.success {
-    background-color: #67c23a;
-    border-color: #67c23a;
+.price-item:hover {
+    background-color: #f9f9f9;
 }
 
-.el-button.success:hover {
-    background-color: #85d97e;
-    border-color: #85d97e;
+.price-item p {
+    margin: 4px 0;
+    font-size: 14px;
 }
 
-.promotion-select {
-    width: 150px;
-    margin: 5px;
+.actions {
+    display: flex;
+    gap: 10px;
 }
 
-.price-input {
-    width: 100px;
-    padding: 5px;
-    text-align: center;
+.pagination {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pagination button {
+    background-color: #f2f2f2;
+    color: #333;
+}
+
+.pagination button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 </style>
