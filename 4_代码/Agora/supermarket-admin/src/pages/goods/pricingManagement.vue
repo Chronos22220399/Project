@@ -54,17 +54,39 @@ export default {
             startTime: '',
             note: '',
             goodsPrices: {
-                items: [],
                 page: 1,
                 page_size: 10,
-                total: 0
+                total: 3,
+                items: [
+                    {
+                        goods_price_id: 1,
+                        goods_id: '1001',
+                        price: 49.99,
+                        start_time: '2025-05-01T08:00:00Z',
+                        note: '促销价'
+                    },
+                    {
+                        goods_price_id: 2,
+                        goods_id: '1002',
+                        price: 89.5,
+                        start_time: '2025-05-03T12:00:00Z',
+                        note: ''
+                    },
+                    {
+                        goods_price_id: 3,
+                        goods_id: '1003',
+                        price: 120.0,
+                        start_time: '2025-05-05T00:00:00Z',
+                        note: '新品上市'
+                    }
+                ]
             }
         };
     },
     methods: {
         async createPrice() {
             try {
-                const response = await axios.post('/api/goods_price/create', {
+                const response = await axios.post('http://localhost:8080/api/goods_price/create', {
                     goods_id: this.goodsId,
                     price: this.price,
                     start_time: this.startTime,
@@ -73,7 +95,7 @@ export default {
                 if (response.data.code === 200) {
                     alert('商品价格创建成功');
                     this.clearForm();
-                    this.loadGoodsPrices();
+                    // this.loadGoodsPrices();
                 } else {
                     alert('创建失败');
                 }
@@ -84,12 +106,12 @@ export default {
 
         async deletePrice(goodsPriceId) {
             try {
-                const response = await axios.post('/api/goods_price/remove', {
+                const response = await axios.post('http://localhost:8080/api/goods_price/remove', {
                     goods_id: goodsPriceId
                 });
                 if (response.data.code === 200) {
                     alert('商品价格删除成功');
-                    this.loadGoodsPrices();
+                    // this.loadGoodsPrices();
                 } else {
                     alert('删除失败');
                 }
@@ -100,7 +122,7 @@ export default {
 
         async loadGoodsPrices() {
             try {
-                const response = await axios.post('/api/goods_price/get_by_page', {
+                const response = await axios.post('http://localhost:8080/api/goods_price/get_by_page', {
                     page: this.goodsPrices.page,
                     page_size: this.goodsPrices.page_size
                 });
@@ -117,14 +139,14 @@ export default {
         nextPage() {
             if (this.goodsPrices.page * this.goodsPrices.page_size < this.goodsPrices.total) {
                 this.goodsPrices.page += 1;
-                this.loadGoodsPrices();
+                // this.loadGoodsPrices();
             }
         },
 
         prevPage() {
             if (this.goodsPrices.page > 1) {
                 this.goodsPrices.page -= 1;
-                this.loadGoodsPrices();
+                // this.loadGoodsPrices();
             }
         },
 
@@ -140,7 +162,7 @@ export default {
         }
     },
     mounted() {
-        this.loadGoodsPrices();
+        // this.loadGoodsPrices();
     }
 };
 </script>
