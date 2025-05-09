@@ -1,7 +1,8 @@
 #include <controller/goods/goods_category_controller.h>
 #include <service/goods/goods_category_service.h>
 
-void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
+void GoodsCategoryController::registerRoutes(crow::SimpleApp &app)
+{
   // MARK: 商品分类创建接口 - POST /api/goods_category/create
   //
   // 请求JSON：
@@ -31,9 +32,8 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/create")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::create(req.body);
-      });
+      .methods("POST"_method)([](const crow::request &req)
+                              { return GoodsCategoryService::create(req.body); });
 
   // MARK: 获取全部商品分类信息 - GET /api/goods_category/get_all
   //
@@ -61,9 +61,8 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/get_all")
-      .methods("GET"_method)([](const crow::request &req) {
-        return GoodsCategoryService::getAll();
-      });
+      .methods("GET"_method)([](const crow::request &req)
+                             { return GoodsCategoryService::getAll(); });
 
   // MARK: 商品分类分页查询接口 - POST /api/goods_category/get_by_page
   //
@@ -103,9 +102,8 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/get_by_page")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::getByPage(req.body);
-      });
+      .methods("POST"_method)([](const crow::request &req)
+                              { return GoodsCategoryService::getByPage(req.body); });
 
   // MARK: 删除商品分类接口 - POST /api/goods_category/remove
   //
@@ -134,9 +132,8 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/remove")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::removeByGoodsCategoryId(req.body);
-      });
+      .methods("POST"_method)([](const crow::request &req)
+                              { return GoodsCategoryService::removeByGoodsCategoryId(req.body); });
 
   // MARK: 修改商品分类接口 - POST /api/goods_category/update
   //
@@ -168,9 +165,8 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app) {
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/update")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsCategoryService::updateByGoodsCategoryId(req.body);
-      });
+      .methods("POST"_method)([](const crow::request &req)
+                              { return GoodsCategoryService::updateByGoodsCategoryId(req.body); });
 
   // other routes
 }
