@@ -1,7 +1,8 @@
 #include <controller/goods/goods_controller.h>
 #include <service/goods/goods_service.h>
 
-void GoodsController::registerRoutes(crow::SimpleApp &app) {
+void GoodsController::registerRoutes(crow::SimpleApp &app)
+{
 
   // MARK: 商品创建接口 - POST /api/goods/create
   //
@@ -30,9 +31,8 @@ void GoodsController::registerRoutes(crow::SimpleApp &app) {
   // 400 - JSON解析失败/字段缺失/数值非法
   // 500 - 数据库错误
   CROW_ROUTE(app, "/api/goods/create")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsService::create(req.body);
-      });
+      .methods("POST"_method)([](const crow::request &req)
+                              { return GoodsService::create(req.body); });
 
   // MARK: 分页查询接口 - POST /api/goods/get_by_page
   //
@@ -70,9 +70,8 @@ void GoodsController::registerRoutes(crow::SimpleApp &app) {
   //   "detail": "page_size must between 5 and 100"
   // }
   CROW_ROUTE(app, "/api/goods/get_by_page")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsService::getByPage(req.body);
-      });
+      .methods("POST"_method)([](const crow::request &req)
+                              { return GoodsService::getByPage(req.body); });
 
   // MARK: 获取全部商品概要信息 - GET /api/goods/get_all
   //
@@ -97,7 +96,8 @@ void GoodsController::registerRoutes(crow::SimpleApp &app) {
   // 500 - 数据库查询失败
   CROW_ROUTE(app, "/api/goods/get_all")
       .methods("GET"_method)(
-          [](const crow::request &req) { return GoodsService::getAll(); });
+          [](const crow::request &req)
+          { return GoodsService::getAll(); });
 
   // MARK: 获取商品详细信息 - POST /api/goods/get_goods_detail_info
   //
@@ -125,9 +125,8 @@ void GoodsController::registerRoutes(crow::SimpleApp &app) {
   // 404 - 商品不存在
   // 500 - 数据库查询失败
   CROW_ROUTE(app, "/api/goods/get_goods_detail_info")
-      .methods("POST"_method)([](const crow::request &req) {
-        return GoodsService::getGoodsDetailInfoById(req.body);
-      });
+      .methods("POST"_method)([](const crow::request &req)
+                              { return GoodsService::getGoodsDetailInfoById(req.body); });
 
   // other routes
 }

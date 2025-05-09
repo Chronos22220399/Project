@@ -39,14 +39,15 @@ if ! docker build --platform linux/amd64 -f ./${DOCKERFILE} --network host -t ${
   exit 1
 fi
 
-SERVICE_PORT=$(python3 ./scripts/parse_json_field.py '.server.port' ./SuperMarketManagementSystem/config/config.json)
+# SERVICE_PORT=$(python3 ./scripts/parse_json_field.py '.server.port' ./SuperMarketManagementSystem/config/config.json)
+SERVICE_PORT=8080
 
 # 运行容器
 echo "启动容器 ${CONTAINER_NAME}..."
 if [[ "$OSTYPE" == "darwin"* || "$OSTYPE" == "msys"* ]]; then
   # macOS 或 Windows
-  docker run -it --platform linux/amd64 -p ${SERVICE_PORT}:${SERVICE_PORT} -v "$(pwd)":/app --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+  docker run -m 4g -it --platform linux/amd64 -p ${SERVICE_PORT}:${SERVICE_PORT} -v "$(pwd)":/app --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
 else
   # Linux 可用 host 网络
-  docker run -it --platform linux/amd64 --network host -v "$(pwd)":/app --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
+  docker run -m 4g -it --platform linux/amd64 --network host -v "$(pwd)":/app --name ${CONTAINER_NAME} ${IMAGE_NAME}:latest
 fi
