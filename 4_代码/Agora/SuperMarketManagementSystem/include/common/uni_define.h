@@ -40,6 +40,9 @@ using update_ret_type = bool;
 /// @brief 删除操作返回类型（表示是否成功）
 using delete_ret_type = bool;
 
+///
+using slot_mount_type = long int;
+
 /**
  * @brief 打印带有文件名、函数名和行号的格式化日志信息。
  *
