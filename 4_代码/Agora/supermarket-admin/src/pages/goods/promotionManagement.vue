@@ -37,7 +37,7 @@
 
             <!-- 促销活动表格 -->
             <h2>促销活动表格</h2>
-            <el-table :data="promotionList" border style="margin-top: 24px">
+            <el-table :data="pagedPromotions" border style="margin-top: 24px">
                 <el-table-column prop="promotion_id" label="促销活动ID" />
                 <el-table-column prop="name" label="促销活动名称" />
                 <el-table-column prop="description" label="促销活动描述" />
@@ -57,23 +57,27 @@
             <!-- 分页 -->
             <div class="pagination">
                 <el-pagination :current-page="currentPage" :page-size="pageSize" :total="totalItems"
-                    @current-change="fetchPromotions" @size-change="handlePageSizeChange" />
+                    @current-change="handlePageChange" @size-change="handlePageSizeChange"
+                    layout="total, sizes, prev, pager, next, jumper" />
             </div>
         </div>
     </el-card>
 </template>
 
 <script>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import axios from 'axios';
 
 export default {
     name: 'PromotionManagement',
     setup() {
+        const useMock = ref(true); // 切换为 false 即使用后端接口
+        const allPromotions = ref([]);
         const promotionList = ref([]);
         const currentPage = ref(1);
         const pageSize = ref(10);
         const totalItems = ref(0);
+
         const form = ref({
             name: '',
             description: '',
@@ -82,31 +86,92 @@ export default {
             end_time: '',
             status: 'active'
         });
+
         const formLabelWidth = '120px';
 
-        const fetchPromotions = async (page = 1, size = 10) => {
-            try {
-                const response = await axios.post('http://localhost:8080/api/promotion/get_by_page', {
-                    page,
-                    page_size: size
-                });
-                if (response.data.code === 200) {
-                    promotionList.value = response.data.data.items;
-                    totalItems.value = response.data.data.total;
+        const pagedPromotions = computed(() => {
+            const start = (currentPage.value - 1) * pageSize.value;
+            return promotionList.value.slice(start, start + pageSize.value);
+        });
+
+        const handlePageChange = (page) => {
+            currentPage.value = page;
+        };
+
+        const handlePageSizeChange = (size) => {
+            pageSize.value = size;
+            currentPage.value = 1;
+        };
+
+        const fetchPromotions = async () => {
+            if (useMock.value) {
+                const mockData = generateMockPromotions();
+                promotionList.value = mockData;
+                totalItems.value = mockData.length;
+            } else {
+                try {
+                    const response = await axios.post('http://localhost:8080/api/promotion/get_by_page', {
+                        page: currentPage.value,
+                        page_size: pageSize.value
+                    });
+                    if (response.data.code === 200) {
+                        promotionList.value = response.data.data.items;
+                        totalItems.value = response.data.data.total;
+                    }
+                } catch (error) {
+                    console.error(error);
                 }
-            } catch (error) {
-                console.error(error);
+            }
+        };
+
+        const generateMockPromotions = () => {
+            const mock = [];
+            for (let i = 1; i <= 25; i++) {
+                mock.push({
+                    promotion_id: i,
+                    name: `促销活动 ${i}`,
+                    description: `描述 ${i}`,
+                    type: i % 2 === 0 ? 'discount' : 'full_reduction',
+                    start_time: `2025-05-${String((i % 30) + 1).padStart(2, '0')} 00:00`,
+                    end_time: `2025-05-${String((i % 30) + 1).padStart(2, '0')} 23:59`,
+                    status: ['active', 'expired', 'draft'][i % 3]
+                });
+            }
+            return mock;
+        };
+
+        const createPromotion = async () => {
+            if (useMock.value) {
+                const newId = promotionList.value.length + 1;
+                promotionList.value.push({ ...form.value, promotion_id: newId });
+                totalItems.value = promotionList.value.length;
+                resetForm();
+            } else {
+                try {
+                    const response = await axios.post('http://localhost:8080/api/promotion/create', form.value);
+                    if (response.data.code === 201) {
+                        resetForm();
+                        fetchPromotions();
+                    }
+                } catch (error) {
+                    console.error(error);
+                }
             }
         };
 
         const removePromotion = async (promotion_id) => {
-            try {
-                const response = await axios.post('http://localhost:8080/api/promotion/remove', { promotion_id });
-                if (response.data.code === 200) {
-                    fetchPromotions();
+            if (useMock.value) {
+                promotionList.value = promotionList.value.filter(p => p.promotion_id !== promotion_id);
+                totalItems.value = promotionList.value.length;
+            } else {
+                try {
+                    const response = await axios.post('http://localhost:8080/api/promotion/remove', { promotion_id });
+                    if (response.data.code === 200) {
+                        fetchPromotions();
+                    }
+                } catch (error) {
+                    console.error(error);
                 }
-            } catch (error) {
-                console.error(error);
             }
         };
 
@@ -121,18 +186,6 @@ export default {
             };
         };
 
-        const createPromotion = async () => {
-            try {
-                const response = await axios.post('http://localhost:8080/api/promotion/create', form.value);
-                if (response.data.code === 201) {
-                    resetForm();
-                    fetchPromotions();
-                }
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
         const editPromotion = (row) => {
             console.log('编辑功能未实现', row);
         };
@@ -142,17 +195,19 @@ export default {
         });
 
         return {
+            form,
+            formLabelWidth,
             promotionList,
+            pagedPromotions,
             currentPage,
             pageSize,
             totalItems,
-            form,
-            formLabelWidth,
-            fetchPromotions,
+            createPromotion,
             removePromotion,
             resetForm,
-            createPromotion,
-            editPromotion
+            editPromotion,
+            handlePageChange,
+            handlePageSizeChange
         };
     }
 };

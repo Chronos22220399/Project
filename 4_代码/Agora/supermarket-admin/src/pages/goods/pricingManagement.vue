@@ -17,20 +17,29 @@
         <!-- 商品价格列表 -->
         <div class="card">
             <h2>商品价格列表</h2>
-            <ul class="price-list">
-                <li v-for="item in goodsPrices.items" :key="item.goods_price_id" class="price-item">
-                    <div>
-                        <p><strong>商品ID:</strong> {{ item.goods_id }}</p>
-                        <p><strong>价格:</strong> ¥{{ item.price }}</p>
-                        <p><strong>生效时间:</strong> {{ item.start_time }}</p>
-                        <p><strong>备注:</strong> {{ item.note || '—' }}</p>
-                    </div>
-                    <div class="actions">
-                        <button @click="editPrice(item)">修改</button>
-                        <button class="danger" @click="deletePrice(item.goods_price_id)">删除</button>
-                    </div>
-                </li>
-            </ul>
+            <table class="price-table">
+                <thead>
+                    <tr>
+                        <th>商品ID</th>
+                        <th>价格 (¥)</th>
+                        <th>生效时间</th>
+                        <th>备注</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="item in goodsPrices.items" :key="item.goods_price_id">
+                        <td>{{ item.goods_id }}</td>
+                        <td>{{ item.price }}</td>
+                        <td>{{ item.start_time }}</td>
+                        <td>{{ item.note || '—' }}</td>
+                        <td>
+                            <button @click="editPrice(item)">修改</button>
+                            <button class="danger" @click="deletePrice(item.goods_price_id)">删除</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
 
             <!-- 分页控制 -->
             <div class="pagination" v-if="goodsPrices.total > goodsPrices.page_size">
@@ -44,8 +53,6 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
     data() {
         return {
@@ -56,113 +63,47 @@ export default {
             goodsPrices: {
                 page: 1,
                 page_size: 10,
-                total: 3,
+                total: 15,  // 总共有15条数据，方便分页
                 items: [
-                    {
-                        goods_price_id: 1,
-                        goods_id: '1001',
-                        price: 49.99,
-                        start_time: '2025-05-01T08:00:00Z',
-                        note: '促销价'
-                    },
-                    {
-                        goods_price_id: 2,
-                        goods_id: '1002',
-                        price: 89.5,
-                        start_time: '2025-05-03T12:00:00Z',
-                        note: ''
-                    },
-                    {
-                        goods_price_id: 3,
-                        goods_id: '1003',
-                        price: 120.0,
-                        start_time: '2025-05-05T00:00:00Z',
-                        note: '新品上市'
-                    }
+                    { goods_price_id: 1, goods_id: '1001', price: 49.99, start_time: '2025-05-01T08:00:00Z', note: '促销价' },
+                    { goods_price_id: 2, goods_id: '1002', price: 89.5, start_time: '2025-05-03T12:00:00Z', note: '' },
+                    { goods_price_id: 3, goods_id: '1003', price: 120.0, start_time: '2025-05-05T00:00:00Z', note: '新品上市' },
+                    { goods_price_id: 4, goods_id: '1004', price: 59.99, start_time: '2025-05-07T14:00:00Z', note: '特价' },
+                    { goods_price_id: 5, goods_id: '1005', price: 99.99, start_time: '2025-05-10T09:30:00Z', note: '促销价' },
+                    { goods_price_id: 6, goods_id: '1006', price: 149.5, start_time: '2025-05-12T16:45:00Z', note: '' },
+                    { goods_price_id: 7, goods_id: '1007', price: 180.0, start_time: '2025-05-15T08:00:00Z', note: '限时折扣' },
+                    { goods_price_id: 8, goods_id: '1008', price: 220.5, start_time: '2025-05-18T10:00:00Z', note: '特价' },
+                    { goods_price_id: 9, goods_id: '1009', price: 79.99, start_time: '2025-05-20T08:30:00Z', note: '新品促销' },
+                    { goods_price_id: 10, goods_id: '1010', price: 119.0, start_time: '2025-05-22T12:00:00Z', note: '限时优惠' },
+                    { goods_price_id: 11, goods_id: '1011', price: 89.99, start_time: '2025-05-24T14:15:00Z', note: '' },
+                    { goods_price_id: 12, goods_id: '1012', price: 129.0, start_time: '2025-05-26T16:30:00Z', note: '优惠价' },
+                    { goods_price_id: 13, goods_id: '1013', price: 99.99, start_time: '2025-05-28T18:00:00Z', note: '新商品' },
+                    { goods_price_id: 14, goods_id: '1014', price: 169.99, start_time: '2025-05-30T09:00:00Z', note: '季末清仓' },
+                    { goods_price_id: 15, goods_id: '1015', price: 75.0, start_time: '2025-06-01T10:30:00Z', note: '' }
                 ]
             }
         };
     },
     methods: {
-        async createPrice() {
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_price/create', {
-                    goods_id: this.goodsId,
-                    price: this.price,
-                    start_time: this.startTime,
-                    note: this.note
-                });
-                if (response.data.code === 200) {
-                    alert('商品价格创建成功');
-                    this.clearForm();
-                    // this.loadGoodsPrices();
-                } else {
-                    alert('创建失败');
-                }
-            } catch (error) {
-                console.error('请求失败', error);
-            }
+        createPrice() {
+            alert('创建商品价格功能尚未实现');
         },
 
-        async deletePrice(goodsPriceId) {
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_price/remove', {
-                    goods_id: goodsPriceId
-                });
-                if (response.data.code === 200) {
-                    alert('商品价格删除成功');
-                    // this.loadGoodsPrices();
-                } else {
-                    alert('删除失败');
-                }
-            } catch (error) {
-                console.error('请求失败', error);
-            }
-        },
-
-        async loadGoodsPrices() {
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_price/get_by_page', {
-                    page: this.goodsPrices.page,
-                    page_size: this.goodsPrices.page_size
-                });
-                if (response.data.code === 200) {
-                    this.goodsPrices = response.data.data;
-                } else {
-                    alert('加载商品价格失败');
-                }
-            } catch (error) {
-                console.error('请求失败', error);
-            }
+        deletePrice(goodsPriceId) {
+            alert('删除商品价格功能尚未实现');
         },
 
         nextPage() {
             if (this.goodsPrices.page * this.goodsPrices.page_size < this.goodsPrices.total) {
                 this.goodsPrices.page += 1;
-                // this.loadGoodsPrices();
             }
         },
 
         prevPage() {
             if (this.goodsPrices.page > 1) {
                 this.goodsPrices.page -= 1;
-                // this.loadGoodsPrices();
             }
-        },
-
-        clearForm() {
-            this.goodsId = '';
-            this.price = '';
-            this.startTime = '';
-            this.note = '';
-        },
-
-        editPrice(item) {
-            alert('修改功能未实现，可拓展为弹窗编辑');
         }
-    },
-    mounted() {
-        // this.loadGoodsPrices();
     }
 };
 </script>
@@ -236,35 +177,6 @@ button.danger:hover {
     background-color: #ff7b7b;
 }
 
-.price-list {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.price-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding: 15px;
-    border-bottom: 1px solid #eee;
-    transition: background-color 0.2s;
-}
-
-.price-item:hover {
-    background-color: #f9f9f9;
-}
-
-.price-item p {
-    margin: 4px 0;
-    font-size: 14px;
-}
-
-.actions {
-    display: flex;
-    gap: 10px;
-}
-
 .pagination {
     display: flex;
     justify-content: flex-end;
@@ -281,5 +193,30 @@ button.danger:hover {
 .pagination button:disabled {
     opacity: 0.6;
     cursor: not-allowed;
+}
+
+/* 表格样式 */
+.price-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    font-size: 14px;
+}
+
+.price-table th,
+.price-table td {
+    padding: 12px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.price-table th {
+    background-color: #f5f7fa;
+    color: #333;
+    font-weight: 600;
+}
+
+.price-table tr:hover {
+    background-color: #f9f9f9;
 }
 </style>
