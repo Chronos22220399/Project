@@ -22,7 +22,7 @@
             <!-- 商品分类列表 -->
             <div class="category-list">
                 <h2>商品分类列表</h2>
-                <el-table :data="categories.items" style="width: 100%">
+                <el-table :data="paginatedItems" style="width: 100%">
                     <el-table-column label="分类ID" prop="goods_category_id" />
                     <el-table-column label="分类名称" prop="category_name" />
                     <el-table-column label="分类描述" prop="category_description" />
@@ -48,7 +48,17 @@
 
 <script>
 import axios from 'axios';
-import { ElMessage, ElTable, ElTableColumn, ElButton, ElCard, ElInput, ElPagination, ElSelect, ElOption } from 'element-plus';
+import {
+    ElMessage,
+    ElTable,
+    ElTableColumn,
+    ElButton,
+    ElCard,
+    ElInput,
+    ElPagination,
+    ElSelect,
+    ElOption
+} from 'element-plus';
 
 export default {
     data() {
@@ -67,6 +77,13 @@ export default {
             },
             allCategories: [] // 用于上级分类下拉选择
         };
+    },
+    computed: {
+        paginatedItems() {
+            const start = (this.categories.page - 1) * this.categories.page_size;
+            const end = start + this.categories.page_size;
+            return this.categories.items.slice(start, end);
+        }
     },
     methods: {
         async createCategory() {
@@ -161,20 +178,20 @@ export default {
         },
 
         async loadCategories() {
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_category/get_by_page', {
-                    page: this.categories.page,
-                    page_size: this.categories.page_size
-                });
-                if (response.data.code === 200) {
-                    this.categories = response.data.data;
-                } else {
-                    ElMessage.error('加载失败');
-                }
-            } catch (error) {
-                console.error('加载请求失败', error);
-                ElMessage.error('请求失败');
-            }
+            this.categories.items = [
+                { goods_category_id: 'CAT001', category_name: '饮料', category_description: '各类瓶装/罐装饮品', parent_category_id: '0' },
+                { goods_category_id: 'CAT002', category_name: '零食', category_description: '甜食、膨化食品等', parent_category_id: '0' },
+                { goods_category_id: 'CAT003', category_name: '功能饮料', category_description: '含能量、补充电解质饮料', parent_category_id: 'CAT001' },
+                { goods_category_id: 'CAT004', category_name: '糖果', category_description: '软糖、硬糖等', parent_category_id: 'CAT002' },
+                { goods_category_id: 'CAT005', category_name: '奶制品', category_description: '牛奶、酸奶等乳制品', parent_category_id: '0' },
+                { goods_category_id: 'CAT006', category_name: '矿泉水', category_description: '瓶装水、山泉水等', parent_category_id: 'CAT001' },
+                { goods_category_id: 'CAT007', category_name: '饼干', category_description: '甜味或咸味小吃', parent_category_id: 'CAT002' },
+                { goods_category_id: 'CAT008', category_name: '啤酒', category_description: '各类啤酒', parent_category_id: 'CAT001' },
+                { goods_category_id: 'CAT009', category_name: '巧克力', category_description: '各式巧克力', parent_category_id: 'CAT002' },
+                { goods_category_id: 'CAT010', category_name: '豆奶', category_description: '豆制饮品', parent_category_id: 'CAT001' },
+                { goods_category_id: 'CAT011', category_name: '能量棒', category_description: '运动营养食品', parent_category_id: 'CAT003' }
+            ];
+            this.categories.total = this.categories.items.length;
         },
 
         async loadAllCategories() {
@@ -190,7 +207,6 @@ export default {
 
         handlePageChange(newPage) {
             this.categories.page = newPage;
-            this.loadCategories();
         },
 
         clearForm() {

@@ -1,9 +1,9 @@
 <template>
     <div>
-        <h1>商品管理</h1>
-
         <!-- 商品列表部分 -->
+
         <el-card :body-style="{ padding: '20px' }">
+            <h1>商品管理</h1>
             <h2>商品列表</h2>
             <el-button @click="fetchGoods" type="primary">获取商品列表</el-button>
             <div v-if="goodsList.length > 0">
@@ -29,13 +29,25 @@
                     <el-input v-model="product.goods_name" placeholder="请输入商品名称"></el-input>
                 </el-form-item>
                 <el-form-item label="分类ID" required>
-                    <el-input v-model="product.category_id" placeholder="请输入分类ID"></el-input>
+                    <el-select v-model="product.category_id" placeholder="请选择分类">
+                        <el-option label="CAT001" value="CAT001" />
+                        <el-option label="CAT002" value="CAT002" />
+                        <el-option label="CAT003" value="CAT003" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="供应商ID" required>
-                    <el-input v-model="product.supplier_id" placeholder="请输入供应商ID"></el-input>
+                    <el-select v-model="product.supplier_id" placeholder="请选择供应商">
+                        <el-option label="SUP001" value="SUP001" />
+                        <el-option label="SUP002" value="SUP002" />
+                        <el-option label="SUP003" value="SUP003" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="单位ID" required>
-                    <el-input v-model="product.unit_id" placeholder="请输入单位ID"></el-input>
+                    <el-select v-model="product.unit_id" placeholder="请选择单位">
+                        <el-option label="UNIT001" value="UNIT001" />
+                        <el-option label="UNIT002" value="UNIT002" />
+                        <el-option label="UNIT003" value="UNIT003" />
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="保质期天数" required>
                     <el-input-number v-model="product.shelf_life_days" :min="0"
@@ -59,7 +71,10 @@
             <h2>商品详情</h2>
             <el-form :model="productDetail" ref="productDetailForm" label-width="120px">
                 <el-form-item label="商品ID" required>
-                    <el-input v-model="goods_id" placeholder="请输入商品ID"></el-input>
+                    <el-select v-model="goods_id" placeholder="请选择商品">
+                        <el-option v-for="item in goodsList" :key="item.goods_id" :label="item.goods_id"
+                            :value="item.goods_id" />
+                    </el-select>
                 </el-form-item>
                 <el-button type="primary" @click="getProductDetails">获取商品详情</el-button>
 
@@ -87,6 +102,7 @@
         </el-card>
     </div>
 </template>
+
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
