@@ -8,7 +8,8 @@
 using json = nlohmann::json;
 
 const std::vector<std::string> required_fields = {
-    "category_name", "category_description", "parent_category_id"};
+    "goods_category_id", "goods_category_name", "goods_category_description",
+    "parent_category_id"};
 
 // MARK: 商品分类创建服务
 //
@@ -119,19 +120,23 @@ GoodsCategoryService::removeByGoodsCategoryId(const std::string &body) {
 
   // 检查必填字段
   CHECK_REQUIRED_FIELD(j, "goods_category_id");
-
   auto goods_category_id = j.at("goods_category_id").get<ex_id_type>();
 
+  auto &cache = GlobalIdCache::getInstance();
+  auto id = cache.getInternalId("goods_category", goods_category_id);
+
   // 判断分类是否存在
-  if (!GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id)) {
+  if (id == 0) {
     return SET_ERR_RESPONSE(404, "Goods category not found.");
   }
 
   // 删除分类
-  bool success =
-      GoodsCategoryRepository::removeByGoodsCategoryId(goods_category_id);
-  return success ? SET_EMPTY_DATA_RESPONSE(200)
-                 : SET_ERR_RESPONSE(500, "DB_DELETE_ERROR");
+  bool success = GoodsCategoryRepository::removeById(id);
+  if (success) {
+    cache.invalidate("goods_catogory", goods_category_id);
+    return SET_EMPTY_DATA_RESPONSE(200);
+  }
+  return SET_ERR_RESPONSE(500, "DB_DELETE_ERROR");
 }
 
 // MARK: 商品分类-更新服务
@@ -153,7 +158,10 @@ GoodsCategoryService::updateByGoodsCategoryId(const std::string &body) {
 
   auto goods_category_id = j.at("goods_category_id").get<ex_id_type>();
 
-  if (!GoodsCategoryRepository::existsByGoodsCategoryId(goods_category_id)) {
+  auto &cache = GlobalIdCache::getInstance();
+  auto id = cache.getInternalId("goods_category", goods_category_id);
+
+  if (id == 0) {
     return SET_ERR_RESPONSE(404, "Goods category not found.");
   }
 

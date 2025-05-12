@@ -8,6 +8,7 @@
 // tools
 #include <common/global_id_cache.hpp>
 // repos
+#include <repository/common/unit_repository.h>
 #include <repository/goods/goods_category_repository.h>
 #include <repository/goods/goods_repository.h>
 #include <repository/goods/promotion_repository.h>
@@ -36,15 +37,8 @@ using namespace std;
 //     }
 //   }
 // }
-//
 
-void testPromotionCreation();
-void testGoodsCreation();
-void testWarehouseCreation();
-
-void testCrowServer();
-
-int main() {
+static void initCache() {
   auto &cache = GlobalIdCache::getInstance();
   // regist goods
   cache.registForward("goods", &GoodsRepository::getInternalId);
@@ -58,10 +52,22 @@ int main() {
   // regist warehouse
   cache.registForward("warehouse", &WarehouseRepository::getInternalId);
   cache.registReverse("warehouse", &WarehouseRepository::getExternalId);
+  // regist unit
+  cache.registForward("unit", &UnitRepository::getInternalId);
+  cache.registReverse("unit", &UnitRepository::getExternalId);
   // regist
   // regist supplier
   // cache.registForward("supplier", &Supplier)
+}
 
+void testPromotionCreation();
+void testGoodsCreation();
+void testWarehouseCreation();
+
+void testCrowServer();
+
+int main() {
+  initCache();
   // 先确保测试数据存在
   // const std::string wh_id = "WH-d337cae7-d53b-4be0-9e5d-8de553b65a14";
   // id_type expected_id = WarehouseRepository::getId(wh_id);

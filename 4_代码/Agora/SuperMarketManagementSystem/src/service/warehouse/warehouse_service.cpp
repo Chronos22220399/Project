@@ -49,6 +49,40 @@ crow::response WarehouseService::create(const std::string &body) {
   }
 }
 
+crow::response WarehouseService::updateByWarehouseId(const std::string &body) {
+  // 检查并获取 json 内容
+  return utils::safeJsonExecution(body, [](const nlohmann::json &j) {
+    CHECK_REQUIRED_FIELDS(j, required_fields);
+    auto warehouse_dto = WarehouseDTO::from_json(j);
+    auto &cache = GlobalIdCache::getInstance();
+    auto id = cache.getInternalId("warehouse", warehouse_dto.warehouse_id);
+
+    if (id == 0 || !WarehouseRepository::existsById(id))
+      return SET_ERR_RESPONSE(404, "Warehouse Not Found.");
+
+    bool success = WarehouseRepository::updateById(id, warehouse_dto);
+    return success ? SET_EMPTY_DATA_RESPONSE(200)
+                   : SET_ERR_RESPONSE(500, "DB_UPDATE_ERROR");
+  });
+}
+
+crow::response WarehouseService::removeByWarehouseId(const std::string &body) {
+  return utils::safeJsonExecution(body, [](const nlohmann::json &j) {
+    CHECK_REQUIRED_FIELD(j, "warehouse_id");
+    auto warehouse_id = j.at("warehouse_id").get<ex_id_type>();
+
+    auto &cache = GlobalIdCache::getInstance();
+    auto id = cache.getInternalId("warehouse", warehouse_id);
+
+    if (id == 0 || !WarehouseRepository::existsById(id))
+      return SET_ERR_RESPONSE(404, "Warehouse Not Found.");
+
+    bool success = WarehouseRepository::removeById(id);
+    return success ? SET_EMPTY_DATA_RESPONSE(200)
+                   : SET_ERR_RESPONSE(500, "DB_UPDATE_ERROR");
+  });
+}
+
 crow::response WarehouseService::getByPage(const std::string &body) {
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);

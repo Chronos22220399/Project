@@ -1,5 +1,6 @@
 #pragma once
 
+#include <crow.h>
 #include <cstdint>
 #include <optional>
 #include <sqlpp11/data_types.h>
@@ -42,6 +43,9 @@ using delete_ret_type = bool;
 
 ///
 using slot_mount_type = long int;
+
+///
+using quantity_type = long int;
 
 /**
  * @brief 打印带有文件名、函数名和行号的格式化日志信息。
@@ -106,11 +110,6 @@ using slot_mount_type = long int;
     }                                                                          \
   }
 
-#define SET_SUC_JSON_DATA(data)                                                \
-  nlohmann::json {                                                             \
-    {"code", 200}, { "data", data }                                            \
-  }
-
 /**
  * @brief 创建一个包含错误代码和错误信息的 HTTP 响应。
  *
@@ -124,6 +123,11 @@ using slot_mount_type = long int;
 
 #define SET_EMPTY_DATA_RESPONSE(status_code)                                   \
   crow::response(status_code, SET_ONLYCODE_JSON(status_code).dump())
+
+#define SET_SUC_JSON_DATA(data)                                                \
+  nlohmann::json {                                                             \
+    {"code", 200}, { "data", data }                                            \
+  }
 
 #define SET_SUC_DATA_RESPONSE(data)                                            \
   crow::response(200, SET_SUC_JSON_DATA(data).dump())
