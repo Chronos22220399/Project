@@ -24,4 +24,7 @@ public:
   static select_ret_type<UnitDTO> getByPage(count_type page_size,
                                             count_type offset);
   static count_type count();
+
+  static in_id_type getInternalId(const ex_id_type &unit_id);
+  static ex_id_type getExternalId(in_id_type id);
 };

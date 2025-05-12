@@ -291,4 +291,27 @@ inline std::string get_current_iso8601() {
   ss << std::put_time(&tm_buf, "%Y-%m-%dT%H:%M:%SZ");
   return ss.str();
 }
+
+template <typename Func, typename ErrHandler = std::function<
+                             crow::response(const std::exception &)>>
+auto safeJsonExecution(
+    const std::string &body, Func &&servFunc,
+    ErrHandler &&errFunc = [](const std::exception &e) {
+      return SET_ERR_RESPONSE(500, "Unknown error");
+    }) -> std::invoke_result_t<Func, const nlohmann::json &> {
+
+  nlohmann::json j;
+  CHECK_AND_GET_JSON(j);
+
+  try {
+    return std::forward<Func>(servFunc)(j);
+  } catch (const std::exception &e) {
+    if constexpr (std::is_same_v<
+                      void, std::invoke_result_t<ErrHandler,
+                                                 const std::exception &>>) {
+      return SET_ERR_RESPONSE(500, e.what());
+    }
+    return std::forward<ErrHandler>(errFunc)(e);
+  }
+}
 } // namespace utils

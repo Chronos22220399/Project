@@ -78,7 +78,7 @@ count_type WarehouseRepository::count() { return _count(); }
 in_id_type WarehouseRepository::getInternalId(const std::string &warehouse_id) {
   auto result = utils::DataBaseHelper::execute<in_id_type>(
       [&warehouse_id](const utils::pooled_conn_ptr_type &conn_) {
-        db::warehouse warehouse{};
+        static db::warehouse warehouse{};
         auto rows =
             (*conn_)(select(warehouse.id)
                          .from(warehouse)
@@ -92,7 +92,7 @@ in_id_type WarehouseRepository::getInternalId(const std::string &warehouse_id) {
 std::string WarehouseRepository::getExternalId(in_id_type id) {
   auto result = utils::DataBaseHelper::execute<std::string>(
       [id](const utils::pooled_conn_ptr_type &conn_) {
-        db::warehouse warehouse{};
+        static db::warehouse warehouse{};
         auto rows = (*conn_)(select(warehouse.warehouse_id)
                                  .from(warehouse)
                                  .where(warehouse.id == id));

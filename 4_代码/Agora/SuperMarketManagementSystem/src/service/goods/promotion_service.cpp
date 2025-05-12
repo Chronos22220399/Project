@@ -60,6 +60,7 @@ crow::response PromotionService::create(const std::string &body) {
   }
 
   auto promotion_dto = PromotionDTO::from_json(j);
+  promotion_dto.promotion_id = utils::create_id("P-");
 
   // 插入促销活动记录
   auto res = PromotionRepository::create(promotion_dto);
@@ -84,14 +85,24 @@ crow::response PromotionService::removeByPromotionId(const std::string &body) {
 
   // 检查必填字段
   CHECK_REQUIRED_FIELD(j, "promotion_id");
-
   auto promotion_id = j.at("promotion_id").get<ex_id_type>();
+
+  auto &cache = GlobalIdCache::getInstance();
+  auto id = cache.getInternalId("promotion", promotion_id);
+
+  if (id == 0) {
+    return SET_ERR_RESPONSE(404, "Promotion not found.");
+  }
 
   // 数据库删除促销活动
   bool success = PromotionRepository::removeByPromotionId(promotion_id);
 
-  return success ? SET_EMPTY_DATA_RESPONSE(200)
-                 : SET_ERR_RESPONSE(500, "DB_DELETE_ERROR");
+  if (success) {
+    cache.invalidate("promotion", promotion_id);
+    return SET_EMPTY_DATA_RESPONSE(200);
+  }
+
+  return SET_ERR_RESPONSE(500, "DB_DELETE_ERROR");
 }
 
 // MARK: 促销活动-更新服务

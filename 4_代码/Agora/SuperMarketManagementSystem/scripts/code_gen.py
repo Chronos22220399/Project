@@ -17,7 +17,7 @@ SRC_SERVICE_DIR = PROJECT_ROOT / "src/service"
 SRC_CONTROLLER_DIR = PROJECT_ROOT / "src/controller"
 
 TYPE_MAPPING = {
-    "INTEGER": "id_type",
+    "INTEGER": "in_id_type",
     "TEXT": "std::string",
     "VARCHAR": "std::string",
     "CHAR": "std::string",
@@ -32,7 +32,7 @@ TYPE_MAPPING = {
 }
 
 DEFAULT_VALUES = {
-    "id_type": "0",
+    "in_id_type": "0",
     "std::string": '""',
     "double": "0.0",
     "bool": "false",
@@ -318,7 +318,7 @@ count_type {self.repo_name_camel}::count() {{ return _count(); }}
             ref_dto = to_camel_case(fk["ref_table"]) + "DTO"
             methods.append(
                 f"static select_ret_type<{self.dto_name_camel}> "
-                f"getBy{to_camel_case(fk['column'])}(id_type {fk['column']});"
+                f"getBy{to_camel_case(fk['column'])}(in_id_type {fk['column']});"
             )
         return '\n    '.join(methods)
 
@@ -340,6 +340,16 @@ void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
     CROW_ROUTE(app, "/api/{self.table_name}/create")
         .methods("POST"_method)([](const crow::request& req) {{
             return {self.service_name_camel}::create(req.body);
+        }});
+        
+    CROW_ROUTE(app, "/api/{self.table_name}/update")
+        .methods("POST"_method)([](const crow::request& req) {{
+            return {self.service_name_camel}::update(req.body);
+        }});
+        
+    CROW_ROUTE(app, "/api/{self.table_name}/remove")
+        .methods("POST"_method)([](const crow::request& req) {{
+            return {self.service_name_camel}::remove(req.body);
         }});
         
     CROW_ROUTE(app, "/api/{self.table_name}/getByPage")
@@ -473,7 +483,9 @@ def process_ddl(ddl_path: Path, interactive: bool = True):
 
     # 生成Service
     service_func_list = [
-        "static crow::response add(const std::string &body)",
+        "static crow::response create(const std::string &body)",
+        "static crow::response update(const std::string &body)",
+        "static crow::response remove(const std::string &body)",
         "static crow::response getByPage(const std::string &body)",
         "static crow::response getAll()"
     ]
