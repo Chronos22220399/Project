@@ -2,38 +2,44 @@
     <el-card>
         <h2>促销活动管理</h2>
         <div class="promotion-management">
-            <!-- 添加促销活动表单 -->
-            <el-form :model="form" ref="form" class="form-container">
-                <el-form-item label="活动名称" :label-width="formLabelWidth">
-                    <el-input v-model="form.name" placeholder="请输入活动名称" />
-                </el-form-item>
-                <el-form-item label="活动描述" :label-width="formLabelWidth">
-                    <el-input v-model="form.description" placeholder="请输入活动描述" />
-                </el-form-item>
-                <el-form-item label="活动类型" :label-width="formLabelWidth">
-                    <el-select v-model="form.type" placeholder="请选择活动类型">
-                        <el-option label="折扣" value="discount" />
-                        <el-option label="满减" value="full_reduction" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="开始时间" :label-width="formLabelWidth">
-                    <el-date-picker v-model="form.start_time" type="datetime" placeholder="请选择开始时间" />
-                </el-form-item>
-                <el-form-item label="结束时间" :label-width="formLabelWidth">
-                    <el-date-picker v-model="form.end_time" type="datetime" placeholder="请选择结束时间" />
-                </el-form-item>
-                <el-form-item label="状态" :label-width="formLabelWidth">
-                    <el-select v-model="form.status" placeholder="请选择状态">
-                        <el-option label="激活" value="active" />
-                        <el-option label="已过期" value="expired" />
-                        <el-option label="草稿" value="draft" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" @click="createPromotion">添加促销活动</el-button>
-                    <el-button @click="resetForm">重置</el-button>
-                </el-form-item>
-            </el-form>
+            <!-- 添加促销活动对话框 -->
+            <el-button type="primary" @click="dialogVisible = true" style="margin-bottom: 16px">添加促销活动</el-button>
+
+            <el-dialog title="添加促销活动" v-model="dialogVisible" width="600px">
+                <el-form :model="form" ref="form">
+                    <el-form-item label="活动名称" :label-width="formLabelWidth">
+                        <el-input v-model="form.name" placeholder="请输入活动名称" />
+                    </el-form-item>
+                    <el-form-item label="活动描述" :label-width="formLabelWidth">
+                        <el-input v-model="form.description" placeholder="请输入活动描述" />
+                    </el-form-item>
+                    <el-form-item label="活动类型" :label-width="formLabelWidth">
+                        <el-select v-model="form.type" placeholder="请选择活动类型">
+                            <el-option label="折扣" value="discount" />
+                            <el-option label="满减" value="full_reduction" />
+                        </el-select>
+                    </el-form-item>
+                    <el-form-item label="开始时间" :label-width="formLabelWidth">
+                        <el-date-picker v-model="form.start_time" type="datetime" placeholder="请选择开始时间"
+                            format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+                    </el-form-item>
+                    <el-form-item label="结束时间" :label-width="formLabelWidth">
+                        <el-date-picker v-model="form.end_time" type="datetime" placeholder="请选择结束时间"
+                            format="YYYY-MM-DD HH:mm:ss" value-format="YYYY-MM-DD HH:mm:ss" />
+                    </el-form-item>
+                    <el-form-item label="状态" :label-width="formLabelWidth">
+                        <el-select v-model="form.status" placeholder="请选择状态">
+                            <el-option label="激活" value="active" />
+                            <el-option label="已过期" value="expired" />
+                            <el-option label="草稿" value="draft" />
+                        </el-select>
+                    </el-form-item>
+                </el-form>
+                <template #footer>
+                    <el-button @click="dialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="handleDialogConfirm">确认</el-button>
+                </template>
+            </el-dialog>
 
             <!-- 促销活动表格 -->
             <h2>促销活动表格</h2>
@@ -47,8 +53,8 @@
                 <el-table-column prop="status" label="状态" />
                 <el-table-column label="操作">
                     <template #default="scope">
-                        <el-button size="mini" @click="editPromotion(scope.row)">编辑</el-button>
-                        <el-button size="mini" class="red-button"
+                        <el-button size="mini" type="text" @click="editPromotion(scope.row)">编辑</el-button>
+                        <el-button size="mini" type="danger" class="red-button"
                             @click="removePromotion(scope.row.promotion_id)">删除</el-button>
                     </template>
                 </el-table-column>
@@ -71,11 +77,12 @@ import axios from 'axios';
 export default {
     name: 'PromotionManagement',
     setup() {
-        const useMock = ref(true); // 切换为 false 即使用后端接口
+        const useMock = ref(true);
+        const dialogVisible = ref(false);
         const allPromotions = ref([]);
         const promotionList = ref([]);
         const currentPage = ref(1);
-        const pageSize = ref(10);
+        const pageSize = ref(5);
         const totalItems = ref(0);
 
         const form = ref({
@@ -125,19 +132,24 @@ export default {
         };
 
         const generateMockPromotions = () => {
-            const mock = [];
-            for (let i = 1; i <= 25; i++) {
-                mock.push({
-                    promotion_id: i,
-                    name: `促销活动 ${i}`,
-                    description: `描述 ${i}`,
-                    type: i % 2 === 0 ? 'discount' : 'full_reduction',
-                    start_time: `2025-05-${String((i % 30) + 1).padStart(2, '0')} 00:00`,
-                    end_time: `2025-05-${String((i % 30) + 1).padStart(2, '0')} 23:59`,
-                    status: ['active', 'expired', 'draft'][i % 3]
-                });
-            }
-            return mock;
+            const types = ['discount', 'full_reduction'];
+            const statuses = ['active', 'expired', 'draft'];
+            return Array.from({ length: 25 }, (_, i) => {
+                const start = new Date();
+                start.setDate(start.getDate() - Math.floor(Math.random() * 10));
+                const end = new Date(start);
+                end.setDate(start.getDate() + Math.floor(Math.random() * 10));
+
+                return {
+                    promotion_id: i + 1,
+                    name: `促销活动 ${i + 1}`,
+                    description: `描述 ${i + 1}`,
+                    type: types[i % 2],
+                    start_time: start.toISOString().slice(0, 19).replace('T', ' '),
+                    end_time: end.toISOString().slice(0, 19).replace('T', ' '),
+                    status: statuses[i % 3]
+                };
+            });
         };
 
         const createPromotion = async () => {
@@ -146,17 +158,23 @@ export default {
                 promotionList.value.push({ ...form.value, promotion_id: newId });
                 totalItems.value = promotionList.value.length;
                 resetForm();
+                dialogVisible.value = false;
             } else {
                 try {
                     const response = await axios.post('http://localhost:8080/api/promotion/create', form.value);
                     if (response.data.code === 201) {
                         resetForm();
+                        dialogVisible.value = false;
                         fetchPromotions();
                     }
                 } catch (error) {
                     console.error(error);
                 }
             }
+        };
+
+        const handleDialogConfirm = () => {
+            createPromotion();
         };
 
         const removePromotion = async (promotion_id) => {
@@ -195,6 +213,7 @@ export default {
         });
 
         return {
+            dialogVisible,
             form,
             formLabelWidth,
             promotionList,
@@ -207,7 +226,8 @@ export default {
             resetForm,
             editPromotion,
             handlePageChange,
-            handlePageSizeChange
+            handlePageSizeChange,
+            handleDialogConfirm
         };
     }
 };
@@ -216,14 +236,6 @@ export default {
 <style>
 .promotion-management {
     padding: 20px;
-}
-
-.form-container {
-    background: #f9f9f9;
-    padding: 20px;
-    margin-bottom: 24px;
-    border-radius: 8px;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.1);
 }
 
 .pagination {
