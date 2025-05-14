@@ -1,135 +1,119 @@
 <template>
-    <div class="page-container">
-        <h2>商品库存管理</h2>
-
-        <!-- 添加商品表单 -->
-        <div class="form-card">
-            <div class="form-row">
-                <el-input v-model="newName" placeholder="商品名称" style="width: 200px; margin-right: 10px" />
-                <el-input-number v-model="newStock" :min="0" placeholder="库存数量" style="margin-right: 10px" />
-                <el-button type="primary" @click="addProduct">添加商品</el-button>
-            </div>
+    <el-card>
+        <div class="toolbar">
+            <el-button type="primary" @click="openDialog()">添加商品</el-button>
         </div>
 
-        <!-- 库存表格 -->
-        <el-table :data="paginatedInventory" border style="width: 100%; margin-top: 20px">
-            <el-table-column prop="name" label="商品名称"></el-table-column>
-            <el-table-column prop="stock" label="库存数量"></el-table-column>
-            <el-table-column label="操作" width="300">
-                <template #default="{ row }">
-                    <el-input-number v-model="row.stock" :min="0" @change="updateStock(row)"
-                        style="margin-right: 10px" />
-                    <el-button type="danger" size="small" @click="deleteProduct(row)">删除</el-button>
+        <el-table :data="paginatedData" border style="width: 100%">
+            <el-table-column prop="id" label="商品ID" width="100" />
+            <el-table-column prop="name" label="商品名称" />
+            <el-table-column prop="stock" label="库存数量" />
+            <el-table-column label="操作" width="180">
+                <template #default="scope">
+                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
-        <!-- 分页器 -->
-        <el-pagination class="mt-4" layout="total, sizes, prev, pager, next, jumper" :total="inventory.length"
-            :current-page="currentPage" :page-size="pageSize" @size-change="handleSizeChange"
-            @current-change="handlePageChange" />
-    </div>
+        <el-pagination v-if="tableData.length > pageSize" :current-page="currentPage" :page-size="pageSize"
+            :total="tableData.length" @current-change="handlePageChange"
+            layout="prev, pager, next, jumper"></el-pagination>
+
+        <el-dialog :title="dialogTitle" v-model="dialogVisible">
+            <el-form :model="form">
+                <el-form-item label="商品名称"><el-input v-model="form.name" /></el-form-item>
+                <el-form-item label="库存数量"><el-input-number v-model="form.stock" :min="0" /></el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="handleSave">保存</el-button>
+            </template>
+        </el-dialog>
+    </el-card>
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
-import { ElMessage } from 'element-plus';
+import { ref, computed } from 'vue'
+import { ElMessage } from 'element-plus'
 
-// 假数据
-const inventory = ref([
-    { name: '可乐', stock: 100 },
-    { name: '饼干', stock: 50 },
-    { name: '水果', stock: 30 },
-    { name: '牛奶', stock: 200 },
-    { name: '面包', stock: 150 },
-    { name: '巧克力', stock: 80 },
-    { name: '水', stock: 300 },
-    { name: '洗发水', stock: 50 },
-    { name: '牙膏', stock: 120 },
-    { name: '纸巾', stock: 90 },
-    { name: '鸡蛋', stock: 200 },
-    { name: '苹果', stock: 70 },
-    { name: '橙子', stock: 60 },
-    { name: '葡萄', stock: 110 },
-    { name: '西瓜', stock: 180 },
-]);
+interface Product {
+    id: number
+    name: string
+    stock: number
+}
 
-const currentPage = ref(1);
-const pageSize = ref(5);
-const newName = ref('');
-const newStock = ref(0);
+// 生成随机商品数据
+const generateFakeProducts = (count: number): Product[] => {
+    const productNames = ['可乐', '牛奶', '面包', '饼干', '泡面', '鸡蛋', '矿泉水', '牙膏', '洗发水', '纸巾']
+    return Array.from({ length: count }, (_, index) => ({
+        id: index + 1,
+        name: productNames[Math.floor(Math.random() * productNames.length)] + (index + 1),
+        stock: Math.floor(Math.random() * 500) + 1,
+    }))
+}
 
-// 获取分页数据
-const paginatedInventory = computed(() => {
-    const start = (currentPage.value - 1) * pageSize.value;
-    const end = currentPage.value * pageSize.value;
-    return inventory.value.slice(start, end);
-});
+const tableData = ref<Product[]>(generateFakeProducts(53))
+const dialogVisible = ref(false)
+const dialogTitle = ref('添加商品')
+const form = ref<Partial<Product>>({})
 
-// 添加商品
-const addProduct = () => {
-    if (!newName.value.trim()) {
-        ElMessage.warning('商品名称不能为空');
-        return;
+// 分页控制
+const currentPage = ref(1)
+const pageSize = ref(10)
+const paginatedData = computed(() => {
+    const start = (currentPage.value - 1) * pageSize.value
+    return tableData.value.slice(start, start + pageSize.value)
+})
+
+// 打开弹窗
+const openDialog = (row?: Product) => {
+    dialogTitle.value = row ? '编辑商品' : '添加商品'
+    form.value = row ? { ...row } : {}
+    dialogVisible.value = true
+}
+
+// 保存（新增或编辑）
+const handleSave = () => {
+    if (!form.value.name?.trim()) {
+        ElMessage.warning('商品名称不能为空')
+        return
     }
-    if (inventory.value.some(item => item.name === newName.value.trim())) {
-        ElMessage.error('该商品已存在');
-        return;
-    }
-    inventory.value.push({
-        name: newName.value.trim(),
-        stock: newStock.value
-    });
-    ElMessage.success(`添加成功：${newName.value}`);
-    newName.value = '';
-    newStock.value = 0;
-};
 
-// 更新库存
-const updateStock = (row: { name: string; stock: number }) => {
-    ElMessage.success(`库存更新成功: ${row.name} 库存为 ${row.stock}`);
-};
+    if (form.value.id) {
+        // 编辑
+        const index = tableData.value.findIndex(item => item.id === form.value.id)
+        if (index !== -1) {
+            tableData.value[index] = { ...(form.value as Product) }
+        }
+    } else {
+        // 添加
+        const newId = tableData.value.length ? Math.max(...tableData.value.map(item => item.id)) + 1 : 1
+        tableData.value.push({
+            id: newId,
+            name: form.value.name!,
+            stock: form.value.stock || 0
+        })
+    }
+
+    ElMessage.success('保存成功')
+    dialogVisible.value = false
+}
 
 // 删除商品
-const deleteProduct = (row: { name: string }) => {
-    inventory.value = inventory.value.filter(item => item.name !== row.name);
-    ElMessage.success(`已删除商品：${row.name}`);
-};
+const handleDelete = (id: number) => {
+    tableData.value = tableData.value.filter(item => item.id !== id)
+    ElMessage.success('删除成功')
+}
 
-// 分页改变每页条数
-const handleSizeChange = (val: number) => {
-    pageSize.value = val;
-    currentPage.value = 1; // 每次改变每页条数时，回到第一页
-};
-
-// 分页改变当前页
-const handlePageChange = (val: number) => {
-    currentPage.value = val;
-};
+// 翻页处理
+const handlePageChange = (page: number) => {
+    currentPage.value = page
+}
 </script>
 
 <style scoped>
-.page-container {
-    padding: 20px;
-    background-color: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.form-card {
-    background-color: #ffffff;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-    margin-bottom: 16px;
-}
-
-.form-row {
-    display: flex;
-    align-items: center;
-}
-
-.mt-4 {
-    margin-top: 20px;
+.toolbar {
+    margin-bottom: 12px;
 }
 </style>

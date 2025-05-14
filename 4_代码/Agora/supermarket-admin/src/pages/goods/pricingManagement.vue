@@ -34,8 +34,9 @@
                         <td>{{ item.start_time }}</td>
                         <td>{{ item.note || '—' }}</td>
                         <td>
-                            <button @click="editPrice(item)">修改</button>
-                            <button class="danger" @click="deletePrice(item.goods_price_id)">删除</button>
+                            <el-button size="mini" type="text" @click="editPrice(scope.row)">编辑</el-button>
+                            <el-button size="mini" type="danger" class="red-button"
+                                @click="deletePrice(scope.row.price_id)">删除</el-button>
                         </td>
                     </tr>
                 </tbody>
@@ -63,26 +64,13 @@ export default {
             goodsPrices: {
                 page: 1,
                 page_size: 10,
-                total: 15,  // 总共有15条数据，方便分页
-                items: [
-                    { goods_price_id: 1, goods_id: '1001', price: 49.99, start_time: '2025-05-01T08:00:00Z', note: '促销价' },
-                    { goods_price_id: 2, goods_id: '1002', price: 89.5, start_time: '2025-05-03T12:00:00Z', note: '' },
-                    { goods_price_id: 3, goods_id: '1003', price: 120.0, start_time: '2025-05-05T00:00:00Z', note: '新品上市' },
-                    { goods_price_id: 4, goods_id: '1004', price: 59.99, start_time: '2025-05-07T14:00:00Z', note: '特价' },
-                    { goods_price_id: 5, goods_id: '1005', price: 99.99, start_time: '2025-05-10T09:30:00Z', note: '促销价' },
-                    { goods_price_id: 6, goods_id: '1006', price: 149.5, start_time: '2025-05-12T16:45:00Z', note: '' },
-                    { goods_price_id: 7, goods_id: '1007', price: 180.0, start_time: '2025-05-15T08:00:00Z', note: '限时折扣' },
-                    { goods_price_id: 8, goods_id: '1008', price: 220.5, start_time: '2025-05-18T10:00:00Z', note: '特价' },
-                    { goods_price_id: 9, goods_id: '1009', price: 79.99, start_time: '2025-05-20T08:30:00Z', note: '新品促销' },
-                    { goods_price_id: 10, goods_id: '1010', price: 119.0, start_time: '2025-05-22T12:00:00Z', note: '限时优惠' },
-                    { goods_price_id: 11, goods_id: '1011', price: 89.99, start_time: '2025-05-24T14:15:00Z', note: '' },
-                    { goods_price_id: 12, goods_id: '1012', price: 129.0, start_time: '2025-05-26T16:30:00Z', note: '优惠价' },
-                    { goods_price_id: 13, goods_id: '1013', price: 99.99, start_time: '2025-05-28T18:00:00Z', note: '新商品' },
-                    { goods_price_id: 14, goods_id: '1014', price: 169.99, start_time: '2025-05-30T09:00:00Z', note: '季末清仓' },
-                    { goods_price_id: 15, goods_id: '1015', price: 75.0, start_time: '2025-06-01T10:30:00Z', note: '' }
-                ]
+                total: 50, // 模拟50条数据
+                items: []
             }
         };
+    },
+    created() {
+        this.loadPageData();
     },
     methods: {
         createPrice() {
@@ -96,13 +84,34 @@ export default {
         nextPage() {
             if (this.goodsPrices.page * this.goodsPrices.page_size < this.goodsPrices.total) {
                 this.goodsPrices.page += 1;
+                this.loadPageData();
             }
         },
 
         prevPage() {
             if (this.goodsPrices.page > 1) {
                 this.goodsPrices.page -= 1;
+                this.loadPageData();
             }
+        },
+
+        loadPageData() {
+            const { page, page_size } = this.goodsPrices;
+            const start = (page - 1) * page_size;
+            const end = start + page_size;
+
+            const allItems = Array.from({ length: this.goodsPrices.total }, (_, index) => {
+                const id = 1001 + index;
+                return {
+                    goods_price_id: index + 1,
+                    goods_id: id.toString(),
+                    price: (Math.random() * 200 + 50).toFixed(2),
+                    start_time: new Date(Date.now() - Math.random() * 1e10).toISOString(),
+                    note: ['促销价', '限时优惠', '特价', '新品上市', ''][Math.floor(Math.random() * 5)]
+                };
+            });
+
+            this.goodsPrices.items = allItems.slice(start, end);
         }
     }
 };
@@ -168,13 +177,16 @@ button.primary:hover {
     background-color: #66b1ff;
 }
 
-button.danger {
-    background-color: #f56c6c;
-    color: white;
+.el-table .el-button {
+    margin-right: 10px;
 }
 
-button.danger:hover {
-    background-color: #ff7b7b;
+.el-table .el-button--text {
+    color: #409EFF;
+}
+
+.el-table .el-button--text.red-button {
+    color: red;
 }
 
 .pagination {

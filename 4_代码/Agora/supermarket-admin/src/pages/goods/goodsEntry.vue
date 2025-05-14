@@ -111,7 +111,7 @@ import axios from 'axios';
 export default defineComponent({
     name: 'GoodsManager',
     setup() {
-        const goodsList = ref<any[]>([{
+        const goodsList = ref < any[] > ([{
             goods_id: 1,
             goods_name: "可乐",
             category_name: "饮料",
@@ -153,7 +153,7 @@ export default defineComponent({
             description: '',
         });
         const goods_id = ref('');
-        const productDetail = ref<any>(null);
+        const productDetail = ref < any > (null);
 
         // 获取商品列表的请求
         const fetchGoods = async () => {

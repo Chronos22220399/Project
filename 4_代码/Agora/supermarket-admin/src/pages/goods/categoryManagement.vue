@@ -1,274 +1,163 @@
 <template>
-    <div class="goods-category-manager page-container">
-        <el-card class="card" :body-style="{ padding: '20px' }">
-            <h1>商品分类管理</h1>
-
-            <!-- 商品分类创建/更新 -->
-            <div class="create-form">
-                <h2>{{ isEditing ? '编辑商品分类' : '创建商品分类' }}</h2>
-                <el-input v-model="categoryName" placeholder="分类名称" class="form-input" />
-                <el-input v-model="categoryDescription" placeholder="分类描述" class="form-input" />
-                <el-select v-model="parentCategoryId" placeholder="选择上级分类" class="form-input">
-                    <el-option :label="'无（顶级）'" :value="'0'" />
-                    <el-option v-for="item in allCategories" :key="item.goods_category_id" :label="item.category_name"
-                        :value="item.goods_category_id.toString()" />
-                </el-select>
-                <el-button :loading="loading" type="primary" @click="isEditing ? updateCategory() : createCategory()">
-                    {{ isEditing ? '更新分类' : '创建分类' }}
-                </el-button>
-                <el-button v-if="isEditing" @click="cancelEdit">取消编辑</el-button>
-            </div>
-
-            <!-- 商品分类列表 -->
-            <div class="category-list">
-                <h2>商品分类列表</h2>
-                <el-table :data="paginatedItems" style="width: 100%">
-                    <el-table-column label="分类ID" prop="goods_category_id" />
-                    <el-table-column label="分类名称" prop="category_name" />
-                    <el-table-column label="分类描述" prop="category_description" />
-                    <el-table-column label="上级分类ID" prop="parent_category_id" />
-                    <el-table-column label="操作" width="150">
-                        <template v-slot="scope">
-                            <el-button @click="editCategory(scope.row)" type="text" size="small">修改</el-button>
-                            <el-button @click="deleteCategory(scope.row.goods_category_id)" type="text" size="small"
-                                class="red-button">删除</el-button>
-                        </template>
-                    </el-table-column>
-                </el-table>
-
-                <!-- 分页 -->
-                <div class="pagination" v-if="categories.total > categories.page_size">
-                    <el-pagination background layout="prev, pager, next" :page-size="categories.page_size"
-                        :total="categories.total" :current-page="categories.page" @current-change="handlePageChange" />
+    <div class="page-container">
+        <el-card>
+            <template #header>
+                <div class="flex justify-between items-center">
+                    <span>商品分类管理</span>
                 </div>
+                <el-button type="primary" @click="openDialog">新增分类</el-button>
+            </template>
+
+            <el-table :data="categoryList" style="width: 100%">
+                <el-table-column prop="goods_category_id" label="分类ID" width="100" />
+                <el-table-column prop="category_name" label="分类名称" />
+                <el-table-column prop="category_description" label="分类描述" />
+                <el-table-column prop="parent_category_id" label="上级分类ID" width="120" />
+                <el-table-column label="操作" width="180">
+                    <template #default="scope">
+                        <el-button type="primary" link @click="editCategory(scope.row)">编辑</el-button>
+                        <el-button type="danger" link
+                            @click="deleteCategory(scope.row.goods_category_id)">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+
+            <!-- 分页 -->
+            <div class="mt-4 text-right">
+                <el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="pageSize"
+                    :total="total" @current-change="handlePageChange" />
             </div>
         </el-card>
+
+        <!-- 弹窗表单 -->
+        <el-dialog :title="isEdit ? '编辑分类' : '新增分类'" v-model="dialogVisible" width="500px">
+            <el-form :model="form" label-width="100px">
+                <el-form-item label="分类名称">
+                    <el-input v-model="form.category_name" />
+                </el-form-item>
+                <el-form-item label="分类描述">
+                    <el-input v-model="form.category_description" />
+                </el-form-item>
+                <el-form-item label="上级分类">
+                    <el-select v-model="form.parent_category_id" placeholder="选择上级分类">
+                        <el-option label="无（顶级）" value="0" />
+                        <el-option v-for="item in categoryList" :key="item.goods_category_id"
+                            :label="item.category_name" :value="item.goods_category_id.toString()" />
+                    </el-select>
+                </el-form-item>
+            </el-form>
+
+            <template #footer>
+                <el-button @click="dialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="submitForm">提交</el-button>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
-<script>
-import axios from 'axios';
-import {
-    ElMessage,
-    ElTable,
-    ElTableColumn,
-    ElButton,
-    ElCard,
-    ElInput,
-    ElPagination,
-    ElSelect,
-    ElOption
-} from 'element-plus';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue'
+import { ElMessage, ElMessageBox } from 'element-plus'
 
-export default {
-    data() {
-        return {
-            categoryName: '',
-            categoryDescription: '',
-            parentCategoryId: '0',
-            editingCategoryId: null,
-            isEditing: false,
-            loading: false,
-            categories: {
-                items: [],
-                page: 1,
-                page_size: 10,
-                total: 0
-            },
-            allCategories: [] // 用于上级分类下拉选择
-        };
-    },
-    computed: {
-        paginatedItems() {
-            const start = (this.categories.page - 1) * this.categories.page_size;
-            const end = start + this.categories.page_size;
-            return this.categories.items.slice(start, end);
-        }
-    },
-    methods: {
-        async createCategory() {
-            if (!this.categoryName || !this.categoryDescription) {
-                ElMessage.warning('分类名称和描述不能为空');
-                return;
-            }
-            this.loading = true;
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_category/create', {
-                    category_name: this.categoryName,
-                    category_description: this.categoryDescription,
-                    parent_category_id: this.parentCategoryId
-                });
-                if (response.data.code === 201) {
-                    ElMessage.success('商品分类创建成功');
-                    this.clearForm();
-                    this.loadCategories();
-                    this.loadAllCategories();
-                } else {
-                    ElMessage.error('创建失败');
-                }
-            } catch (error) {
-                console.error('创建请求失败', error);
-                ElMessage.error('请求失败');
-            } finally {
-                this.loading = false;
-            }
-        },
+interface GoodsCategory {
+    goods_category_id: number
+    category_name: string
+    category_description: string
+    parent_category_id: string
+}
 
-        async updateCategory() {
-            if (!this.categoryName || !this.categoryDescription) {
-                ElMessage.warning('分类名称和描述不能为空');
-                return;
-            }
-            this.loading = true;
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_category/update', {
-                    goods_category_id: this.editingCategoryId,
-                    category_name: this.categoryName,
-                    category_description: this.categoryDescription,
-                    parent_category_id: this.parentCategoryId
-                });
-                if (response.data.code === 200) {
-                    ElMessage.success('商品分类更新成功');
-                    this.clearForm();
-                    this.loadCategories();
-                    this.loadAllCategories();
-                    this.isEditing = false;
-                    this.editingCategoryId = null;
-                } else {
-                    ElMessage.error('更新失败');
-                }
-            } catch (error) {
-                console.error('更新请求失败', error);
-                ElMessage.error('请求失败');
-            } finally {
-                this.loading = false;
-            }
-        },
-
-        async deleteCategory(goodsCategoryId) {
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_category/remove', {
-                    goods_category_id: goodsCategoryId
-                });
-                if (response.data.code === 200) {
-                    ElMessage.success('商品分类删除成功');
-                    this.loadCategories();
-                    this.loadAllCategories();
-                } else {
-                    ElMessage.error('删除失败');
-                }
-            } catch (error) {
-                console.error('删除请求失败', error);
-                ElMessage.error('请求失败');
-            }
-        },
-
-        editCategory(category) {
-            this.categoryName = category.category_name;
-            this.categoryDescription = category.category_description;
-            this.parentCategoryId = category.parent_category_id.toString();
-            this.editingCategoryId = category.goods_category_id;
-            this.isEditing = true;
-        },
-
-        cancelEdit() {
-            this.clearForm();
-            this.isEditing = false;
-            this.editingCategoryId = null;
-        },
-
-        async loadCategories() {
-            this.categories.items = [
-                { goods_category_id: 'CAT001', category_name: '饮料', category_description: '各类瓶装/罐装饮品', parent_category_id: '0' },
-                { goods_category_id: 'CAT002', category_name: '零食', category_description: '甜食、膨化食品等', parent_category_id: '0' },
-                { goods_category_id: 'CAT003', category_name: '功能饮料', category_description: '含能量、补充电解质饮料', parent_category_id: 'CAT001' },
-                { goods_category_id: 'CAT004', category_name: '糖果', category_description: '软糖、硬糖等', parent_category_id: 'CAT002' },
-                { goods_category_id: 'CAT005', category_name: '奶制品', category_description: '牛奶、酸奶等乳制品', parent_category_id: '0' },
-                { goods_category_id: 'CAT006', category_name: '矿泉水', category_description: '瓶装水、山泉水等', parent_category_id: 'CAT001' },
-                { goods_category_id: 'CAT007', category_name: '饼干', category_description: '甜味或咸味小吃', parent_category_id: 'CAT002' },
-                { goods_category_id: 'CAT008', category_name: '啤酒', category_description: '各类啤酒', parent_category_id: 'CAT001' },
-                { goods_category_id: 'CAT009', category_name: '巧克力', category_description: '各式巧克力', parent_category_id: 'CAT002' },
-                { goods_category_id: 'CAT010', category_name: '豆奶', category_description: '豆制饮品', parent_category_id: 'CAT001' },
-                { goods_category_id: 'CAT011', category_name: '能量棒', category_description: '运动营养食品', parent_category_id: 'CAT003' }
-            ];
-            this.categories.total = this.categories.items.length;
-        },
-
-        async loadAllCategories() {
-            try {
-                const response = await axios.post('http://localhost:8080/api/goods_category/get_all');
-                if (response.data.code === 200) {
-                    this.allCategories = response.data.data;
-                }
-            } catch (error) {
-                console.error('加载所有分类失败', error);
-            }
-        },
-
-        handlePageChange(newPage) {
-            this.categories.page = newPage;
-        },
-
-        clearForm() {
-            this.categoryName = '';
-            this.categoryDescription = '';
-            this.parentCategoryId = '0';
-        }
-    },
-    mounted() {
-        this.loadCategories();
-        this.loadAllCategories();
-    },
-    components: {
-        ElTable,
-        ElTableColumn,
-        ElButton,
-        ElCard,
-        ElInput,
-        ElPagination,
-        ElSelect,
-        ElOption
+// 生成随机商品分类数据
+const generateRandomData = (): GoodsCategory[] => {
+    const categories = ['饮料', '零食', '方便食品', '生活用品', '乳制品']
+    const randomData: GoodsCategory[] = []
+    for (let i = 1; i <= 50; i++) {
+        const parentCategoryIndex = Math.floor(Math.random() * categories.length)
+        randomData.push({
+            goods_category_id: i,
+            category_name: `${categories[parentCategoryIndex]}子类${i}`,
+            category_description: `${categories[parentCategoryIndex]}的描述${i}`,
+            parent_category_id: (parentCategoryIndex + 1).toString(),
+        })
     }
-};
+    return randomData
+}
+
+const categoryList = ref<GoodsCategory[]>(generateRandomData())
+const dialogVisible = ref(false)
+const isEdit = ref(false)
+const form = ref<GoodsCategory>({
+    goods_category_id: 0,
+    category_name: '',
+    category_description: '',
+    parent_category_id: '0'
+})
+
+const currentPage = ref(1)
+const pageSize = ref(5)
+const total = ref(categoryList.value.length)
+
+const loadData = () => {
+    const start = (currentPage.value - 1) * pageSize.value
+    const end = start + pageSize.value
+    categoryList.value = generateRandomData().slice(start, end)
+    total.value = 50 // 随机数据总数
+}
+
+const handlePageChange = (page: number) => {
+    currentPage.value = page
+    loadData()
+}
+
+const openDialog = () => {
+    isEdit.value = false
+    form.value = {
+        goods_category_id: Date.now(),
+        category_name: '',
+        category_description: '',
+        parent_category_id: '0'
+    }
+    dialogVisible.value = true
+}
+
+const editCategory = (item: GoodsCategory) => {
+    isEdit.value = true
+    form.value = { ...item }
+    dialogVisible.value = true
+}
+
+const deleteCategory = (id: number) => {
+    ElMessageBox.confirm('确定要删除该分类吗？', '提示', {
+        type: 'warning'
+    }).then(() => {
+        const index = categoryList.value.findIndex(item => item.goods_category_id === id)
+        if (index !== -1) {
+            categoryList.value.splice(index, 1)
+            ElMessage.success('删除成功')
+            loadData()
+        }
+    })
+}
+
+const submitForm = () => {
+    const index = categoryList.value.findIndex(item => item.goods_category_id === form.value.goods_category_id)
+    if (isEdit.value && index !== -1) {
+        categoryList.value[index] = { ...form.value }
+        ElMessage.success('更新成功')
+    } else {
+        categoryList.value.push({ ...form.value })
+        ElMessage.success('添加成功')
+    }
+    dialogVisible.value = false
+    loadData()
+}
+
+onMounted(() => {
+    loadData()
+})
 </script>
 
 <style scoped>
-.goods-category-manager {
-    padding: 20px;
-}
-
-.card {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-}
-
-.create-form {
-    margin-bottom: 20px;
-}
-
-.form-input {
-    margin-bottom: 10px;
-    width: 100%;
-}
-
-.category-list {
-    margin-top: 20px;
-}
-
-.pagination {
-    margin-top: 16px;
-    text-align: right;
-}
-
-.el-table .el-button {
-    margin-right: 10px;
-}
-
-.el-table .el-button--text {
-    color: #409EFF;
-}
-
-.el-table .el-button--text.red-button {
-    color: red;
+.page-container {
+    padding: 16px;
 }
 </style>
