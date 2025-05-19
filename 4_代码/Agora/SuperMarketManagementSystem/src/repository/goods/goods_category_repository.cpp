@@ -82,9 +82,15 @@ in_id_type
 GoodsCategoryRepository::getInternalId(const std::string &goods_category_id)
 {
   auto result = utils::DataBaseHelper::execute<in_id_type>(
+<<<<<<< HEAD
       [&goods_category_id](const utils::pooled_conn_ptr_type &conn_)
       {
         db::goods_category goods_category{};
+=======
+      [&goods_category_id](const utils::pooled_conn_ptr_type &conn_)
+      {
+        static db::goods_category goods_category{};
+>>>>>>> 0d66a7fda8df75fe479d27d5214b3f62d3b57575
         auto rows = (*conn_)(
             select(goods_category.id)
                 .from(goods_category)
@@ -98,9 +104,15 @@ GoodsCategoryRepository::getInternalId(const std::string &goods_category_id)
 std::string GoodsCategoryRepository::getExternalId(in_id_type id)
 {
   auto result = utils::DataBaseHelper::execute<std::string>(
+<<<<<<< HEAD
       [id](const utils::pooled_conn_ptr_type &conn_)
       {
         db::goods_category goods_category{};
+=======
+      [id](const utils::pooled_conn_ptr_type &conn_)
+      {
+        static db::goods_category goods_category{};
+>>>>>>> 0d66a7fda8df75fe479d27d5214b3f62d3b57575
         auto rows = (*conn_)(select(goods_category.goods_category_id)
                                  .from(goods_category)
                                  .where(goods_category.id == id));

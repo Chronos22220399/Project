@@ -7,6 +7,16 @@ void UnitController::registerRoutes(crow::SimpleApp &app) {
         return UnitService::create(req.body);
       });
 
+  CROW_ROUTE(app, "/api/unit/update")
+      .methods("POST"_method)([](const crow::request &req) {
+        return UnitService::updateByUnitId(req.body);
+      });
+
+  CROW_ROUTE(app, "/api/unit/remove")
+      .methods("POST"_method)([](const crow::request &req) {
+        return UnitService::removeByUnitId(req.body);
+      });
+
   CROW_ROUTE(app, "/api/unit/get_by_page")
       .methods("POST"_method)([](const crow::request &req) {
         return UnitService::getByPage(req.body);

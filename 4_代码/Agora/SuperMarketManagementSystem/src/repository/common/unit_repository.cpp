@@ -57,3 +57,23 @@ select_ret_type<UnitDTO> UnitRepository::getByPage(count_type page_size,
 }
 
 count_type UnitRepository::count() { return _count(); }
+
+in_id_type UnitRepository::getInternalId(const ex_id_type &unit_id) {
+  return utils::DataBaseHelper::execute<in_id_type>(
+      [&unit_id](const utils::pooled_conn_ptr_type &conn_) {
+        static auto unit = db::unit{};
+        auto result =
+            (*conn_)(select(unit.id).from(unit).where(unit.unit_id == unit_id));
+        return result.empty() ? 0 : result.front().id;
+      });
+}
+
+ex_id_type UnitRepository::getExternalId(in_id_type id) {
+  return utils::DataBaseHelper::execute<ex_id_type>(
+      [&id](const utils::pooled_conn_ptr_type &conn_) {
+        static auto unit = db::unit{};
+        auto result =
+            (*conn_)(select(unit.unit_id).from(unit).where(unit.id == id));
+        return result.empty() ? std::string() : result.front().unit_id;
+      });
+}

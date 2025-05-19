@@ -110,7 +110,7 @@ GoodsRepository::getGoodsDetailInfoByGoodsId(const std::string &goods_id) {
 in_id_type GoodsRepository::getInternalId(const std::string &goods_id) {
   auto result = utils::DataBaseHelper::execute<in_id_type>(
       [&goods_id](const utils::pooled_conn_ptr_type &conn_) {
-        db::goods goods{};
+        static db::goods goods{};
         auto rows = (*conn_)(
             select(goods.id).from(goods).where(goods.goods_id == goods_id));
         return rows.empty() ? 0 : rows.front().id;
@@ -122,7 +122,7 @@ in_id_type GoodsRepository::getInternalId(const std::string &goods_id) {
 std::string GoodsRepository::getExternalId(in_id_type id) {
   auto result = utils::DataBaseHelper::execute<std::string>(
       [id](const utils::pooled_conn_ptr_type &conn_) {
-        db::goods goods{};
+        static db::goods goods{};
         auto rows =
             (*conn_)(select(goods.goods_id).from(goods).where(goods.id == id));
         return rows.empty() ? std::string() : rows.front().goods_id;
