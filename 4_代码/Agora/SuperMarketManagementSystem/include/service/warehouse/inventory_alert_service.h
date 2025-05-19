@@ -2,11 +2,11 @@
 #include <crow.h>
 #include <string>
 
-class WarehouseService {
+class InventoryAlertService {
 public:
   static crow::response create(const std::string &body);
-  static crow::response updateByWarehouseId(const std::string &body);
-  static crow::response removeByWarehouseId(const std::string &body);
+  static crow::response update(const std::string &body);
+  static crow::response remove(const std::string &body);
   static crow::response getByPage(const std::string &body);
   static crow::response getAll();
 };

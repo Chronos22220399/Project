@@ -74,13 +74,81 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
     };
+    struct total_slots
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "total_slots";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T total_slots;
+            T& operator()() { return total_slots; }
+            const T& operator()() const { return total_slots; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
+    };
+    struct available_slots
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "available_slots";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T available_slots;
+            T& operator()() { return available_slots; }
+            const T& operator()() const { return available_slots; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
+    };
+    struct manager
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "manager";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T manager;
+            T& operator()() { return manager; }
+            const T& operator()() const { return manager; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
+    };
+    struct description
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "description";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T description;
+            T& operator()() { return description; }
+            const T& operator()() const { return description; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
+    };
   } // namespace warehouse_
 
   struct warehouse: sqlpp::table_t<warehouse,
                warehouse_::id,
                warehouse_::warehouse_id,
                warehouse_::warehouse_name,
-               warehouse_::location>
+               warehouse_::location,
+               warehouse_::total_slots,
+               warehouse_::available_slots,
+               warehouse_::manager,
+               warehouse_::description>
   {
     struct _alias_t
     {

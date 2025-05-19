@@ -128,7 +128,7 @@ public:
   template <typename T> static insert_ret_type _insert(T &&model) {
     return utils::DataBaseHelper::execute<insert_ret_type>(
         [](const pooled_conn_ptr_type &conn, T &&model_) {
-          Table table_{};
+          static Table table_{};
           // 插入数据
           auto result = (*conn)(
               insert_into(table_).set(assign_table<Reflect, T, Table, Start>(
@@ -155,7 +155,7 @@ public:
     return utils::DataBaseHelper::execute<update_ret_type>(
         [](const pooled_conn_ptr_type &conn_, T &&model_,
            Condition &&condition_) {
-          Table table_{};
+          static Table table_{};
           (*conn_)(
               sqlpp::update(table_)
                   .set(assign_table<Reflect, T, Table, Start>(
@@ -177,7 +177,7 @@ public:
   static select_ret_type<Model> _select(Condition &&condition) {
     return utils::DataBaseHelper::execute<select_ret_type<Model>>(
         [](const pooled_conn_ptr_type &conn_, Condition &&condition_) {
-          Table table_{};
+          static Table table_{};
           select_ret_type<Model> ret_container{};
           auto select_result =
               (*conn_)(sqlpp::select(all_of(table_))
@@ -207,7 +207,7 @@ public:
     return utils::DataBaseHelper::execute<select_ret_type<Model>>(
         [limit_ = page_size, offset_ = offset](
             const pooled_conn_ptr_type &conn_, Condition &&condition_) {
-          Table table_{};
+          static Table table_{};
           select_ret_type<Model> ret_container{};
           auto select_result =
               (*conn_)(sqlpp::select(all_of(table_))
@@ -235,7 +235,7 @@ public:
   static delete_ret_type _remove(Condition &&condition) {
     return utils::DataBaseHelper::execute<delete_ret_type>(
         [](const pooled_conn_ptr_type &conn_, Condition &&condition_) {
-          Table table_{};
+          static Table table_{};
           (*conn_)(
               remove_from(table_).where(std::forward<Condition>(condition_)));
           return true;
@@ -251,7 +251,7 @@ public:
   static count_type _count() {
     return utils::DataBaseHelper::execute<count_type>(
         [](const pooled_conn_ptr_type &conn_) {
-          Table table_{};
+          static Table table_{};
           auto rows = (*conn_)(sqlpp::select(sqlpp::count(table_.id))
                                    .from(table_)
                                    .where(table_.id >= 0));
@@ -288,7 +288,7 @@ namespace unused {
  */
 template <typename Reflect, typename Model, typename Table, size_t... Is>
 Model assign_model_impl(Table &&table, std::index_sequence<Is...>) {
-  Model model;
+  static Model model;
   ((model.*std::get<Is>(Reflect::map_members).first =
         table.*std::get<Is>(Reflect::map_members).second),
    ...);
@@ -308,7 +308,7 @@ Model assign_model_impl(Table &&table, std::index_sequence<Is...>) {
  */
 template <typename Reflect, typename Model, typename Table, size_t... Is>
 Model assign_model_impl(const Table &table, std::index_sequence<Is...>) {
-  Model model;
+  static Model model;
   ((model.*std::get<Is>(Reflect::map_members).first =
         table.*std::get<Is>(Reflect::map_members).second),
    ...);

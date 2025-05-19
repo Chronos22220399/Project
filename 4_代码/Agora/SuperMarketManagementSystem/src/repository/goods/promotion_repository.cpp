@@ -59,7 +59,7 @@ count_type PromotionRepository::count() { return _count(); }
 in_id_type PromotionRepository::getInternalId(const std::string &promotion_id) {
   auto result = utils::DataBaseHelper::execute<in_id_type>(
       [&promotion_id](const utils::pooled_conn_ptr_type &conn_) {
-        db::promotion promotion{};
+        static db::promotion promotion{};
         auto rows =
             (*conn_)(select(promotion.id)
                          .from(promotion)
@@ -73,7 +73,7 @@ in_id_type PromotionRepository::getInternalId(const std::string &promotion_id) {
 std::string PromotionRepository::getExternalId(in_id_type id) {
   auto result = utils::DataBaseHelper::execute<std::string>(
       [id](const utils::pooled_conn_ptr_type &conn_) {
-        db::promotion promotion{};
+        static db::promotion promotion{};
         auto rows = (*conn_)(select(promotion.promotion_id)
                                  .from(promotion)
                                  .where(promotion.id == id));

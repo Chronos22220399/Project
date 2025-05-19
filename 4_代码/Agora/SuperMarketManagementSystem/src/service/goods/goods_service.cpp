@@ -29,10 +29,6 @@ crow::response GoodsService::create(const std::string &body) {
   // 检查并解析 JSON
   CHECK_AND_GET_JSON(j);
 
-  // 检查必填字段
-  const std::vector<std::string> required_fields = {
-      "goods_name",      "category_id", "supplier_id", "unit_id",
-      "shelf_life_days", "barcode",     "image_url",   "description"};
   CHECK_REQUIRED_FIELDS(j, required_fields);
 
   try {
@@ -40,28 +36,27 @@ crow::response GoodsService::create(const std::string &body) {
     auto goods_dto = GoodsDTO::from_json(j);
 
     // 生成外部 ID
-    goods_dto.goods_id = utils::create_id("G");
+    goods_dto.goods_id = utils::create_id("G-");
 
     // 插入记录到数据库
     auto insert_res = GoodsRepository::create(goods_dto);
 
-    // 检查插入结果
-    if (insert_res) {
-      // 更新全局 ID 缓存
-      auto &cache = GlobalIdCache::getInstance();
-      cache.update("goods", goods_dto.goods_id, insert_res.value());
-
-      // 构造成功响应
-      return crow::response(
-          201, nlohmann::json{{"code", 201},
-                              {"data",
-                               {{"goods_id", goods_dto.goods_id},
-                                {"create_time", utils::get_current_iso8601()}}}}
-                   .dump());
-    }
-
     // 如果插入失败，返回 500 错误
-    return SET_ERR_RESPONSE(500, "DB_ERROR");
+    if (!insert_res.has_value())
+      return SET_ERR_RESPONSE(500, "DB_ERROR");
+
+    // 更新全局 ID 缓存
+    auto &cache = GlobalIdCache::getInstance();
+    cache.update("goods", goods_dto.goods_id, insert_res.value());
+
+    // 构造成功响应
+    return crow::response(
+        201, nlohmann::json{{"code", 201},
+                            {"data",
+                             {{"goods_id", goods_dto.goods_id},
+                              {"create_time", utils::get_current_iso8601()}}}}
+                 .dump());
+
   } catch (const std::exception &e) {
     // 捕获异常并返回 500 错误
     return SET_ERR_RESPONSE(500, e.what());
