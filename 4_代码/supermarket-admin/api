@@ -1,0 +1,238 @@
+员工管理
+员工信息录入
+| 接口名称   | 请求方法   | 请求URL              | 请求参数                                                              | 返回格式                                                        | 备注         |
+| ------ | ------ | ------------------ | ----------------------------------------------------------------- | ----------------------------------------------------------- | ---------- |
+| 获取员工列表 | GET    | /api/employee      | ?page=1\&pageSize=10                                              | `{ code: 200, data: { items: Employee[], total: number } }` | 分页获取员工列表   |
+| 添加员工   | POST   | /api/employee      | `{ name, gender, phone, email, department, position, entryDate }` | `{ code: 201, msg: '添加成功', data: { id: number } }`          | 添加新员工      |
+| 修改员工信息 | PUT    | /api/employee/{id} | `{ name, gender, phone, email, department, position, entryDate }` | `{ code: 200, msg: '修改成功' }`                                | 更新指定ID员工资料 |
+| 删除员工   | DELETE | /api/employee/{id} | 无                                                                 | `{ code: 200, msg: '删除成功' }`                                | 删除指定ID员工   |
+
+考勤管理
+| 接口名称   | 请求方法   | 请求URL                | 请求参数                                                                    | 返回格式                                                          | 备注         |
+| ------ | ------ | -------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------- | ---------- |
+| 获取考勤列表 | GET    | /api/attendance      | ?page=1\&pageSize=10                                                    | `{ code: 200, data: { items: Attendance[], total: number } }` | 分页获取考勤记录列表 |
+| 添加考勤记录 | POST   | /api/attendance      | `{ employeeId, employeeName, date, status, checkInTime, checkOutTime }` | `{ code: 201, msg: '添加成功', data: { id: number } }`            | 新增考勤记录     |
+| 修改考勤记录 | PUT    | /api/attendance/{id} | `{ employeeId, employeeName, date, status, checkInTime, checkOutTime }` | `{ code: 200, msg: '修改成功' }`                                  | 修改指定ID考勤记录 |
+| 删除考勤记录 | DELETE | /api/attendance/{id} | 无                                                                       | `{ code: 200, msg: '删除成功' }`                                  | 删除指定ID考勤记录 |
+
+岗位管理
+| 接口名称   | 请求方法   | 请求URL         | 请求参数                                | 返回格式                                                           | 备注       |
+| ------ | ------ | ------------- | ----------------------------------- | -------------------------------------------------------------- | -------- |
+| 获取岗位列表 | GET    | /api/job      | ?page=1\&pageSize=10                | `{ code: 200, data: { items: JobPosition[], total: number } }` | 分页获取岗位列表 |
+| 添加岗位   | POST   | /api/job      | `{ name, description, baseSalary }` | `{ code: 201, msg: '添加成功', data: { id: number } }`             | 新增岗位     |
+| 修改岗位   | PUT    | /api/job/{id} | `{ name, description, baseSalary }` | `{ code: 200, msg: '修改成功' }`                                   | 修改指定岗位   |
+| 删除岗位   | DELETE | /api/job/{id} | 无                                   | `{ code: 200, msg: '删除成功' }`                                   | 删除指定岗位   |
+
+工资管理
+| 接口名称   | 请求方法   | 请求 URL           | 请求参数 (POST/PUT)                                                        | 返回格式                                                      | 说明       |
+| ------ | ------ | ---------------- | ---------------------------------------------------------------------- | --------------------------------------------------------- | -------- |
+| 获取工资列表 | GET    | /api/salary      | ?page=1\&pageSize=10                                                   | `{ code: 200, data: { items: Salary[], total: number } }` | 分页获取工资记录 |
+| 添加工资记录 | POST   | /api/salary      | `{ employeeId, employeeName, baseSalary, bonus, deductions, payDate }` | `{ code: 201, msg: '添加成功', data: { id: number } }`        | 新增工资记录   |
+| 修改工资记录 | PUT    | /api/salary/{id} | `{ employeeId, employeeName, baseSalary, bonus, deductions, payDate }` | `{ code: 200, msg: '修改成功' }`                              | 修改指定工资记录 |
+| 删除工资记录 | DELETE | /api/salary/{id} | 无                                                                      | `{ code: 200, msg: '删除成功' }`                              | 删除指定工资记录 |
+
+排班管理
+| 接口名称   | 请求方法   | 请求 URL             | 请求参数 (POST/PUT)                           | 返回格式                                                       | 说明       |
+| ------ | ------ | ------------------ | ----------------------------------------- | ---------------------------------------------------------- | -------- |
+| 获取排班列表 | GET    | /api/schedule      | ?page=1\&pageSize=10                      | { code: 200, data: { items: Schedule\[], total: number } } | 分页获取排班记录 |
+| 添加排班记录 | POST   | /api/schedule      | { employeeId, employeeName, shift, date } | { code: 201, msg: '添加成功', data: { id: number } }           | 新增排班记录   |
+| 修改排班记录 | PUT    | /api/schedule/{id} | { employeeId, employeeName, shift, date } | { code: 200, msg: '修改成功' }                                 | 修改指定排班记录 |
+| 删除排班记录 | DELETE | /api/schedule/{id} | 无                                         | { code: 200, msg: '删除成功' }                                 | 删除指定排班记录 |
+
+仓库管理
+仓库信息信息管理
+| 接口名称   | 请求方法   | 请求 URL              | 请求参数 (POST/PUT)                                   | 返回格式                                                         | 说明       |
+| ------ | ------ | ------------------- | ------------------------------------------------- | ------------------------------------------------------------ | -------- |
+| 获取仓库列表 | GET    | /api/warehouse      | ?page=1\&pageSize=10（分页参数可选，视后端实现）                | `{ code: 200, data: { items: Warehouse[], total: number } }` | 分页获取仓库信息 |
+| 添加仓库   | POST   | /api/warehouse      | `{ name, address, capacity, superintendent }`     | `{ code: 201, msg: '添加成功', data: { id: number } }`           | 新增仓库记录   |
+| 编辑仓库   | PUT    | /api/warehouse/{id} | `{ id, name, address, capacity, superintendent }` | `{ code: 200, msg: '修改成功' }`                                 | 修改指定仓库记录 |
+| 删除仓库   | DELETE | /api/warehouse/{id} | 无                                                 | `{ code: 200, msg: '删除成功' }`                                 | 删除指定仓库记录 |
+
+商品入库管理
+| 接口名称     | 请求方法   | 请求 URL                      | 请求参数 (POST/PUT)                                                                | 返回格式                                                      | 说明            |
+| -------- | ------ | --------------------------- | ------------------------------------------------------------------------------ | --------------------------------------------------------- | ------------- |
+| 获取入库记录列表 | GET    | /api/warehouse/inbound      | ?page=1\&pageSize=10（分页参数）                                                     | { code: 200, data: { items: Inbound\[], total: number } } | 分页获取入库记录      |
+| 添加入库记录   | POST   | /api/warehouse/inbound      | { productId, warehouseId, unitId, quantity, price, inboundTime, operator }     | { code: 201, msg: "添加成功", data: { id: number } }          | 新增入库记录        |
+| 编辑入库记录   | PUT    | /api/warehouse/inbound/{id} | { id, productId, warehouseId, unitId, quantity, price, inboundTime, operator } | { code: 200, msg: "修改成功" }                                | 修改指定入库记录      |
+| 删除入库记录   | DELETE | /api/warehouse/inbound/{id} | 无                                                                              | { code: 200, msg: "删除成功" }                                | 删除指定入库记录      |
+| 获取全部入库记录 | GET    | /api/warehouse/inbound/all  | 无                                                                              | { code: 200, data: Inbound\[] }                           | 获取全部入库记录（不分页） |
+
+商品出库管理
+| 接口名称     | 请求方法   | 请求 URL                       | 请求参数 (POST/PUT)                                                                  | 返回格式                                                       | 说明            |
+| -------- | ------ | ---------------------------- | -------------------------------------------------------------------------------- | ---------------------------------------------------------- | ------------- |
+| 获取出库记录列表 | GET    | /api/warehouse/outbound      | ?page=1\&pageSize=10（分页参数）                                                       | { code: 200, data: { items: Outbound\[], total: number } } | 分页获取出库记录      |
+| 添加出库记录   | POST   | /api/warehouse/outbound      | { warehouseId, productId, unitId, quantity, reason, outboundTime, operator }     | { code: 201, msg: "添加成功", data: { id: number } }           | 新增出库记录        |
+| 编辑出库记录   | PUT    | /api/warehouse/outbound/{id} | { id, warehouseId, productId, unitId, quantity, reason, outboundTime, operator } | { code: 200, msg: "修改成功" }                                 | 修改指定出库记录      |
+| 删除出库记录   | DELETE | /api/warehouse/outbound/{id} | 无                                                                                | { code: 200, msg: "删除成功" }                                 | 删除指定出库记录      |
+| 获取全部出库记录 | GET    | /api/warehouse/outbound/all  | 无                                                                                | { code: 200, data: Outbound\[] }                           | 获取全部出库记录（不分页） |
+
+库存盘点管理
+| 接口名称     | 请求方法   | 请求 URL                              | 请求参数 (POST/PUT)                                       | 返回格式                                                             | 说明            |
+| -------- | ------ | ----------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------- | ------------- |
+| 获取盘点记录列表 | GET    | /api/warehouse/inventory-check      | ?page=1\&pageSize=10（分页参数）                            | { code: 200, data: { items: InventoryCheck\[], total: number } } | 分页获取盘点记录      |
+| 添加盘点记录   | POST   | /api/warehouse/inventory-check      | { warehouseId, productId, counted, actual, time }     | { code: 201, msg: "添加成功", data: { id: number } }                 | 新增盘点记录        |
+| 编辑盘点记录   | PUT    | /api/warehouse/inventory-check/{id} | { id, warehouseId, productId, counted, actual, time } | { code: 200, msg: "修改成功" }                                       | 修改指定盘点记录      |
+| 删除盘点记录   | DELETE | /api/warehouse/inventory-check/{id} | 无                                                     | { code: 200, msg: "删除成功" }                                       | 删除指定盘点记录      |
+| 获取全部盘点记录 | GET    | /api/warehouse/inventory-check/all  | 无                                                     | { code: 200, data: InventoryCheck\[] }                           | 获取全部盘点记录（不分页） |
+
+库存预警管理
+| 接口名称          | 方法     | 请求 URL                            | 请求参数(body/query)                                        | 返回格式                                                          | 说明            |
+| ------------- | ------ | --------------------------------- | ------------------------------------------------------- | ------------------------------------------------------------- | ------------- |
+| 获取预警规则列表      | GET    | /api/warehouse/warning-rules      | ?page=1\&pageSize=10                             | { code: 200, data: { items: WarningRule\[], total: number } } | 分页获取预警规则列表    |
+| 添加预警规则        | POST   | /api/warehouse/warning-rules      | { productId, warehouseId, threshold, currentStock }     | { code: 201, msg: "添加成功", data: { id: number } }              | 添加新的库存预警规则    |
+| 编辑预警规则        | PUT    | /api/warehouse/warning-rules/{id} | { id, productId, warehouseId, threshold, currentStock } | { code: 200, msg: "修改成功" }                                    | 修改指定ID的预警规则   |
+| 删除预警规则        | DELETE | /api/warehouse/warning-rules/{id} | 无                                                       | { code: 200, msg: "删除成功" }                                    | 删除指定ID的预警规则   |
+| 获取全部预警规则（无分页） | GET    | /api/warehouse/warning-rules/all  | 无                                                       | { code: 200, data: WarningRule\[] }                           | 获取全部预警规则（不分页） |
+
+销售管理
+销售订单录入
+| 接口名称   | 请求方法   | 请求URL                       | 请求参数                                       | 返回格式                                                          | 备注         |
+| ------ | ------ | --------------------------- | ------------------------------------------ | ------------------------------------------------------------- | ---------- |
+| 获取订单列表 | GET    | /api/sales/orders           | ?page=1\&pageSize=10                       | `{ code: 200, data: { items: SalesOrder[], total: number } }` | 分页获取销售订单列表 |
+| 添加订单   | POST   | /api/sales/orders           | `{ customerName, totalAmount, orderDate }` | `{ code: 201, msg: '添加成功', data: { orderId: number } }`       | 新增销售订单     |
+| 修改订单   | PUT    | /api/sales/orders/{orderId} | `{ customerName, totalAmount, orderDate }` | `{ code: 200, msg: '修改成功' }`                                  | 更新指定ID订单   |
+| 删除订单   | DELETE | /api/sales/orders/{orderId} | 无                                          | `{ code: 200, msg: '删除成功' }`                                  | 删除指定ID订单   |
+
+销售退货管理
+| 接口名称     | 请求方法   | 请求URL                         | 请求参数                                    | 返回格式                                                           | 备注         |
+| -------- | ------ | ----------------------------- | --------------------------------------- | -------------------------------------------------------------- | ---------- |
+| 获取退货记录列表 | GET    | /api/sales/returns            | ?page=1\&pageSize=10                    | `{ code: 200, data: { items: SalesReturn[], total: number } }` | 分页获取退货记录列表 |
+| 添加退货记录   | POST   | /api/sales/returns            | `{ orderId, returnReason, returnDate }` | `{ code: 201, msg: '添加成功', data: { returnId: number } }`       | 新增退货记录     |
+| 修改退货记录   | PUT    | /api/sales/returns/{returnId} | `{ orderId, returnReason, returnDate }` | `{ code: 200, msg: '修改成功' }`                                   | 更新指定ID退货记录 |
+| 删除退货记录   | DELETE | /api/sales/returns/{returnId} | 无                                       | `{ code: 200, msg: '删除成功' }`                                   | 删除指定ID退货记录 |
+
+销售统计报表
+| 接口名称      | 请求方法 | 请求URL              | 请求参数                | 返回格式                                                            | 备注          |
+| --------- | ---- | ------------------ | ------------------- | --------------------------------------------------------------- | ----------- |
+| 获取商品销售排行榜 | GET  | /api/sales/ranking | ?page=1\&pageSize=5 | `{ code: 200, data: { items: SalesRanking[], total: number } }` | 分页获取商品销售排行榜 |
+
+商品销售排行榜
+| 接口名称     | 请求方法 | 请求URL             | 请求参数                | 返回格式                                                           | 备注          |
+| -------- | ---- | ----------------- | ------------------- | -------------------------------------------------------------- | ----------- |
+| 获取销售统计报表 | GET  | /api/sales/report | ?page=1\&pageSize=5 | `{ code: 200, data: { items: SalesReport[], total: number } }` | 分页获取月销售统计报表 |
+
+
+财务管理
+收银管理
+| 接口名称     | 请求方法   | 请求URL                          | 请求参数                                                                             | 返回格式                                                             | 备注          |
+| -------- | ------ | ------------------------------ | -------------------------------------------------------------------------------- | ---------------------------------------------------------------- | ----------- |
+| 获取收银记录列表 | GET    | /api/cashier/records           | ?page=1\&pageSize=10                                                             | `{ code: 200, data: { items: CashierRecord[], total: number } }` | 分页获取收银记录列表  |
+| 添加收银记录   | POST   | /api/cashier/record            | `{ cashierId: number, amount: number, time: string, paymentMethod: string }`     | `{ code: 200, message: '添加成功' }`                                 | 添加新的收银记录    |
+| 编辑收银记录   | PUT    | /api/cashier/record/{recordId} | `{ cashierId?: number, amount?: number, time?: string, paymentMethod?: string }` | `{ code: 200, message: '更新成功' }`                                 | 更新指定ID的收银记录 |
+| 删除收银记录   | DELETE | /api/cashier/record/{recordId} | 无                                                                                | `{ code: 200, message: '删除成功' }`                                 | 删除指定ID的收银记录 |
+
+财务报表
+| 接口名称     | 请求方法 | 请求URL               | 请求参数 | 返回格式                                                                                                    | 备注                |
+| -------- | ---- | ------------------- | ---- | ------------------------------------------------------------------------------------------------------- | ----------------- |
+| 获取财务报表数据 | GET  | /api/finance/report | -    | `{ code: 200, data: { monthlyIncome: number[], paymentMethodRatio: {name: string, value: number}[] } }` | 返回月度收入数据和支付方式占比数据 |
+
+成本核算
+| 接口名称     | 请求方法   | 请求URL                        | 请求参数                                                                                                                      | 返回格式                                                          | 备注            |
+| -------- | ------ | ---------------------------- | ------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- | ------------- |
+| 获取成本记录列表 | GET    | /api/cost/records            | `?page=1&pageSize=10`                                                                                                     | `{ code: 200, data: { items: CostRecord[], total: number } }` | 分页获取成本记录列表    |
+| 添加成本记录   | POST   | /api/cost/record             | `{ productId: number, totalInboundPrice: number, outboundQuantity: number, costAmount: number, calculationTime: string }` | `{ code: 200, message: '添加成功' }`                              | 添加新的成本记录      |
+| 编辑成本记录   | PUT    | /api/cost/record/{productId} | `{ totalInboundPrice?: number, outboundQuantity?: number, costAmount?: number, calculationTime?: string }`                | `{ code: 200, message: '更新成功' }`                              | 更新指定商品ID的成本记录 |
+| 删除成本记录   | DELETE | /api/cost/record/{productId} | 无                                                                                                                         | `{ code: 200, message: '删除成功' }`                              | 删除指定商品ID的成本记录 |
+
+预算管理
+| 接口名称     | 请求方法   | 请求URL               | 请求参数                                                           | 返回格式                                                            | 备注            |
+| -------- | ------ | ------------------- | -------------------------------------------------------------- | --------------------------------------------------------------- | ------------- |
+| 获取预算记录列表 | GET    | /api/budget/records | `?page=1&pageSize=10`                                          | `{ code: 200, data: { items: BudgetRecord[], total: number } }` | 分页获取预算记录列表    |
+| 添加预算记录   | POST   | /api/budget/record  | `{ month: string, projectName: string, budgetAmount: number }` | `{ code: 200, message: '添加成功' }`                                | 添加新的预算记录      |
+| 编辑预算记录   | PUT    | /api/budget/record  | `{ month: string, projectName: string, budgetAmount: number }` | `{ code: 200, message: '更新成功' }`                                | 更新指定月和项目的预算记录 |
+| 删除预算记录   | DELETE | /api/budget/record  | `{ month: string, projectName: string }`                       | `{ code: 200, message: '删除成功' }`                                | 删除指定月和项目的预算记录 |
+
+税务管理
+| 接口名称     | 请求方法   | 请求URL            | 请求参数                                                                 | 返回格式                                                         | 备注             |
+| -------- | ------ | ---------------- | -------------------------------------------------------------------- | ------------------------------------------------------------ | -------------- |
+| 获取税务记录列表 | GET    | /api/tax/records | `?page=1&pageSize=10`                                                | `{ code: 200, data: { items: TaxRecord[], total: number } }` | 分页获取税务记录列表     |
+| 添加税务记录   | POST   | /api/tax/record  | `{ project: string, taxAmount: number, date: string, type: string }` | `{ code: 200, message: '添加成功' }`                             | 添加新的税务记录       |
+| 编辑税务记录   | PUT    | /api/tax/record  | `{ project: string, taxAmount: number, date: string, type: string }` | `{ code: 200, message: '更新成功' }`                             | 更新指定项目和日期的税务记录 |
+| 删除税务记录   | DELETE | /api/tax/record  | `{ project: string, date: string }`                                  | `{ code: 200, message: '删除成功' }`                             | 删除指定项目和日期的税务记录 |
+
+
+会员管理
+会员信息录入
+| 接口名称       | 请求方法   | 请求URL              | 请求参数                                                                                          | 返回格式                                                      | 备注            |                    |
+| ---------- | ------ | ------------------ | --------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ------------- | ------------------ |
+| 获取会员列表     | GET    | /api/member/list   | `?page=1&pageSize=10&name=&gender=`                                                           | `{ code: 200, data: { items: Member[], total: number } }` | 分页获取会员列表（可筛选） |                    |
+| 添加会员       | POST   | /api/member        | `{ name: string, gender: string, birthday: string, phone: string, registrationDate: string }` | `{ code: 200, message: '添加成功' }`                          | 新增会员          |                    |
+| 编辑会员       | PUT    | /api/member/\:id   | `{ name: string, gender: string, birthday: string, phone: string, registrationDate: string }` | `{ code: 200, message: '更新成功' }`                          | 更新指定ID会员信息    |                    |
+| 删除会员       | DELETE | /api/member/\:id   | -                                                                                             | `{ code: 200, message: '删除成功' }`                          | 删除指定ID会员      |                    |
+| 获取会员详细信息   | GET    | /api/member/\:id   | -                                                                                             | `{ code: 200, data: Member }`                             | 获取指定ID会员详细信息  |                    |
+| 导出会员数据（可选） | GET    | /api/member/export | \`?format=csv                                                                                 | excel\`                                                   | 文件流           | 导出会员数据为CSV或Excel格式 |
+
+会员等级管理
+| 接口名称   | 请求方法   | 请求URL                  | 请求参数                                                                       | 返回格式                                                     | 备注         |
+| ------ | ------ | ---------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------- | ---------- |
+| 获取等级列表 | GET    | /api/member/level/list | `?page=1&pageSize=10`                                                      | `{ code: 200, data: { items: Level[], total: number } }` | 分页获取会员等级列表 |
+| 添加等级   | POST   | /api/member/level      | `{ name: string, discount: string, pointsRequired: number, note: string }` | `{ code: 200, message: '添加成功' }`                         | 新增会员等级     |
+| 编辑等级   | PUT    | /api/member/level/\:id | `{ name: string, discount: string, pointsRequired: number, note: string }` | `{ code: 200, message: '更新成功' }`                         | 修改指定ID等级   |
+| 删除等级   | DELETE | /api/member/level/\:id | -                                                                          | `{ code: 200, message: '删除成功' }`                         | 删除指定ID等级   |
+
+积分政策管理
+| 接口名称     | 请求方法   | 请求URL                          | 请求参数                                                                                                     | 返回格式                                                            | 备注         |
+| -------- | ------ | ------------------------------ | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ---------- |
+| 获取积分政策列表 | GET    | /api/member/points-policy/list | `?page=1&pageSize=10`                                                                                    | `{ code: 200, data: { items: PointsPolicy[], total: number } }` | 分页获取积分政策列表 |
+| 新增积分政策   | POST   | /api/member/points-policy      | `{ policyName: string, pointsPerYuan: number, startDate: string, endDate: string, description: string }` | `{ code: 200, message: '添加成功' }`                                | 新增积分政策     |
+| 编辑积分政策   | PUT    | /api/member/points-policy/\:id | `{ policyName: string, pointsPerYuan: number, startDate: string, endDate: string, description: string }` | `{ code: 200, message: '更新成功' }`                                | 修改指定ID积分政策 |
+| 删除积分政策   | DELETE | /api/member/points-policy/\:id | -                                                                                                        | `{ code: 200, message: '删除成功' }`                                | 删除指定ID积分政策 |
+
+会员消费记录管理
+| 接口名称     | 请求方法   | 请求URL                            | 请求参数                                                                                                   | 返回格式                                                             | 备注         |
+| -------- | ------ | -------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- | ---------- |
+| 获取消费记录列表 | GET    | /api/member/consume-records      | `?page=1&pageSize=10`                                                                                  | `{ code: 200, data: { items: ConsumeRecord[], total: number } }` | 分页获取消费记录列表 |
+| 新增消费记录   | POST   | /api/member/consume-records      | `{ memberId: number, memberName: string, amount: number, consumeDate: string, paymentMethod: string }` | `{ code: 200, message: '添加成功' }`                                 | 新增一条消费记录   |
+| 编辑消费记录   | PUT    | /api/member/consume-records/\:id | `{ memberId: number, memberName: string, amount: number, consumeDate: string, paymentMethod: string }` | `{ code: 200, message: '更新成功' }`                                 | 更新指定ID消费记录 |
+| 删除消费记录   | DELETE | /api/member/consume-records/\:id | -                                                                                                      | `{ code: 200, message: '删除成功' }`                                 | 删除指定ID消费记录 |
+
+会员积分兑换管理
+| 接口名称     | 请求方法   | 请求URL                           | 请求参数                                                                               | 返回格式                                                            | 备注         |
+| -------- | ------ | ------------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------- | ---------- |
+| 获取兑换记录列表 | GET    | /api/member/redeem-records      | `?page=1&pageSize=10`                                                              | `{ code: 200, data: { items: RedeemRecord[], total: number } }` | 分页获取兑换记录列表 |
+| 新增兑换记录   | POST   | /api/member/redeem-records      | `{ memberId: number, redeemItemId: number, pointsUsed: number, operator: string }` | `{ code: 200, message: '添加成功' }`                                | 新增一条兑换记录   |
+| 编辑兑换记录   | PUT    | /api/member/redeem-records/\:id | `{ memberId: number, redeemItemId: number, pointsUsed: number, operator: string }` | `{ code: 200, message: '更新成功' }`                                | 更新指定ID兑换记录 |
+| 删除兑换记录   | DELETE | /api/member/redeem-records/\:id | -                                                                                  | `{ code: 200, message: '删除成功' }`                                | 删除指定ID兑换记录 |
+| 获取兑换物品列表 | GET    | /api/member/redeem-items        | -                                                                                  | `{ code: 200, data: RedeemItem[] }`                             | 获取所有可兑换物品  |
+
+积分兑换物品管理
+| 接口名称   | 请求方法   | 请求URL           | 请求参数                                                                           | 返回格式                                                          | 备注       |
+| ------ | ------ | --------------- | ------------------------------------------------------------------------------ | ------------------------------------------------------------- | -------- |
+| 获取物品列表 | GET    | /api/items      | `?page=1&pageSize=10`                                                          | `{ code: 200, data: { items: RedeemItem[], total: number } }` | 分页获取物品列表 |
+| 添加物品   | POST   | /api/items      | `{ name: string, pointsRequired: number, startTime: string, endTime: string }` | `{ code: 200, message: '添加成功', data: RedeemItem }`            | 新增物品     |
+| 编辑物品   | PUT    | /api/items/\:id | `{ name: string, pointsRequired: number, startTime: string, endTime: string }` | `{ code: 200, message: '更新成功', data: RedeemItem }`            | 修改指定ID物品 |
+| 删除物品   | DELETE | /api/items/\:id | -                                                                              | `{ code: 200, message: '删除成功' }`                              | 删除指定ID物品 |
+
+
+供应商管理
+供应商信息录入
+| 接口名称    | 请求方法   | 请求URL              | 请求参数                                                                      | 返回格式                                                        | 备注             |
+| ------- | ------ | ------------------ | ------------------------------------------------------------------------- | ----------------------------------------------------------- | -------------- |
+| 获取供应商列表 | GET    | /api/supplier/list | `?page=1&pageSize=10`                                                     | `{ code: 200, data: { items: Supplier[], total: number } }` | 分页获取供应商信息      |
+| 添加供应商   | POST   | /api/supplier      | `{ name: string, contactPerson: string, phone: string, address: string }` | `{ code: 200, message: '添加成功' }`                            | 新增供应商信息        |
+| 编辑供应商   | PUT    | /api/supplier/\:id | `{ name: string, contactPerson: string, phone: string, address: string }` | `{ code: 200, message: '更新成功' }`                            | 修改指定 ID 的供应商信息 |
+| 删除供应商   | DELETE | /api/supplier/\:id | -                                                                         | `{ code: 200, message: '删除成功' }`                            | 删除指定 ID 的供应商信息 |
+
+供应商合同管理
+| 接口名称   | 请求方法   | 请求URL              | 请求参数                                                                                   | 返回格式                                                        | 备注           |
+| ------ | ------ | ------------------ | -------------------------------------------------------------------------------------- | ----------------------------------------------------------- | ------------ |
+| 获取合同列表 | GET    | /api/contract/list | `?page=1&pageSize=10`                                                                  | `{ code: 200, data: { items: Contract[], total: number } }` | 分页获取供应商合同    |
+| 添加合同   | POST   | /api/contract      | `{ supplierName: string, contractNumber: string, startDate: string, endDate: string }` | `{ code: 200, message: '添加成功' }`                            | 新增合同记录       |
+| 编辑合同   | PUT    | /api/contract/\:id | `{ supplierName: string, contractNumber: string, startDate: string, endDate: string }` | `{ code: 200, message: '更新成功' }`                            | 更新指定 ID 合同记录 |
+| 删除合同   | DELETE | /api/contract/\:id | -                                                                                      | `{ code: 200, message: '删除成功' }`                            | 删除指定 ID 合同记录 |
+
+供应商评价管理
+| 接口名称   | 请求方法   | 请求URL            | 请求参数                                                                        | 返回格式                                                             | 备注            |
+| ------ | ------ | ---------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------- | ------------- |
+| 获取评价列表 | GET    | /api/review/list | ?page=1\&pageSize=10                                                        | { code: 200, data: { items: SupplierReview\[], total: number } } | 分页获取供应商评价     |
+| 添加评价   | POST   | /api/review      | { supplierName: string, reviewer: string, rating: number, comment: string } | { code: 200, message: '添加成功' }                                   | 新增评价记录        |
+| 编辑评价   | PUT    | /api/review/\:id | { supplierName: string, reviewer: string, rating: number, comment: string } | { code: 200, message: '更新成功' }                                   | 更新指定 ID 的评价记录 |
+| 删除评价   | DELETE | /api/review/\:id | -                                                                           | { code: 200, message: '删除成功' }                                   | 删除指定 ID 的评价记录 |
+
+采购订单管理
+| 接口名称     | 请求方法   | 请求URL              | 请求参数                                                                                  | 返回格式                                                            | 备注             |
+| -------- | ------ | ------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- | -------------- |
+| 获取采购订单列表 | GET    | /api/purchase/list | ?page=1\&pageSize=10                                                                  | { code: 200, data: { items: PurchaseOrder\[], total: number } } | 分页获取采购订单记录     |
+| 添加采购订单   | POST   | /api/purchase      | { supplierName: string, orderNumber: string, orderDate: string, totalAmount: number } | { code: 200, message: '添加成功' }                                  | 新增采购订单         |
+| 编辑采购订单   | PUT    | /api/purchase/\:id | { supplierName: string, orderNumber: string, orderDate: string, totalAmount: number } | { code: 200, message: '更新成功' }                                  | 更新指定 ID 采购订单   |
+| 删除采购订单   | DELETE | /api/purchase/\:id | -                                                                                     | { code: 200, message: '删除成功' }                                  | 删除指定 ID 采购订单记录 |
