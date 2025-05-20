@@ -2,6 +2,8 @@
 
 #include <crow.h>
 #include <cstdint>
+#include <fmt/format.h>
+#include <nlohmann/json.hpp>
 #include <optional>
 #include <sqlpp11/data_types.h>
 #include <vector>
@@ -52,8 +54,8 @@ using quantity_type = long int;
  *
  * @note 使用示例：`LOG("Current value: {}", value);`
  */
-#define LOG(...)                                                               \
-  fmt::println("[{}:{}:{}]: {}", __FILE_NAME__, __FUNCTION__, __LINE__,        \
+#define LOG(...)                                                        \
+  fmt::println("[{}:{}:{}]: {}", __FILE_NAME__, __FUNCTION__, __LINE__, \
                fmt::format(__VA_ARGS__))
 
 /**
@@ -61,15 +63,16 @@ using quantity_type = long int;
  *
  * @note 使用示例：`auto log_str = FORMAT_LOG_STR("Value is {}", value);`
  */
-#define FORMAT_LOG_STR(...)                                                    \
-  fmt::format("[{}:{}:{}]: {}", __FILE_NAME__, __FUNCTION__, __LINE__,         \
+#define FORMAT_LOG_STR(...)                                            \
+  fmt::format("[{}:{}:{}]: {}", __FILE_NAME__, __FUNCTION__, __LINE__, \
               __VA_ARGS__)
 
-#define SET_ONLYCODE_JSON(status_code)                                         \
-  nlohmann::json {                                                             \
-    {                                                                          \
-      "code", status_code                                                      \
-    }                                                                          \
+#define SET_ONLYCODE_JSON(status_code) \
+  nlohmann::json                       \
+  {                                    \
+    {                                  \
+      "code", status_code              \
+    }                                  \
   }
 
 /**
@@ -80,15 +83,18 @@ using quantity_type = long int;
  *
  * @note 使用示例：`auto err_json = SET_ERR_JSON(400, "Invalid Request");`
  */
-#define SET_ERR_JSON(status_code, error)                                       \
-  nlohmann::json {                                                             \
-    {"code", status_code}, {                                                   \
-      "data", {                                                                \
-        {                                                                      \
-          "error", error                                                       \
-        }                                                                      \
-      }                                                                        \
-    }                                                                          \
+#define SET_ERR_JSON(status_code, error) \
+  nlohmann::json                         \
+  {                                      \
+    {"code", status_code},               \
+    {                                    \
+      "data",                            \
+      {                                  \
+        {                                \
+          "error", error                 \
+        }                                \
+      }                                  \
+    }                                    \
   }
 
 /**
@@ -101,13 +107,19 @@ using quantity_type = long int;
  * @note 使用示例：`auto err_json = SET_ERR_JSON_WITH_DETAIL(400, "Invalid
  * Request", "Missing field 'name'");`
  */
-#define SET_ERR_JSON_WITH_DETAIL(status_code, error, error_detail)             \
-  nlohmann::json {                                                             \
-    {"code", status_code}, {                                                   \
-      "data", {                                                                \
-        {"error", error}, { "detail", error_detail }                           \
-      }                                                                        \
-    }                                                                          \
+#define SET_ERR_JSON_WITH_DETAIL(status_code, error, error_detail) \
+  nlohmann::json                                                   \
+  {                                                                \
+    {"code", status_code},                                         \
+    {                                                              \
+      "data",                                                      \
+      {                                                            \
+        {"error", error},                                          \
+        {                                                          \
+          "detail", error_detail                                   \
+        }                                                          \
+      }                                                            \
+    }                                                              \
   }
 
 /**
@@ -118,18 +130,22 @@ using quantity_type = long int;
  *
  * @note 使用示例：`auto response = SET_ERR_RESPONSE(400, "Invalid Request");`
  */
-#define SET_ERR_RESPONSE(status_code, error)                                   \
+#define SET_ERR_RESPONSE(status_code, error) \
   crow::response(status_code, SET_ERR_JSON(status_code, error).dump())
 
-#define SET_EMPTY_DATA_RESPONSE(status_code)                                   \
+#define SET_EMPTY_DATA_RESPONSE(status_code) \
   crow::response(status_code, SET_ONLYCODE_JSON(status_code).dump())
 
-#define SET_SUC_JSON_DATA(data)                                                \
-  nlohmann::json {                                                             \
-    {"code", 200}, { "data", data }                                            \
+#define SET_SUC_JSON_DATA(data) \
+  nlohmann::json                \
+  {                             \
+    {"code", 200},              \
+    {                           \
+      "data", data              \
+    }                           \
   }
 
-#define SET_SUC_DATA_RESPONSE(data)                                            \
+#define SET_SUC_DATA_RESPONSE(data) \
   crow::response(200, SET_SUC_JSON_DATA(data).dump())
 
 /**
@@ -143,10 +159,10 @@ using quantity_type = long int;
  * CHECK_AND_GET_JSON(j);
  * @endcode
  */
-#define CHECK_AND_GET_JSON(j)                                                  \
-  auto j_opt = utils::try_parse_json(body);                                    \
-  if (!j_opt)                                                                  \
-    return crow::response(400, SET_ERR_JSON(400, "Invalid JSON"));             \
+#define CHECK_AND_GET_JSON(j)                                      \
+  auto j_opt = utils::try_parse_json(body);                        \
+  if (!j_opt)                                                      \
+    return crow::response(400, SET_ERR_JSON(400, "Invalid JSON")); \
   j = std::move(j_opt.value());
 
 /**
@@ -160,10 +176,10 @@ using quantity_type = long int;
  * CHECK_REQUIRED_FIELD(j, "name");
  * @endcode
  */
-#define CHECK_REQUIRED_FIELD(j, field)                                         \
-  if (!(j).contains((field)))                                                  \
-  return crow::response(                                                       \
-      400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field))))
+#define CHECK_REQUIRED_FIELD(j, field) \
+  if (!(j).contains((field)))          \
+  return crow::response(               \
+    400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field))))
 
 /**
  * @brief 批量检查 JSON 中是否包含所有指定字段，不存在则返回 400 错误。
@@ -177,10 +193,16 @@ using quantity_type = long int;
  * CHECK_REQUIRED_FIELDS(j, required);
  * @endcode
  */
-#define CHECK_REQUIRED_FIELDS(j, container)                                    \
-  for (const auto &field : (container)) {                                      \
-    if (!(j).contains(field)) {                                                \
-      return crow::response(                                                   \
-          400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field)));   \
-    }                                                                          \
+#define CHECK_REQUIRED_FIELDS(j, container)                                \
+  for (const auto& field : (container)) {                                  \
+    if (!(j).contains(field)) {                                            \
+      return crow::response(                                               \
+        400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field))); \
+    }                                                                      \
   }
+
+struct ServiceResult {
+  bool success;
+  std::string error;
+  nlohmann::json data;
+};

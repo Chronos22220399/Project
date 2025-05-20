@@ -1,7 +1,11 @@
 #include <controller/goods/goods_category_controller.h>
 #include <service/goods/goods_category_service.h>
 
-void GoodsCategoryController::registerRoutes(crow::SimpleApp &app)
+const std::vector<std::string> required_fields = {
+  "goods_category_id", "goods_category_name", "goods_category_description",
+  "parent_category_id"};
+
+void GoodsCategoryController::registerRoutes(crow::SimpleApp& app)
 {
   // MARK: 商品分类创建接口 - POST /api/goods_category/create
   //
@@ -32,8 +36,20 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app)
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/create")
-      .methods("POST"_method)([](const crow::request &req)
-                              { return GoodsCategoryService::create(req.body); });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      // 检查并解析JSON，失败自动返回400
+      CHECK_AND_GET_JSON(j);
+      // 检查必填字段
+      CHECK_REQUIRED_FIELDS(j, required_fields);
+      auto gc_dto = GoodsCategoryDTO::from_json(j);
+      gc_dto.goods_category_id = utils::create_id("GC");  // 生成外部ID
+
+      auto res = GoodsCategoryService::create(gc_dto);
+      return utils::to_response(res, 201);
+    });
+
 
   // MARK: 获取全部商品分类信息 - GET /api/goods_category/get_all
   //
@@ -61,8 +77,11 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app)
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/get_all")
-      .methods("GET"_method)([](const crow::request &req)
-                             { return GoodsCategoryService::getAll(); });
+    .methods("GET"_method)([](const crow::request& req) {
+      auto res = GoodsCategoryService::getAll();
+      return utils::to_response(res, 200);
+    });
+
 
   // MARK: 商品分类分页查询接口 - POST /api/goods_category/get_by_page
   //
@@ -102,8 +121,21 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app)
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/get_by_page")
-      .methods("POST"_method)([](const crow::request &req)
-                              { return GoodsCategoryService::getByPage(req.body); });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      int page = j.value("page", 1);
+      int page_size = j.value("page_size", 10);
+      if (page <= 0 || page_size <= 0) {
+        return SET_ERR_RESPONSE(400, "Invalid page or page_size");
+      }
+
+      auto res = GoodsCategoryService::getByPage(page, page_size);
+      return utils::to_response(res, 200);
+    });
+
 
   // MARK: 删除商品分类接口 - POST /api/goods_category/remove
   //
@@ -132,8 +164,17 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app)
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/remove")
-      .methods("POST"_method)([](const crow::request &req)
-                              { return GoodsCategoryService::removeByGoodsCategoryId(req.body); });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+      // 检查并获取必填字段
+      CHECK_REQUIRED_FIELD(j, "goods_category_id");
+      auto goods_category_id = j.at("goods_category_id").get<ex_id_type>();
+
+      auto res = GoodsCategoryService::removeByGoodsCategoryId(req.body);
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 修改商品分类接口 - POST /api/goods_category/update
   //
@@ -165,8 +206,20 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp &app)
   //   "data": null
   // }
   CROW_ROUTE(app, "/api/goods_category/update")
-      .methods("POST"_method)([](const crow::request &req)
-                              { return GoodsCategoryService::updateByGoodsCategoryId(req.body); });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+      // 检查并获取必填字段
+      CHECK_REQUIRED_FIELDS(j, required_fields);
+      CHECK_REQUIRED_FIELD(j, "goods_category_id");
+      auto gc_dto = GoodsCategoryDTO::from_json(j);
+      auto goods_category_id = gc_dto.goods_category_id;
+
+      auto res = GoodsCategoryService::updateByGoodsCategoryId(
+        goods_category_id, gc_dto);
+      return utils::to_response(res, 200);
+    });
 
   // other routes
 }

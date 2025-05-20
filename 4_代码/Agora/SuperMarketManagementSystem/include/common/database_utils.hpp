@@ -65,12 +65,13 @@ inline utils::ConfigManager configManager(config_file);
  * @return std::unique_ptr<pooled_conn_type> Unique pointer to a pooled SQLite
  * connection.
  */
-[[nodiscard]] static auto get_pooled_conn_ptr() {
+[[nodiscard]] static auto get_pooled_conn_ptr()
+{
   static sqlpp::sqlite3::connection_config config{};
   static std::once_flag flag;
-  std::call_once(flag, [&]() {
+  std::call_once(flag, [ & ]() {
     static auto root_dir_path =
-        utils::get_project_root_path(std::filesystem::current_path(), "Agora");
+      utils::get_project_root_path(std::filesystem::current_path(), "Agora");
     fmt::println("Current Path: {}", root_dir_path.c_str());
     config.debug = true;
     config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
@@ -79,7 +80,7 @@ inline utils::ConfigManager configManager(config_file);
     config.path_to_database = databasePath;
   });
   static auto config_ptr =
-      std::make_shared<sqlpp::sqlite3::connection_config>(config);
+    std::make_shared<sqlpp::sqlite3::connection_config>(config);
   static auto conn_pool = conn_pool_type(config_ptr, 8);
   return std::make_unique<pooled_conn_type>(conn_pool.get());
 }
@@ -92,7 +93,7 @@ inline utils::ConfigManager configManager(config_file);
  * committed upon destruction, unless explicitly committed earlier.
  */
 class ScopedTranscation {
-public:
+  public:
   /**
    * @brief Constructs a ScopedTranscation and starts a transaction.
    *
@@ -100,15 +101,19 @@ public:
    * @throw std::invalid_argument If the provided connection pointer is null.
    */
   explicit ScopedTranscation(pooled_conn_ptr_type pc_ptr)
-      : pc_ptr_(std::move(pc_ptr)), is_commited_(false) {
+    : pc_ptr_(std::move(pc_ptr))
+    , is_commited_(false)
+  {
     try {
       if (this->pc_ptr_ == nullptr) {
         throw std::invalid_argument("invalid pointer to pooled_conn_ptr_type");
       }
       pc_ptr_->start_transaction();
-    } catch (const sqlpp::exception &e) {
+    }
+    catch (const sqlpp::exception& e) {
       LOG("出现数据库错误: {}", e.what());
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e) {
       LOG("出现系统错误: {}", e.what());
     }
   }
@@ -116,15 +121,18 @@ public:
   /**
    * @brief Commits the transaction if it has not been committed yet.
    */
-  void commit() {
+  void commit()
+  {
     try {
       if (!is_commited_) {
         pc_ptr_->commit_transaction();
         is_commited_ = true;
       }
-    } catch (const sqlpp::exception &e) {
+    }
+    catch (const sqlpp::exception& e) {
       LOG("出现数据库错误: {}", e.what());
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e) {
       LOG("出现系统错误: {}", e.what());
     }
   }
@@ -132,22 +140,25 @@ public:
   /**
    * @brief Destructor that commits the transaction if it is still active.
    */
-  ~ScopedTranscation() {
+  ~ScopedTranscation()
+  {
     try {
       if (!is_commited_ || pc_ptr_->is_transaction_active()) {
         pc_ptr_->commit_transaction();
       }
-    } catch (const sqlpp::exception &e) {
+    }
+    catch (const sqlpp::exception& e) {
       LOG("出现系统错误: {}", e.what());
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e) {
       LOG("出现数据库错误: {}", e.what());
     }
   }
 
-private:
+  private:
   pooled_conn_ptr_type
-      pc_ptr_;       ///< Shared pointer to a pooled SQLite connection.
-  bool is_commited_; ///< Indicates whether the transaction has been committed.
+    pc_ptr_;          ///< Shared pointer to a pooled SQLite connection.
+  bool is_commited_;  ///< Indicates whether the transaction has been committed.
 };
 
 /**
@@ -169,7 +180,8 @@ struct DataBaseHelper {
    * @return RetType The result of the operation.
    */
   template <typename RetType, typename Operation, typename... Args>
-  static auto execute(Operation &&operation, Args &&...args) {
+  static auto execute(Operation&& operation, Args&&... args)
+  {
     try {
       pooled_conn_ptr_type pooled_conn_ptr = get_pooled_conn_ptr();
       if (!pooled_conn_ptr->is_connected()) {
@@ -180,13 +192,15 @@ struct DataBaseHelper {
       RetType ret = operation(pooled_conn_ptr, std::forward<Args>(args)...);
       trans.commit();
       return ret;
-    } catch (const sqlpp::exception &e) {
+    }
+    catch (const sqlpp::exception& e) {
       LOG("出现数据库错误: {}", e.what());
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e) {
       LOG("出现系统错误: {}", e.what());
     }
     return RetType{};
   }
 };
 
-} // namespace utils
+}  // namespace utils

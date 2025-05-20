@@ -1,7 +1,9 @@
 #include <controller/goods/promotion_controller.h>
 #include <service/goods/promotion_service.h>
 
-void PromotionController::registerRoutes(crow::SimpleApp &app) {
+
+void PromotionController::registerRoutes(crow::SimpleApp& app)
+{
   // MARK: 创建促销活动接口 - POST /api/promotion/create
   //
   // 请求JSON：
@@ -32,9 +34,20 @@ void PromotionController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库插入异常
   // }
   CROW_ROUTE(app, "/api/promotion/create")
-      .methods("POST"_method)([](const crow::request &req) {
-        return PromotionService::create(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      // 检查必填字段
+      CHECK_REQUIRED_FIELDS(j, required_fields);
+
+      auto promotion_dto = PromotionDTO::from_json(j);
+      promotion_dto.promotion_id = utils::create_id("P-");
+
+      auto res = PromotionService::create(promotion_dto);
+      return utils::to_response(res, 201);
+    });
 
   // MARK: 删除促销活动接口 - POST /api/promotion/remove
   //
@@ -56,9 +69,19 @@ void PromotionController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库删除失败
   // }
   CROW_ROUTE(app, "/api/promotion/remove")
-      .methods("POST"_method)([](const crow::request &req) {
-        return PromotionService::removeByPromotionId(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      // 检查必填字段
+      CHECK_REQUIRED_FIELD(j, "promotion_id");
+      auto promotion_id = j.at("promotion_id").get<ex_id_type>();
+
+      auto res = PromotionService::removeByPromotionId(promotion_id);
+
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 更新促销活动接口 - POST /api/promotion/update
   //
@@ -90,9 +113,20 @@ void PromotionController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库更新失败
   // }
   CROW_ROUTE(app, "/api/promotion/update")
-      .methods("POST"_method)([](const crow::request &req) {
-        return PromotionService::updateByPromotionId(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+      // 检查必填字段
+      CHECK_REQUIRED_FIELDS(j, required_fields);
+
+      auto promotion_dto = PromotionDTO::from_json(j);
+      auto promotion_id = promotion_dto.promotion_id;
+
+      auto res =
+        PromotionService::updateByPromotionId(promotion_id, promotion_dto);
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 分页获取促销活动接口 - POST /api/promotion/get_by_page
   //
@@ -133,9 +167,18 @@ void PromotionController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库查询失败
   // }
   CROW_ROUTE(app, "/api/promotion/get_by_page")
-      .methods("POST"_method)([](const crow::request &req) {
-        return PromotionService::getByPage(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      // 获取分页参数并设置默认值
+      int page = j.value("page", 1);
+      int page_size = j.value("page_size", 10);
+
+      auto res = PromotionService::getByPage(page, page_size);
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 获取所有促销活动接口 - GET /api/promotion/get_all
   //
@@ -165,7 +208,8 @@ void PromotionController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库查询失败
   // }
   CROW_ROUTE(app, "/api/promotion/get_all").methods("GET"_method)([]() {
-    return PromotionService::getAll();
+    auto res = PromotionService::getAll();
+    return utils::to_response(res, 200);
   });
 
   // 其他路由...
