@@ -1,47 +1,21 @@
-<<<<<<< HEAD
-# Vue 3 + TypeScript + Vite
+## 用法
 
-This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+### 初始化
+使用 `./init.sh` 创建并启动镜像，支持在 arm64、arm64 架构的机器上运行，镜像中的环境会自动配置
 
-Learn more about the recommended Project Setup and IDE Support in the [Vue Docs TypeScript Guide](https://vuejs.org/guide/typescript/overview.html#project-setup).
-=======
-# my-vue-project
+#### 退出容器后重新打开容器
+使用 `./start.sh` 可在退出容器后重新启动并进入容器
 
-#### 介绍
-{**以下是 Gitee 平台说明，您可以替换此简介**
-Gitee 是 OSCHINA 推出的基于 Git 的代码托管平台（同时支持 SVN）。专为开发者提供稳定、高效、安全的云端软件开发协作平台
-无论是个人、团队、或是企业，都能够用 Gitee 实现代码托管、项目管理、协作开发。企业项目请看 [https://gitee.com/enterprises](https://gitee.com/enterprises)}
+#### 安装第三方库
+通过 `./install-all.sh` 能自动安装所需的第三方库
+> ⚠️install-all.sh 已暂停更新，不能保证能安装好所有库，但需要手动编译安装的库已配置好了，无需担心，若有需要的库未被安装，请自行通过 pacman、yay 或 paru 安装，如有疑问，请自行解决。
 
-#### 软件架构
-软件架构说明
+#### 启动服务
+通过 `./run.sh` 可直接启动服务
 
+#### 服务内的脚本
+服务内的脚本存放于 `SupermarketManageMentSystem/scripts` 下，其中存放有：
+1. code_gen.py：根据 `sql` 下的 ddl 文件生成初始化子模块所需文件
+2. create_all_tables.py：读取 `sql` 下所有 ddl 文件生成 `sqlpp11` 所需的头文件
+2. create_single_table.py：读取 `sql` 下指定的 ddl 文件生成 `sqlpp11` 所需的头文件
 
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
-
-
-#### 特技
-
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
->>>>>>> 50fe34e2967564128056421aa21510f4e92efafb

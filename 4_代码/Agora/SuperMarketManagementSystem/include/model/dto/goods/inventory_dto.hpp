@@ -17,41 +17,43 @@ struct InventoryDTO {
   in_id_type warehouse_rk_id = 0;
   in_id_type quantity = 0;
 
-  static InventoryDTO from_json(const nlohmann::json &j) {
-    auto &cache = GlobalIdCache::getInstance();
-    return InventoryDTO{
-        .goods_rk_id =
-            cache.getInternalId("goods", j.at("goods_id").get<std::string>()),
-        .warehouse_rk_id = cache.getInternalId(
-            "warehosue", j.at("warehosue_id").get<std::string>()),
-        .quantity = j.at("quantity").get<in_id_type>()};
+  static InventoryDTO from_json(const nlohmann::json& j)
+  {
+    auto& cache = GlobalIdCache::getInstance();
+    return InventoryDTO{.goods_rk_id = cache.getInternalId(
+                          "goods", j.at("goods_id").get<std::string>()),
+                        .warehouse_rk_id = cache.getInternalId(
+                          "warehosue", j.at("warehosue_id").get<std::string>()),
+                        .quantity = j.at("quantity").get<in_id_type>()};
   }
 };
 
-inline void to_json(nlohmann::json &j, const InventoryDTO &inventory_dto) {
-  auto &cache = GlobalIdCache::getInstance();
+inline void to_json(nlohmann::json& j, const InventoryDTO& inventory_dto)
+{
+  auto& cache = GlobalIdCache::getInstance();
   j = nlohmann::json{
-      {"goods_id", cache.getExternalId("goods", inventory_dto.goods_rk_id)},
-      {"warehouse_id",
-       cache.getExternalId("warehouse", inventory_dto.warehouse_rk_id)},
-      {"quantity", inventory_dto.quantity}};
+    {"goods_id", cache.getExternalId("goods", inventory_dto.goods_rk_id)},
+    {"warehouse_id",
+     cache.getExternalId("warehouse", inventory_dto.warehouse_rk_id)},
+    {"quantity", inventory_dto.quantity}};
 }
 
 // ORM mapping
 namespace model {
 template <> struct ReflectTable<InventoryDTO, db::inventory> {
   static constexpr auto map_members = std::make_tuple(
-      std::make_pair(&InventoryDTO::id, &db::inventory::id),
-      std::make_pair(&InventoryDTO::goods_rk_id, &db::inventory::goods_rk_id),
-      std::make_pair(&InventoryDTO::warehouse_rk_id,
-                     &db::inventory::warehouse_rk_id),
-      std::make_pair(&InventoryDTO::quantity, &db::inventory::quantity));
+    std::make_pair(&InventoryDTO::id, &db::inventory::id),
+    std::make_pair(&InventoryDTO::goods_rk_id, &db::inventory::goods_rk_id),
+    std::make_pair(&InventoryDTO::warehouse_rk_id,
+                   &db::inventory::warehouse_rk_id),
+    std::make_pair(&InventoryDTO::quantity, &db::inventory::quantity));
 };
 
 // mapping
 template <typename InventoryRow>
 struct ReflectTableRow<InventoryDTO, InventoryRow> {
-  static InventoryDTO assign_model(InventoryRow &&row) {
+  static InventoryDTO assign_model(InventoryRow&& row)
+  {
     return InventoryDTO{.id = row.id,
                         .goods_rk_id = row.goods_rk_id,
                         .warehouse_rk_id = row.warehouse_rk_id,
@@ -59,4 +61,4 @@ struct ReflectTableRow<InventoryDTO, InventoryRow> {
   }
 };
 
-} // namespace model
+}  // namespace model
