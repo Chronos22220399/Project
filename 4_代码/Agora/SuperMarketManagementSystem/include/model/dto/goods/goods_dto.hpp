@@ -44,24 +44,26 @@ struct GoodsDTO {
   std::string image_url;
   std::string description;
 
-  static GoodsDTO from_json(const nlohmann::json &j) {
-    auto &cache = GlobalIdCache::getInstance();
+  static GoodsDTO from_json(const nlohmann::json& j)
+  {
+    auto& cache = GlobalIdCache::getInstance();
     try {
       return GoodsDTO{
-          .id = 0,
-          .goods_id = j.at("goods_id").get<ex_id_type>(),
-          .goods_category_rk_id = cache.getInternalId(
-              "goods_category", j.at("goods_category_id").get<ex_id_type>()),
-          .supplier_rk_id = cache.getInternalId(
-              "supplier", j.at("supplier_id").get<ex_id_type>()),
-          // 后续实现了 unit 的相关内容后改为 cache.getInternalId("unit", ...)
-          .unit_rk_id = std::stol(j.at("unit_id").get<ex_id_type>()),
-          .goods_name = j.at("goods_name").get<std::string>(),
-          .shelf_life_days = j.at("shelf_life_days").get<in_id_type>(),
-          .barcode = j.at("barcode").get<std::string>(),
-          .image_url = j.value("image_url", ""),
-          .description = j.at("description").get<std::string>()};
-    } catch (const std::exception &e) {
+        .id = 0,
+        .goods_id = j.at("goods_id").get<ex_id_type>(),
+        .goods_category_rk_id = cache.getInternalId(
+          "goods_category", j.at("goods_category_id").get<ex_id_type>()),
+        .supplier_rk_id = cache.getInternalId(
+          "supplier", j.at("supplier_id").get<ex_id_type>()),
+        // 后续实现了 unit 的相关内容后改为 cache.getInternalId("unit", ...)
+        .unit_rk_id = std::stol(j.at("unit_id").get<ex_id_type>()),
+        .goods_name = j.at("goods_name").get<std::string>(),
+        .shelf_life_days = j.at("shelf_life_days").get<in_id_type>(),
+        .barcode = j.at("barcode").get<std::string>(),
+        .image_url = j.value("image_url", ""),
+        .description = j.at("description").get<std::string>()};
+    }
+    catch (const std::exception& e) {
       std::cerr << "[from_json error] " << e.what() << "\n"
                 << "Input JSON: " << j.dump(2) << std::endl;
       throw;
@@ -69,16 +71,20 @@ struct GoodsDTO {
   }
 };
 
-inline void to_json(nlohmann::json &j, const GoodsDTO &goods_dto) {
-  j = nlohmann::json{{"goods_id", goods_dto.goods_id},
-                     {"category_id", goods_dto.goods_category_rk_id},
-                     {"supplier_id", goods_dto.supplier_rk_id},
-                     {"unit_id", goods_dto.unit_rk_id},
-                     {"goods_name", goods_dto.goods_name},
-                     {"shelf_life_days", goods_dto.shelf_life_days},
-                     {"barcode", goods_dto.barcode},
-                     {"image_url", goods_dto.image_url},
-                     {"description", goods_dto.description}};
+inline void to_json(nlohmann::json& j, const GoodsDTO& goods_dto)
+{
+  auto& cache = GlobalIdCache::getInstance();
+  j = nlohmann::json{
+    {"goods_id", goods_dto.goods_id},
+    {"category_id",
+     cache.getExternalId("goods", goods_dto.goods_category_rk_id)},
+    {"supplier_id", cache.getExternalId("supplier", goods_dto.supplier_rk_id)},
+    {"unit_id", cache.getExternalId("unit", goods_dto.unit_rk_id)},
+    {"goods_name", goods_dto.goods_name},
+    {"shelf_life_days", goods_dto.shelf_life_days},
+    {"barcode", goods_dto.barcode},
+    {"image_url", goods_dto.image_url},
+    {"description", goods_dto.description}};
 }
 
 namespace model {
@@ -86,22 +92,23 @@ namespace model {
 // 反射 DTO 与表字段的映射关系
 template <> struct ReflectTable<GoodsDTO, db::goods> {
   static constexpr auto map_members = std::make_tuple(
-      std::make_pair(&GoodsDTO::id, &db::goods::id),
-      std::make_pair(&GoodsDTO::goods_id, &db::goods::goods_id),
-      std::make_pair(&GoodsDTO::goods_category_rk_id,
-                     &db::goods::goods_category_rk_id),
-      std::make_pair(&GoodsDTO::supplier_rk_id, &db::goods::supplier_rk_id),
-      std::make_pair(&GoodsDTO::unit_rk_id, &db::goods::unit_rk_id),
-      std::make_pair(&GoodsDTO::goods_name, &db::goods::goods_name),
-      std::make_pair(&GoodsDTO::shelf_life_days, &db::goods::shelf_life_days),
-      std::make_pair(&GoodsDTO::barcode, &db::goods::barcode),
-      std::make_pair(&GoodsDTO::image_url, &db::goods::image_url),
-      std::make_pair(&GoodsDTO::description, &db::goods::description));
+    std::make_pair(&GoodsDTO::id, &db::goods::id),
+    std::make_pair(&GoodsDTO::goods_id, &db::goods::goods_id),
+    std::make_pair(&GoodsDTO::goods_category_rk_id,
+                   &db::goods::goods_category_rk_id),
+    std::make_pair(&GoodsDTO::supplier_rk_id, &db::goods::supplier_rk_id),
+    std::make_pair(&GoodsDTO::unit_rk_id, &db::goods::unit_rk_id),
+    std::make_pair(&GoodsDTO::goods_name, &db::goods::goods_name),
+    std::make_pair(&GoodsDTO::shelf_life_days, &db::goods::shelf_life_days),
+    std::make_pair(&GoodsDTO::barcode, &db::goods::barcode),
+    std::make_pair(&GoodsDTO::image_url, &db::goods::image_url),
+    std::make_pair(&GoodsDTO::description, &db::goods::description));
 };
 
 // 如果你还需要从数据库行反射回 DTO，可以添加如下内容：
 template <typename GoodsRow> struct ReflectTableRow<GoodsDTO, GoodsRow> {
-  static GoodsDTO assign_model(GoodsRow &&row) {
+  static GoodsDTO assign_model(GoodsRow&& row)
+  {
     return GoodsDTO{.goods_id = row.goods_id,
                     .goods_category_rk_id = row.goods_category_rk_id,
                     .supplier_rk_id = row.supplier_rk_id,
@@ -114,7 +121,7 @@ template <typename GoodsRow> struct ReflectTableRow<GoodsDTO, GoodsRow> {
   }
 };
 
-} // namespace model
+}  // namespace model
 
 struct GoodsDetailInfo {
   std::string goods_id;
@@ -128,7 +135,8 @@ struct GoodsDetailInfo {
   std::string category;
 };
 
-inline void to_json(nlohmann::json &j, const GoodsDetailInfo &info) {
+inline void to_json(nlohmann::json& j, const GoodsDetailInfo& info)
+{
   j = nlohmann::json{{"goods_id", info.goods_id},
                      {"goods_name", info.goods_name},
                      {"shelf_life_days", info.shelf_life_days},
