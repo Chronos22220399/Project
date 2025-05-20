@@ -1,9 +1,24 @@
+// controller
 #include <controller/goods/goods_controller.h>
+// serv
 #include <service/goods/goods_service.h>
+// model
+#include <model/dto/goods/goods_dto.hpp>
+// tools
+#include <common/uni_define.h>
 
-void GoodsController::registerRoutes(crow::SimpleApp &app)
+#include <common/common_utils.hpp>
+// third_party
+#include <nlohmann/json.hpp>
+
+
+const std::vector<std::string> required_fields = {
+  "goods_name",      "category_id", "supplier_id", "unit_id",
+  "shelf_life_days", "barcode",     "image_url",   "description"};
+
+
+void GoodsController::registerRoutes(crow::SimpleApp& app)
 {
-
   // MARK: 商品创建接口 - POST /api/goods/create
   //
   // 请求JSON：
@@ -31,8 +46,20 @@ void GoodsController::registerRoutes(crow::SimpleApp &app)
   // 400 - JSON解析失败/字段缺失/数值非法
   // 500 - 数据库错误
   CROW_ROUTE(app, "/api/goods/create")
-      .methods("POST"_method)([](const crow::request &req)
-                              { return GoodsService::create(req.body); });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      // 检查并解析 JSON
+      CHECK_AND_GET_JSON(j);
+      // 检查所需字段
+      CHECK_REQUIRED_FIELDS(j, required_fields);
+      // 将 JSON 转换为 DTO
+      auto goods_dto = GoodsDTO::from_json(j);
+
+      auto result = GoodsService::create(goods_dto);
+
+      return utils::to_response(result);
+    });
 
   // MARK: 分页查询接口 - POST /api/goods/get_by_page
   //
@@ -70,8 +97,23 @@ void GoodsController::registerRoutes(crow::SimpleApp &app)
   //   "detail": "page_size must between 5 and 100"
   // }
   CROW_ROUTE(app, "/api/goods/get_by_page")
-      .methods("POST"_method)([](const crow::request &req)
-                              { return GoodsService::getByPage(req.body); });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      // 检测并获取 body 内的元素
+      CHECK_AND_GET_JSON(j);
+      // 检测 page 和 page_size 是否存在
+      CHECK_REQUIRED_FIELD(j, "page");
+      CHECK_REQUIRED_FIELD(j, "page_size");
+
+      int page = j.value("page", 1);
+      int page_size = j.value("page_size", 10);
+
+      auto res = GoodsService::getByPage(page, page_size);
+
+
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 获取全部商品概要信息 - GET /api/goods/get_all
   //
@@ -95,9 +137,10 @@ void GoodsController::registerRoutes(crow::SimpleApp &app)
   // 错误响应：
   // 500 - 数据库查询失败
   CROW_ROUTE(app, "/api/goods/get_all")
-      .methods("GET"_method)(
-          [](const crow::request &req)
-          { return GoodsService::getAll(); });
+    .methods("GET"_method)([](const crow::request& req) {
+      auto res = GoodsService::getAll();
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 获取商品详细信息 - POST /api/goods/get_goods_detail_info
   //
@@ -125,8 +168,20 @@ void GoodsController::registerRoutes(crow::SimpleApp &app)
   // 404 - 商品不存在
   // 500 - 数据库查询失败
   CROW_ROUTE(app, "/api/goods/get_goods_detail_info")
-      .methods("POST"_method)([](const crow::request &req)
-                              { return GoodsService::getGoodsDetailInfoById(req.body); });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+      CHECK_REQUIRED_FIELD(j, "goods_id");
+
+      // 获取 id
+      auto goods_id = j.at("goods_id").get<std::string>();
+      auto id = GlobalIdCache::getInstance().getInternalId("goods", goods_id);
+
+      auto res = GoodsService::getGoodsDetailInfoById(id);
+
+      return utils::to_response(res, 200);
+    });
 
   // other routes
 }

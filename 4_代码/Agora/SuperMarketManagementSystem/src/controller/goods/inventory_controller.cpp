@@ -1,7 +1,12 @@
 #include <controller/goods/inventory_controller.h>
 #include <service/goods/inventory_service.h>
 
-void InventoryController::registerRoutes(crow::SimpleApp &app) {
+
+const std::vector<std::string> required_fields = {"goods_id", "warehouse_id",
+                                                  "quantity"};
+
+void InventoryController::registerRoutes(crow::SimpleApp& app)
+{
   // MARK: 创建库存接口 - POST /api/inventory/create
   //
   // 请求JSON：
@@ -27,9 +32,20 @@ void InventoryController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库插入异常
   // }
   CROW_ROUTE(app, "/api/inventory/create")
-      .methods("POST"_method)([](const crow::request &req) {
-        return InventoryService::create(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+      // 检查必填字段
+      CHECK_REQUIRED_FIELDS(j, required_fields);
+
+      auto inventory_dto = InventoryDTO::from_json(j);
+
+      auto res = InventoryService::create(inventory_dto);
+
+      return utils::to_response(res, 201);
+    });
+
 
   // MARK: 修改库存接口 - POST /api/inventory/update
   //
@@ -56,9 +72,18 @@ void InventoryController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库更新异常
   // }
   CROW_ROUTE(app, "/api/inventory/update")
-      .methods("POST"_method)([](const crow::request &req) {
-        return InventoryService::updateByGoodsId(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+      // 检查并获取必填字段
+      CHECK_REQUIRED_FIELDS(j, required_fields);
+      auto inventory_dto = InventoryDTO::from_json(j);
+      auto goods_rk_id = inventory_dto.goods_rk_id;
+
+      auto res = InventoryService::updateByGoodsId(goods_rk_id, inventory_dto);
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 获取指定商品库存接口 - POST /api/inventory/get_by_goods_id
   //
@@ -95,9 +120,18 @@ void InventoryController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库查询异常
   // }
   CROW_ROUTE(app, "/api/inventory/get_by_goods_id")
-      .methods("POST"_method)([](const crow::request &req) {
-        return InventoryService::getByGoodsId(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      CHECK_REQUIRED_FIELD(j, "goods_id");
+      auto goods_id = j.at("goods_id").get<ex_id_type>();
+
+      auto res = InventoryService::getByGoodsId(goods_id);
+
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 获取指定仓库库存接口 - POST /api/inventory/get_by_warehouse_id
   //
@@ -134,9 +168,18 @@ void InventoryController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库查询异常
   // }
   CROW_ROUTE(app, "/api/inventory/get_by_warehouse_id")
-      .methods("POST"_method)([](const crow::request &req) {
-        return InventoryService::getByWarehouseId(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      CHECK_REQUIRED_FIELD(j, "warehouse_id");
+      auto warehouse_id = j.at("warehouse_id").get<ex_id_type>();
+
+      auto res = InventoryService::getByGoodsId(warehouse_id);
+
+      return utils::to_response(res, 200);
+    });
 
   // MARK: 分页获取库存记录接口 - POST /api/inventory/get_by_page
   //
@@ -154,8 +197,7 @@ void InventoryController::registerRoutes(crow::SimpleApp &app) {
   //     "total": 100,         // 库存记录总数
   //     "page": 1,            // 当前页码
   //     "page_size": 10,      // 每页数量
-  //     "items": [
-  //       {
+  //     "items": [ {
   //         "goods_id": "Gxxxx",
   //         "warehouse_id": "Wxxxx",
   //         "quantity": 100
@@ -173,13 +215,23 @@ void InventoryController::registerRoutes(crow::SimpleApp &app) {
   //   "code": 500    // 数据库查询失败
   // }
   CROW_ROUTE(app, "/api/inventory/get_by_page")
-      .methods("POST"_method)([](const crow::request &req) {
-        return InventoryService::getByPage(req.body);
-      });
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      // 解析分页参数并设置默认值
+      int page = j.value("page", 1);
+      int page_size = j.value("page_size", 10);
+
+      auto res = InventoryService::getByPage(page, page_size);
+      return utils::to_response(res, 200);
+    });
 
   // Not implement !
   CROW_ROUTE(app, "/api/inventory/get_all").methods("GET"_method)([]() {
-    return InventoryService::getAll();
+    auto res = InventoryService::getAll();
+    return crow::response(501, "Not implemented yet.");
   });
 
   // 其他路由...

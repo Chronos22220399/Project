@@ -4,8 +4,12 @@ CREATE TABLE IF NOT EXISTS warehouse (
     warehouse_id TEXT UNIQUE,
     warehouse_name TEXT NOT NULL,
     location TEXT,
-    total_slots INTEGER NOT NULL,
-    available_slots INTEGER NOT NULL,
-    manager TEXT,
-    description TEXT
+    capacity INTEGER,
+    manager_id INTEGER,
+    phone TEXT,
+    created_at DATETIME,
+    status TEXT,
+    remark TEXT,
+    -- TODO: 待修改
+    CHECK(status IN ('A', 'B', 'C', 'D', 'E'))
 );
