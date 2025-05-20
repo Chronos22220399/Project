@@ -124,13 +124,13 @@ using quantity_type = long int;
 #define SET_EMPTY_DATA_RESPONSE(status_code)                                   \
   crow::response(status_code, SET_ONLYCODE_JSON(status_code).dump())
 
-#define SET_SUC_JSON_DATA(data)                                                \
+#define SET_SUC_JSON_DATA(status_code, data)                                                \
   nlohmann::json {                                                             \
-    {"code", 200}, { "data", data }                                            \
+    {"code", status_code}, { "data", data }                                            \
   }
 
 #define SET_SUC_DATA_RESPONSE(data)                                            \
-  crow::response(200, SET_SUC_JSON_DATA(data).dump())
+  crow::response(200, SET_SUC_JSON_DATA(200, data).dump())
 
 /**
  * @brief 尝试解析 body 中的 JSON，如果解析失败则返回 400 错误。
