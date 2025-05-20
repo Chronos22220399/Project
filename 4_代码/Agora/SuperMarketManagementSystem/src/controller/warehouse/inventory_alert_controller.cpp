@@ -9,7 +9,7 @@ void InventoryAlertController::registerRoutes(crow::SimpleApp &app) {
 
   CROW_ROUTE(app, "/api/inventory_alert/update")
       .methods("POST"_method)([](const crow::request &req) {
-        return InventoryAlertService::update(req.body);
+        return InventoryAlertService::updateByInventoryId(req.body);
       });
 
   CROW_ROUTE(app, "/api/inventory_alert/remove")
