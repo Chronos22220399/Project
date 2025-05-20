@@ -34,7 +34,6 @@ inline void to_json(nlohmann::json &j,
                     const InventoryAlertDTO &inventory_alert_dto) {
   auto &cache = GlobalIdCache::getInstance();
   j = nlohmann::json{
-      {"id", inventory_alert_dto.id},
       {"goods_id",
        cache.getExternalId("inventory_alert", inventory_alert_dto.goods_rk_id)},
       {"lower_bound", inventory_alert_dto.lower_bound}};
