@@ -44,10 +44,21 @@ using update_ret_type = bool;
 using delete_ret_type = bool;
 
 ///
-using slot_mount_type = long int;
+using slot_mount_type = double;
 
 ///
-using quantity_type = long int;
+using quantity_type = double;
+
+///
+using phone_type = std::string;
+
+using address_type = std::string;
+
+using name_type = std::string;
+
+using remark_type = std::string;
+
+using status_type = std::string;
 
 /**
  * @brief 打印带有文件名、函数名和行号的格式化日志信息。

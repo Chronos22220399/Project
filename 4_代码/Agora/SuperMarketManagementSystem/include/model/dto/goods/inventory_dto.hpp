@@ -15,7 +15,7 @@ struct InventoryDTO {
   in_id_type id = 0;
   in_id_type goods_rk_id = 0;
   in_id_type warehouse_rk_id = 0;
-  in_id_type quantity = 0;
+  quantity_type quantity = 0;
 
   static InventoryDTO from_json(const nlohmann::json& j)
   {
@@ -24,7 +24,7 @@ struct InventoryDTO {
                           "goods", j.at("goods_id").get<std::string>()),
                         .warehouse_rk_id = cache.getInternalId(
                           "warehosue", j.at("warehosue_id").get<std::string>()),
-                        .quantity = j.at("quantity").get<in_id_type>()};
+                        .quantity = j.at("quantity").get<quantity_type>()};
   }
 };
 

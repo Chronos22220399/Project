@@ -6,6 +6,7 @@ CREATE TABLE IF NOT EXISTS warehouse (
   warehouse_name TEXT NOT NULL,
   location TEXT,
   capacity REAL CHECK (capacity >= 0),
+  available_capacity REAL,
   manager_rk_id INTEGER,
   phone TEXT,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
