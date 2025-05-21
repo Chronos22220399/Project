@@ -4,37 +4,20 @@
 #include <repository/goods/promotion_repository.h>
 #include <service/goods/promotion_service.h>
 
-// Implemented
-
-// std::string promotion_id = "";
-// std::string name = "";
-// std::string description = "";
-// std::string type = "";
-// datetime_type start_time = {};
-// datetime_type end_time = {};
-// std::string status = "";
 
 // MARK: 促销活动-创建服务
-//
-// @param body - 请求体（JSON字符串），包含 promotion_id, name, description,
-// type,
-//               start_time, end_time, status
-// @return ServiceResult
-//   成功: 201, 仅返回 code 字段
-//   失败: 400, JSON解析或字段缺失
-//         404, 类型或状态非法
-//         500, 数据库插入异常
-ServiceResult PromotionService::create(const PromotionDTO& promotion_dto)
+ServiceResult PromotionService::create(PromotionDTO& promotion_dto)
 {
   // 检测类型是否合法
-  if (!utils::in(promotion_dto.type, required_type)) {
+  if (!utils::in(promotion_dto.type, PromotionDTO::type_domain)) {
     return {false, "type must be 'discount' or 'full reduction'."};
   }
   // 检测状态是否合法
-  if (!utils::in(promotion_dto.status, required_status)) {
+  if (!utils::in(promotion_dto.status, PromotionDTO::status_domain)) {
     return {false, "status must be 'active', 'expired', or 'draft'."};
   }
 
+  promotion_dto.promotion_id = utils::create_id("P-");
 
   // 插入促销活动记录
   auto res = PromotionRepository::create(promotion_dto);
@@ -87,14 +70,14 @@ PromotionService::removeByPromotionId(const std::string& promotion_id)
 //         500, 数据库更新异常
 ServiceResult
 PromotionService::updateByPromotionId(const std::string& promotion_id,
-                                      const PromotionDTO& promotion_dto)
+                                      PromotionDTO& promotion_dto)
 {
   // 校验类型是否合法
-  if (!utils::in(promotion_dto.type, required_type)) {
+  if (!utils::in(promotion_dto.type, PromotionDTO::type_domain)) {
     return {false, "type must be 'discount' or 'full reduction'."};
   }
   // 校验状态是否合法
-  if (!utils::in(promotion_dto.status, required_status)) {
+  if (!utils::in(promotion_dto.status, PromotionDTO::status_domain)) {
     return {false, "status must be 'active', 'expired', or 'draft'."};
   }
 

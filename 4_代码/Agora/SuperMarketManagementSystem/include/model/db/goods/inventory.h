@@ -74,13 +74,64 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::floating_point, sqlpp::tag::require_insert>;
     };
+    struct min_threshold
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "min_threshold";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T min_threshold;
+            T& operator()() { return min_threshold; }
+            const T& operator()() const { return min_threshold; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::floating_point, sqlpp::tag::require_insert>;
+    };
+    struct max_threshold
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "max_threshold";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T max_threshold;
+            T& operator()() { return max_threshold; }
+            const T& operator()() const { return max_threshold; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::floating_point, sqlpp::tag::require_insert>;
+    };
+    struct last_updated
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "last_updated";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T last_updated;
+            T& operator()() { return last_updated; }
+            const T& operator()() const { return last_updated; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::time_point>;
+    };
   } // namespace inventory_
 
   struct inventory: sqlpp::table_t<inventory,
                inventory_::id,
                inventory_::goods_rk_id,
                inventory_::warehouse_rk_id,
-               inventory_::quantity>
+               inventory_::quantity,
+               inventory_::min_threshold,
+               inventory_::max_threshold,
+               inventory_::last_updated>
   {
     struct _alias_t
     {

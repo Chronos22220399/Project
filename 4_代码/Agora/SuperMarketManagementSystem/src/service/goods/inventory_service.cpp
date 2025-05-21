@@ -1,9 +1,10 @@
 // tools
-
 #include <common/common_utils.hpp>
 // third_party
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
+// stl
+#include <chrono>
 // serv
 #include <service/goods/inventory_service.h>
 // repo
@@ -12,10 +13,11 @@
 // tools
 #include <common/global_id_cache.hpp>
 
+using namespace std::chrono;
 
 // MARK: 库存-创建服务
 // 中间表无需注册到全局缓存中
-ServiceResult InventoryService::create(const InventoryDTO& inventory_dto)
+ServiceResult InventoryService::create(InventoryDTO& inventory_dto)
 {
   // 检查商品和仓库是否存在
   if (!inventory_dto.goods_rk_id) {
@@ -25,6 +27,9 @@ ServiceResult InventoryService::create(const InventoryDTO& inventory_dto)
     return {false, "Warehouse not found."};
   }
 
+  // 获取当前时间作为更新时间
+  inventory_dto.last_updated =
+    time_point_cast<microseconds>(system_clock::now());
   auto res = InventoryRepository::create(inventory_dto);
 
   if (!res.has_value())
@@ -41,9 +46,8 @@ ServiceResult InventoryService::create(const InventoryDTO& inventory_dto)
 //   失败: 400, JSON解析或字段缺失
 //         404, 商品或仓库不存在
 //         500, 数据库更新异常
-ServiceResult
-InventoryService::updateByGoodsId(const in_id_type goods_rk_id,
-                                  const InventoryDTO& inventory_dto)
+ServiceResult InventoryService::updateByGoodsId(const in_id_type goods_rk_id,
+                                                InventoryDTO& inventory_dto)
 {
   // 检查商品和仓库是否存在
   if (!inventory_dto.goods_rk_id) {
@@ -53,6 +57,8 @@ InventoryService::updateByGoodsId(const in_id_type goods_rk_id,
     return {false, "Warehouse not found."};
   }
 
+  inventory_dto.last_updated =
+    time_point_cast<microseconds>(system_clock::now());
   // 更新库存记录
   bool success = InventoryRepository::updateByGoodsRKId(
     inventory_dto.goods_rk_id, inventory_dto);
