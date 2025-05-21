@@ -1,7 +1,7 @@
 <template>
     <el-card class="settings-card">
         <h3>系统管理功能</h3>
-        <el-div class="grid-container">
+        <div class="grid-container">
             <el-button type="primary" plain class="setting-button"
                 @click="$router.push('/systemManagement/userPermission')">
                 用户权限管理
@@ -11,10 +11,6 @@
                 系统日志管理
             </el-button>
             <el-button type="primary" plain class="setting-button"
-                @click="$router.push('/systemManagement/dataBackup')">
-                数据备份与恢复
-            </el-button>
-            <el-button type="primary" plain class="setting-button"
                 @click="$router.push('/systemManagement/systemSettings')">
                 系统设置
             </el-button>
@@ -22,7 +18,7 @@
                 @click="$router.push('/systemManagement/systemUpdate')">
                 系统更新与维护
             </el-button>
-        </el-div>
+        </div>
     </el-card>
 </template>
 
@@ -40,72 +36,40 @@ h3 {
     font-weight: bold;
     font-size: 28px;
     color: #131212;
-    /* 修改为较柔和的深灰色 */
 }
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    /* 上方三列 */
-    grid-template-rows: auto auto;
-    /* 自动行数 */
-    grid-gap: 15px;
-    /* 设置按钮之间的间隙 */
-    position: relative;
+    grid-template-columns: repeat(2, 1fr);
+    /* 两列 */
+    grid-template-rows: repeat(2, auto);
+    /* 两行 */
+    grid-gap: 20px;
+    justify-items: center;
 }
 
-/* 上方的按钮 */
+/* 按钮样式 */
 .setting-button {
     font-size: 20px;
-    width: 300px;
-    /* 固定宽度 */
-    height: 300px;
-    /* 固定高度，确保按钮是正方形 */
+    width: 280px;
+    height: 280px;
     background-color: rgba(255, 255, 255, 0.5);
-    /* 透明背景 */
     color: #222;
-    /* 修改为更深的文字颜色 */
     border: 2px solid rgba(255, 255, 255, 0.5);
-    /* 半透明边框 */
     border-radius: 10px;
-    /* 圆角 */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease-in-out;
-    position: relative;
-    z-index: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    /* 居中文本 */
-    margin: 0;
-    /* 去掉按钮默认的间隙 */
 }
 
-/* 上方的按钮排布 */
-.setting-button:nth-child(1),
-.setting-button:nth-child(2),
-.setting-button:nth-child(3) {
-    grid-column: span 1;
-    /* 上方三个按钮各占一列 */
-}
-
-/* 下方的按钮 */
-.setting-button:nth-child(4),
-.setting-button:nth-child(5) {
-    grid-column: span 1;
-    /* 下方两个按钮各占一列 */
-    grid-row: 2;
-    /* 确保下方按钮排在第二行 */
-}
-
-/* 鼠标悬停效果 */
+/* 悬停效果 */
 .setting-button:hover {
     opacity: 0.85;
     transform: scale(1.05);
-    /* 放大按钮，增加互动感 */
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     border-color: #ff4081;
-    /* 悬浮时的边框颜色变化 */
 }
 
 /* 焦点状态 */
@@ -114,11 +78,15 @@ h3 {
     box-shadow: 0 0 10px 2px rgba(255, 64, 129, 0.5);
 }
 
-/* 响应式设计 */
+/* 小屏幕适配：单列 */
 @media (max-width: 768px) {
     .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-        /* 在小屏幕上改为两列布局 */
+        grid-template-columns: 1fr;
+    }
+
+    .setting-button {
+        width: 100%;
+        height: 180px;
     }
 }
 </style>

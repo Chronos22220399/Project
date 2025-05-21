@@ -4,15 +4,17 @@
             <el-button type="primary" @click="openDialog()">添加排班</el-button>
         </div>
         <el-table :data="paginatedData" border style="width: 100%">
-            <el-table-column prop="id" label="排班ID" width="80" />
-            <el-table-column prop="employeeId" label="员工ID" width="100" />
+            <el-table-column prop="schedule_id" label="排班ID" width="80" />
+            <el-table-column prop="employee_id" label="员工ID" width="100" />
             <el-table-column prop="employeeName" label="员工姓名" />
-            <el-table-column prop="shift" label="班次" />
-            <el-table-column prop="date" label="排班日期" />
+            <el-table-column prop="shift_type" label="班次" />
+            <el-table-column prop="schedule_date" label="排班日期" />
+            <el-table-column prop="created_by" label="创建人" width="100" />
+            <el-table-column prop="created_at" label="创建时间" width="180" />
             <el-table-column label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
+                    <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.row.schedule_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -23,17 +25,20 @@
 
         <el-dialog :title="dialogTitle" v-model="dialogVisible">
             <el-form :model="form" label-width="100px">
-                <el-form-item label="员工ID"><el-input v-model="form.employeeId" /></el-form-item>
+                <el-form-item label="员工ID"><el-input v-model="form.employee_id" /></el-form-item>
                 <el-form-item label="员工姓名"><el-input v-model="form.employeeName" /></el-form-item>
                 <el-form-item label="班次">
-                    <el-select v-model="form.shift" placeholder="选择班次">
+                    <el-select v-model="form.shift_type" placeholder="选择班次">
                         <el-option label="早班" value="早班" />
                         <el-option label="中班" value="中班" />
                         <el-option label="晚班" value="晚班" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="排班日期">
-                    <el-date-picker v-model="form.date" type="date" placeholder="选择日期" />
+                    <el-date-picker v-model="form.schedule_date" type="date" placeholder="选择日期" />
+                </el-form-item>
+                <el-form-item label="创建人">
+                    <el-input v-model="form.created_by" disabled />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -49,33 +54,39 @@ import { ref, computed } from 'vue'
 import axios from 'axios'
 
 interface Schedule {
-    id: number
-    employeeId: string
+    schedule_id: number
+    employee_id: string
     employeeName: string
-    shift: string
-    date: string
+    shift_type: string
+    schedule_date: string
+    created_at: string
+    created_by: string
 }
 
-// 假数据
+const currentUser = 'admin' // TODO: 替换为当前登录用户名变量
+const today = new Date()
+
+// 生成假数据
 const generateFakeSchedules = (): Schedule[] => {
     const names = ['张三', '李四', '王五', '赵六', '钱七']
     const shifts = ['早班', '中班', '晚班']
-    const today = new Date()
     return Array.from({ length: 50 }, (_, i) => ({
-        id: i + 1,
-        employeeId: 'EMP' + (1000 + i),
+        schedule_id: i + 1,
+        employee_id: 'EMP' + (1000 + i),
         employeeName: names[i % names.length],
-        shift: shifts[i % shifts.length],
-        date: new Date(today.getTime() + i * 86400000).toISOString().split('T')[0]
+        shift_type: shifts[i % shifts.length],
+        schedule_date: new Date(today.getTime() + i * 86400000).toISOString().split('T')[0],
+        created_at: new Date(today.getTime() - i * 10000000).toISOString(),
+        created_by: 'admin'
     }))
 }
 
-const tableData = ref < Schedule[] > (generateFakeSchedules())
+const tableData = ref<Schedule[]>(generateFakeSchedules())
 const currentPage = ref(1)
 const pageSize = ref(10)
 const dialogVisible = ref(false)
 const dialogTitle = ref('添加排班')
-const form = ref < Partial < Schedule >> ({})
+const form = ref<Partial<Schedule>>({})
 
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value
@@ -84,21 +95,32 @@ const paginatedData = computed(() => {
 
 const openDialog = (row?: Schedule) => {
     dialogTitle.value = row ? '编辑排班' : '添加排班'
-    form.value = row ? { ...row } : {}
+    if (row) {
+        form.value = { ...row }
+    } else {
+        form.value = {
+            employee_id: '',
+            employeeName: '',
+            shift_type: '',
+            schedule_date: '',
+            created_by: currentUser,
+            created_at: new Date().toISOString()
+        }
+    }
     dialogVisible.value = true
 }
 
 const handleSave = async () => {
-    const newData = { ...form.value }
+    const newData = { ...form.value } as Schedule
     try {
-        if (form.value.id) {
-            await axios.put(`/api/schedule/${form.value.id}`, newData)
-            const index = tableData.value.findIndex(item => item.id === form.value.id)
-            if (index !== -1) tableData.value[index] = form.value as Schedule
+        if (form.value.schedule_id) {
+            await axios.put(`/api/schedule/${form.value.schedule_id}`, newData)
+            const index = tableData.value.findIndex(item => item.schedule_id === form.value.schedule_id)
+            if (index !== -1) tableData.value[index] = newData
         } else {
             const response = await axios.post('/api/schedule', newData)
-            const newId = response.data.id || Date.now()
-            tableData.value.push({ ...(form.value as Schedule), id: newId })
+            const newId = response.data?.schedule_id || Date.now()
+            tableData.value.push({ ...newData, schedule_id: newId })
         }
         dialogVisible.value = false
     } catch (err) {
@@ -109,7 +131,7 @@ const handleSave = async () => {
 const handleDelete = async (id: number) => {
     try {
         await axios.delete(`/api/schedule/${id}`)
-        tableData.value = tableData.value.filter(item => item.id !== id)
+        tableData.value = tableData.value.filter(item => item.schedule_id !== id)
     } catch (err) {
         console.error('删除失败', err)
     }

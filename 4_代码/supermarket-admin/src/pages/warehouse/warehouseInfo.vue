@@ -3,30 +3,54 @@
         <div class="toolbar">
             <el-button type="primary" @click="openDialog()">添加仓库</el-button>
         </div>
+
         <el-table :data="paginatedData" border style="width: 100%">
-            <el-table-column prop="id" label="仓库ID" width="100" />
+            <el-table-column prop="warehouse_id" label="仓库ID" width="100" />
             <el-table-column prop="name" label="仓库名" />
             <el-table-column prop="address" label="地址" />
             <el-table-column prop="capacity" label="容量" />
-            <el-table-column prop="superintendent" label="负责人" />
+            <el-table-column prop="phone" label="联系电话" />
+            <el-table-column prop="admin_id" label="管理员ID" />
+            <el-table-column prop="status" label="状态" />
+            <el-table-column prop="created_at" label="创建时间" />
+            <el-table-column prop="remark" label="备注" />
             <el-table-column label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
+                    <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.row.warehouse_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
         <el-pagination v-if="tableData.length > pageSize" :current-page="currentPage" :page-size="pageSize"
-            :total="tableData.length" @current-change="handlePageChange"
-            layout="prev, pager, next, jumper"></el-pagination>
+            :total="tableData.length" @current-change="handlePageChange" layout="prev, pager, next, jumper" />
 
         <el-dialog :title="dialogTitle" v-model="dialogVisible">
-            <el-form :model="form">
-                <el-form-item label="仓库名"><el-input v-model="form.name" /></el-form-item>
-                <el-form-item label="地址"><el-input v-model="form.address" /></el-form-item>
-                <el-form-item label="容量"><el-input v-model="form.capacity" /></el-form-item>
-                <el-form-item label="负责人"><el-input v-model="form.superintendent" /></el-form-item>
+            <el-form :model="form" label-width="100px">
+                <el-form-item label="仓库名">
+                    <el-input v-model="form.name" />
+                </el-form-item>
+                <el-form-item label="地址">
+                    <el-input v-model="form.address" />
+                </el-form-item>
+                <el-form-item label="容量">
+                    <el-input v-model="form.capacity" type="number" />
+                </el-form-item>
+                <el-form-item label="联系电话">
+                    <el-input v-model="form.phone" />
+                </el-form-item>
+                <el-form-item label="管理员ID">
+                    <el-input v-model="form.admin_id" type="number" />
+                </el-form-item>
+                <el-form-item label="状态">
+                    <el-select v-model="form.status" placeholder="请选择状态">
+                        <el-option label="启用" :value="1" />
+                        <el-option label="禁用" :value="0" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="备注">
+                    <el-input type="textarea" v-model="form.remark" />
+                </el-form-item>
             </el-form>
             <template #footer>
                 <el-button @click="dialogVisible = false">取消</el-button>
@@ -41,21 +65,28 @@ import { ref, computed } from 'vue'
 import axios from 'axios'
 
 interface Warehouse {
-    id: number
+    warehouse_id: number
     name: string
     address: string
-    capacity: string
-    superintendent: string
+    capacity: number
+    phone: string
+    admin_id: number
+    status: number
+    created_at?: string
+    remark?: string
 }
 
-// 假数据（仅用于展示，正式接入 API 后可去掉）
 const generateFakeData = () => {
     return Array.from({ length: 50 }, (_, index) => ({
-        id: index + 1,
+        warehouse_id: index + 1,
         name: `仓库${index + 1}`,
         address: `地址${index + 1}`,
-        capacity: `${Math.floor(Math.random() * 1000) + 500}`,
-        superintendent: `负责人${index + 1}`,
+        capacity: Math.floor(Math.random() * 1000) + 500,
+        phone: `1380000${String(index + 1).padStart(4, '0')}`,
+        admin_id: index + 200,
+        status: index % 2,
+        created_at: new Date().toISOString().slice(0, 19).replace('T', ' '),
+        remark: `备注${index + 1}`
     }))
 }
 
@@ -64,7 +95,6 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('添加仓库')
 const form = ref<Partial<Warehouse>>({})
 
-// 分页控制
 const currentPage = ref(1)
 const pageSize = ref(10)
 const paginatedData = computed(() => {
@@ -72,45 +102,49 @@ const paginatedData = computed(() => {
     return tableData.value.slice(start, start + pageSize.value)
 })
 
-// 打开弹窗
 const openDialog = (row?: Warehouse) => {
     dialogTitle.value = row ? '编辑仓库' : '添加仓库'
     form.value = row ? { ...row } : {}
     dialogVisible.value = true
 }
 
-// 保存（新增或编辑）
 const handleSave = async () => {
     const warehouseData = {
-        id: form.value.id,
+        warehouse_id: form.value.warehouse_id,
         name: form.value.name,
         address: form.value.address,
         capacity: form.value.capacity,
-        superintendent: form.value.superintendent
+        phone: form.value.phone,
+        admin_id: form.value.admin_id,
+        status: form.value.status,
+        remark: form.value.remark
     }
 
     try {
         let response
-        if (form.value.id) {
-            // 编辑仓库
-            response = await axios.put(`/api/warehouse/${form.value.id}`, warehouseData)
+        if (form.value.warehouse_id) {
+            response = await axios.put(`/api/warehouse/${form.value.warehouse_id}`, warehouseData)
         } else {
-            // 添加仓库
             response = await axios.post('/api/warehouse', warehouseData)
         }
 
         console.log('请求成功', response.data)
 
-        if (form.value.id) {
-            // 本地更新编辑
-            const index = tableData.value.findIndex(item => item.id === form.value.id)
+        if (form.value.warehouse_id) {
+            const index = tableData.value.findIndex(item => item.warehouse_id === form.value.warehouse_id)
             if (index !== -1) {
-                tableData.value[index] = { ...(form.value as Warehouse) }
+                tableData.value[index] = {
+                    ...(form.value as Warehouse),
+                    created_at: tableData.value[index].created_at
+                }
             }
         } else {
-            // 添加返回 ID（可根据后端返回调整）
-            const newId = response.data.id || Date.now()
-            tableData.value.push({ ...(form.value as Warehouse), id: newId })
+            const newId = response.data.warehouse_id || Date.now()
+            tableData.value.push({
+                ...(form.value as Warehouse),
+                warehouse_id: newId,
+                created_at: new Date().toISOString().slice(0, 19).replace('T', ' ')
+            })
         }
 
         dialogVisible.value = false
@@ -119,17 +153,15 @@ const handleSave = async () => {
     }
 }
 
-// 删除仓库
 const handleDelete = async (id: number) => {
     try {
         await axios.delete(`/api/warehouse/${id}`)
-        tableData.value = tableData.value.filter(item => item.id !== id)
+        tableData.value = tableData.value.filter(item => item.warehouse_id !== id)
     } catch (error) {
         console.error('删除失败', error)
     }
 }
 
-// 翻页处理
 const handlePageChange = (page: number) => {
     currentPage.value = page
 }

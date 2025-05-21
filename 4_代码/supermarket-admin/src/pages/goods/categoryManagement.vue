@@ -15,7 +15,7 @@
                 <el-table-column prop="parent_category_id" label="上级分类ID" width="120" />
                 <el-table-column label="操作" width="180">
                     <template #default="scope">
-                        <el-button size="small" @click="editCategory(scope.row)">编辑</el-button>
+                        <el-button size="small" @click="editCategory(scope.row)">更新</el-button>
                         <el-button size="small" type="danger"
                             @click="deleteCategory(scope.row.goods_category_id)">删除</el-button>
                     </template>
@@ -93,7 +93,7 @@ const form = ref<GoodsCategory>({
 })
 
 const currentPage = ref(1)
-const pageSize = ref(5)
+const pageSize = ref(10)
 const total = ref(categoryList.value.length)
 
 const loadData = () => {

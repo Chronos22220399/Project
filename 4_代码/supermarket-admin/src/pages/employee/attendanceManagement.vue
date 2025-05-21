@@ -4,31 +4,30 @@
             <el-button type="primary" @click="openDialog()">添加考勤记录</el-button>
         </div>
         <el-table :data="paginatedData" border style="width: 100%">
-            <el-table-column prop="id" label="考勤ID" width="80" />
-            <el-table-column prop="employeeId" label="员工ID" width="100" />
-            <el-table-column prop="employeeName" label="员工姓名" />
+            <el-table-column prop="attendance_id" label="考勤ID" width="100" />
+            <el-table-column prop="employee_id" label="员工ID" width="120" />
             <el-table-column prop="date" label="考勤日期" />
             <el-table-column prop="status" label="考勤状态" />
-            <el-table-column prop="checkInTime" label="签到时间" />
-            <el-table-column prop="checkOutTime" label="签退时间" />
+            <el-table-column prop="clock_in_time" label="上班打卡时间" />
+            <el-table-column prop="clock_out_time" label="下班打卡时间" />
             <el-table-column label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
+                    <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.row.attendance_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
 
         <el-pagination v-if="tableData.length > pageSize" :current-page="currentPage" :page-size="pageSize"
-            :total="tableData.length" @current-change="handlePageChange"
-            layout="prev, pager, next, jumper"></el-pagination>
+            :total="tableData.length" @current-change="handlePageChange" layout="prev, pager, next, jumper" />
 
-        <el-dialog :title="dialogTitle" v-model="dialogVisible">
-            <el-form :model="form" label-width="100px">
-                <el-form-item label="员工ID"><el-input v-model="form.employeeId" /></el-form-item>
-                <el-form-item label="员工姓名"><el-input v-model="form.employeeName" /></el-form-item>
+        <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">
+            <el-form :model="form" label-width="120px">
+                <el-form-item label="员工ID">
+                    <el-input v-model="form.employee_id" />
+                </el-form-item>
                 <el-form-item label="考勤日期">
-                    <el-date-picker v-model="form.date" type="date" placeholder="选择日期" />
+                    <el-date-picker v-model="form.date" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" />
                 </el-form-item>
                 <el-form-item label="考勤状态">
                     <el-select v-model="form.status" placeholder="选择状态">
@@ -39,10 +38,14 @@
                         <el-option label="请假" value="请假" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="签到时间"><el-time-picker v-model="form.checkInTime"
-                        placeholder="选择时间" /></el-form-item>
-                <el-form-item label="签退时间"><el-time-picker v-model="form.checkOutTime"
-                        placeholder="选择时间" /></el-form-item>
+                <el-form-item label="上班打卡时间">
+                    <el-time-picker v-model="form.clock_in_time" placeholder="选择时间" format="HH:mm"
+                        value-format="HH:mm" />
+                </el-form-item>
+                <el-form-item label="下班打卡时间">
+                    <el-time-picker v-model="form.clock_out_time" placeholder="选择时间" format="HH:mm"
+                        value-format="HH:mm" />
+                </el-form-item>
             </el-form>
             <template #footer>
                 <el-button @click="dialogVisible = false">取消</el-button>
@@ -56,64 +59,70 @@
 import { ref, computed } from 'vue'
 import axios from 'axios'
 
-interface Attendance {
-    id: number
-    employeeId: string
-    employeeName: string
+interface AttendanceRecord {
+    attendance_id: number
+    employee_id: string
     date: string
     status: string
-    checkInTime: string
-    checkOutTime: string
+    clock_in_time: string
+    clock_out_time: string
 }
 
-// 假数据生成
-const generateFakeAttendance = (): Attendance[] => {
-    const names = ['张三', '李四', '王五', '赵六', '钱七']
+const generateFakeData = (): AttendanceRecord[] => {
     const statuses = ['正常', '迟到', '早退', '缺勤', '请假']
     return Array.from({ length: 50 }, (_, i) => {
         const date = new Date()
         date.setDate(date.getDate() - i)
         return {
-            id: i + 1,
-            employeeId: 'EMP' + (1000 + i),
-            employeeName: names[i % names.length],
+            attendance_id: i + 1,
+            employee_id: 'EMP' + (1000 + i),
             date: date.toISOString().split('T')[0],
             status: statuses[i % statuses.length],
-            checkInTime: '09:00',
-            checkOutTime: '18:00',
+            clock_in_time: '09:00',
+            clock_out_time: '18:00',
         }
     })
 }
 
-const tableData = ref < Attendance[] > (generateFakeAttendance())
+const tableData = ref<AttendanceRecord[]>(generateFakeData())
 const currentPage = ref(1)
 const pageSize = ref(10)
 const dialogVisible = ref(false)
 const dialogTitle = ref('添加考勤记录')
-const form = ref < Partial < Attendance >> ({})
+const form = ref<Partial<AttendanceRecord>>({})
 
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value
     return tableData.value.slice(start, start + pageSize.value)
 })
 
-const openDialog = (row?: Attendance) => {
+const openDialog = (row?: AttendanceRecord) => {
     dialogTitle.value = row ? '编辑考勤记录' : '添加考勤记录'
-    form.value = row ? { ...row } : {}
+    form.value = row ? { ...row } : {
+        employee_id: '',
+        date: '',
+        status: '',
+        clock_in_time: '',
+        clock_out_time: ''
+    }
     dialogVisible.value = true
 }
 
 const handleSave = async () => {
-    const newData = { ...form.value }
+    if (!form.value.employee_id || !form.value.date) {
+        alert('员工ID和考勤日期为必填项')
+        return
+    }
+    const newData = { ...form.value } as AttendanceRecord
     try {
-        if (form.value.id) {
-            await axios.put(`/api/attendance/${form.value.id}`, newData)
-            const index = tableData.value.findIndex(item => item.id === form.value.id)
-            if (index !== -1) tableData.value[index] = form.value as Attendance
+        if (newData.attendance_id) {
+            await axios.put(`/api/attendance/${newData.attendance_id}`, newData)
+            const index = tableData.value.findIndex(item => item.attendance_id === newData.attendance_id)
+            if (index !== -1) tableData.value[index] = newData
         } else {
             const response = await axios.post('/api/attendance', newData)
-            const newId = response.data.id || Date.now()
-            tableData.value.push({ ...(form.value as Attendance), id: newId })
+            const newId = response.data?.attendance_id || Date.now()
+            tableData.value.push({ ...newData, attendance_id: newId })
         }
         dialogVisible.value = false
     } catch (err) {
@@ -124,7 +133,7 @@ const handleSave = async () => {
 const handleDelete = async (id: number) => {
     try {
         await axios.delete(`/api/attendance/${id}`)
-        tableData.value = tableData.value.filter(item => item.id !== id)
+        tableData.value = tableData.value.filter(item => item.attendance_id !== id)
     } catch (err) {
         console.error('删除失败', err)
     }

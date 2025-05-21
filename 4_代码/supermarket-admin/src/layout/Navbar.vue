@@ -3,7 +3,7 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const username = ref("Ess & koi");
+const username = ref("koi");
 
 // 退出登录
 const logout = () => {

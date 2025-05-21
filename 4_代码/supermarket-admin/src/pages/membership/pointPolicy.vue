@@ -4,16 +4,16 @@
             <el-button type="primary" @click="openDialog()">添加积分政策</el-button>
         </div>
         <el-table :data="paginatedData" border style="width: 100%">
-            <el-table-column prop="policyId" label="政策ID" width="100" />
-            <el-table-column prop="policyName" label="政策名称" />
-            <el-table-column prop="pointsPerYuan" label="每满1元获得积分" />
-            <el-table-column prop="startDate" label="生效日期" />
-            <el-table-column prop="endDate" label="失效日期" />
-            <el-table-column prop="description" label="政策描述" />
+            <el-table-column prop="policy_id" label="积分政策ID" width="120" />
+            <el-table-column prop="name" label="积分政策名称" />
+            <el-table-column prop="point_per_yuan" label="满1元所得积分点数" />
+            <el-table-column prop="effective_from" label="生效日期" />
+            <el-table-column prop="effective_to" label="失效日期" />
+            <el-table-column prop="description" label="积分政策描述" />
             <el-table-column label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.row.policyId)">删除</el-button>
+                    <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.row.policy_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -21,22 +21,23 @@
         <el-pagination v-if="tableData.length > pageSize" :current-page="currentPage" :page-size="pageSize"
             :total="tableData.length" @current-change="handlePageChange" layout="prev, pager, next, jumper" />
 
-        <el-dialog :title="dialogTitle" v-model="dialogVisible">
-            <el-form :model="form" label-width="120px">
-                <el-form-item label="政策名称">
-                    <el-input v-model="form.policyName" placeholder="请输入政策名称" />
+        <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">
+            <el-form :model="form" label-width="140px">
+                <el-form-item label="积分政策名称">
+                    <el-input v-model="form.name" placeholder="请输入积分政策名称" />
                 </el-form-item>
-                <el-form-item label="每满1元获积分">
-                    <el-input v-model.number="form.pointsPerYuan" placeholder="例如：10" />
+                <el-form-item label="满1元所得积分点数">
+                    <el-input v-model.number="form.point_per_yuan" placeholder="例如：10" />
                 </el-form-item>
                 <el-form-item label="生效日期">
-                    <el-date-picker v-model="form.startDate" type="date" placeholder="请选择生效日期" style="width: 100%" />
+                    <el-date-picker v-model="form.effective_from" type="date" placeholder="请选择生效日期"
+                        style="width: 100%" />
                 </el-form-item>
                 <el-form-item label="失效日期">
-                    <el-date-picker v-model="form.endDate" type="date" placeholder="请选择失效日期" style="width: 100%" />
+                    <el-date-picker v-model="form.effective_to" type="date" placeholder="请选择失效日期" style="width: 100%" />
                 </el-form-item>
-                <el-form-item label="政策描述">
-                    <el-input v-model="form.description" type="textarea" rows="3" placeholder="请输入政策描述" />
+                <el-form-item label="积分政策描述">
+                    <el-input v-model="form.description" type="textarea" rows="3" placeholder="请输入积分政策描述" />
                 </el-form-item>
             </el-form>
             <template #footer>
@@ -51,34 +52,32 @@
 import { ref, computed } from 'vue'
 
 interface PointsPolicy {
-    policyId: number
-    policyName: string
-    pointsPerYuan: number
+    policy_id: number
+    name: string
+    point_per_yuan: number
     description: string
-    startDate: string
-    endDate: string
+    effective_from: string
+    effective_to: string
 }
 
-const generateFakeData = (): PointsPolicy[] => {
-    return [
-        {
-            policyId: 1,
-            policyName: '基础积分政策',
-            pointsPerYuan: 10,
-            description: '每消费1元获得10积分，有效期至2025年底',
-            startDate: '2025-01-01',
-            endDate: '2025-12-31',
-        },
-        {
-            policyId: 2,
-            policyName: '促销积分',
-            pointsPerYuan: 20,
-            description: '促销期间每1元获得20积分',
-            startDate: '2025-06-01',
-            endDate: '2025-06-30',
-        },
-    ]
-}
+const generateFakeData = (): PointsPolicy[] => [
+    {
+        policy_id: 1,
+        name: '基础积分政策',
+        point_per_yuan: 10,
+        description: '每消费1元获得10积分，有效期至2025年底',
+        effective_from: '2025-01-01',
+        effective_to: '2025-12-31',
+    },
+    {
+        policy_id: 2,
+        name: '促销积分',
+        point_per_yuan: 20,
+        description: '促销期间每1元获得20积分',
+        effective_from: '2025-06-01',
+        effective_to: '2025-06-30',
+    },
+]
 
 const tableData = ref<PointsPolicy[]>(generateFakeData())
 
@@ -101,20 +100,22 @@ const openDialog = (row?: PointsPolicy) => {
 }
 
 const handleSave = () => {
-    if (form.value.policyId) {
-        const idx = tableData.value.findIndex(item => item.policyId === form.value.policyId)
+    if (form.value.policy_id) {
+        const idx = tableData.value.findIndex((item) => item.policy_id === form.value.policy_id)
         if (idx !== -1) {
             tableData.value[idx] = form.value as PointsPolicy
         }
     } else {
-        const newId = tableData.value.length ? Math.max(...tableData.value.map(i => i.policyId)) + 1 : 1
-        tableData.value.push({ ...(form.value as PointsPolicy), policyId: newId })
+        const newId = tableData.value.length
+            ? Math.max(...tableData.value.map((i) => i.policy_id)) + 1
+            : 1
+        tableData.value.push({ ...(form.value as PointsPolicy), policy_id: newId })
     }
     dialogVisible.value = false
 }
 
 const handleDelete = (id: number) => {
-    tableData.value = tableData.value.filter(item => item.policyId !== id)
+    tableData.value = tableData.value.filter((item) => item.policy_id !== id)
 }
 
 const handlePageChange = (page: number) => {

@@ -4,17 +4,17 @@
             <el-button type="primary" @click="openDialog()">添加日志</el-button>
         </div>
         <el-table :data="paginatedData" border>
-            <el-table-column prop="logId" label="日志ID" width="80" />
-            <el-table-column prop="operator" label="操作人" />
-            <el-table-column prop="operationType" label="操作类型" />
-            <el-table-column prop="content" label="内容" />
-            <el-table-column prop="time" label="时间" />
-            <el-table-column prop="ipAddress" label="IP地址" />
-            <el-table-column prop="macAddress" label="MAC地址" />
+            <el-table-column prop="log_id" label="日志ID" width="80" />
+            <el-table-column prop="user_id" label="用户ID" />
+            <el-table-column prop="action_type" label="操作类型" />
+            <el-table-column prop="actual_detail" label="操作内容" />
+            <el-table-column prop="timestamp" label="操作时间" />
+            <el-table-column prop="ip_address" label="IP地址" />
+            <el-table-column prop="mac_address" label="MAC地址" />
             <el-table-column label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
-                    <el-button size="small" type="danger" @click="handleDelete(scope.row.logId)">删除</el-button>
+                    <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
+                    <el-button size="small" type="danger" @click="handleDelete(scope.row.log_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -24,12 +24,24 @@
 
         <el-dialog :title="dialogTitle" v-model="dialogVisible">
             <el-form :model="form">
-                <el-form-item label="操作人"><el-input v-model="form.operator" /></el-form-item>
-                <el-form-item label="操作类型"><el-input v-model="form.operationType" /></el-form-item>
-                <el-form-item label="内容"><el-input v-model="form.content" /></el-form-item>
-                <el-form-item label="时间"><el-date-picker v-model="form.time" type="datetime" /></el-form-item>
-                <el-form-item label="IP地址"><el-input v-model="form.ipAddress" /></el-form-item>
-                <el-form-item label="MAC地址"><el-input v-model="form.macAddress" /></el-form-item>
+                <el-form-item label="用户ID">
+                    <el-input v-model="form.user_id" />
+                </el-form-item>
+                <el-form-item label="操作类型">
+                    <el-input v-model="form.action_type" />
+                </el-form-item>
+                <el-form-item label="操作内容">
+                    <el-input v-model="form.actual_detail" />
+                </el-form-item>
+                <el-form-item label="操作时间">
+                    <el-date-picker v-model="form.timestamp" type="datetime" />
+                </el-form-item>
+                <el-form-item label="IP地址">
+                    <el-input v-model="form.ip_address" />
+                </el-form-item>
+                <el-form-item label="MAC地址">
+                    <el-input v-model="form.mac_address" />
+                </el-form-item>
             </el-form>
             <template #footer>
                 <el-button @click="dialogVisible = false">取消</el-button>
@@ -43,24 +55,24 @@
 import { ref, computed } from 'vue'
 
 interface SystemLog {
-    logId: number
-    operator: string
-    operationType: string
-    content: string
-    time: string
-    ipAddress: string
-    macAddress: string
+    log_id: number
+    user_id: string
+    action_type: string
+    actual_detail: string
+    timestamp: string
+    ip_address: string
+    mac_address: string
 }
 
 const generateFakeLogs = (): SystemLog[] =>
-    Array.from({ length: 20 }, (_, i) => ({
-        logId: i + 1,
-        operator: `admin${i + 1}`,
-        operationType: i % 2 ? '修改' : '登录',
-        content: '测试操作内容',
-        time: '2025-05-01 10:00',
-        ipAddress: '192.168.0.' + (i + 1),
-        macAddress: `00:0a:95:9d:68:${(10 + i).toString(16)}`
+    Array.from({ length: 50 }, (_, i) => ({
+        log_id: i + 1,
+        user_id: `admin${i + 1}`,
+        action_type: i % 2 ? '修改' : '登录',
+        actual_detail: '模拟操作内容',
+        timestamp: '2025-05-01 10:00',
+        ip_address: '192.168.0.' + (i + 1),
+        mac_address: `00:0a:95:9d:68:${(10 + i).toString(16)}`
     }))
 
 const tableData = ref<SystemLog[]>(generateFakeLogs())
@@ -82,18 +94,18 @@ const openDialog = (row?: SystemLog) => {
 }
 
 const handleSave = () => {
-    if (form.value.logId) {
-        const index = tableData.value.findIndex(item => item.logId === form.value.logId)
+    if (form.value.log_id) {
+        const index = tableData.value.findIndex(item => item.log_id === form.value.log_id)
         if (index !== -1) tableData.value[index] = form.value as SystemLog
     } else {
         const newId = Date.now()
-        tableData.value.push({ ...(form.value as SystemLog), logId: newId })
+        tableData.value.push({ ...(form.value as SystemLog), log_id: newId })
     }
     dialogVisible.value = false
 }
 
-const handleDelete = (logId: number) => {
-    tableData.value = tableData.value.filter(item => item.logId !== logId)
+const handleDelete = (log_id: number) => {
+    tableData.value = tableData.value.filter(item => item.log_id !== log_id)
 }
 
 const handlePageChange = (page: number) => {

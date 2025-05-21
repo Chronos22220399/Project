@@ -6,12 +6,13 @@
     <el-table :data="paginatedData" border style="width: 100%">
       <el-table-column prop="id" label="物品ID" width="100" />
       <el-table-column prop="name" label="物品名称" />
-      <el-table-column prop="pointsRequired" label="所需积分" />
-      <el-table-column prop="startTime" label="开始时间" />
-      <el-table-column prop="endTime" label="结束时间" />
+      <el-table-column prop="points_required" label="所需积分" />
+      <el-table-column prop="begin_time" label="开始时间" />
+      <el-table-column prop="end_time" label="结束时间" />
+      <el-table-column prop="quantity" label="剩余数量" />
       <el-table-column label="操作" width="180">
         <template #default="scope">
-          <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
+          <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
           <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
         </template>
       </el-table-column>
@@ -22,9 +23,10 @@
     <el-dialog :title="dialogTitle" v-model="dialogVisible">
       <el-form :model="form">
         <el-form-item label="物品名称"><el-input v-model="form.name" /></el-form-item>
-        <el-form-item label="所需积分"><el-input v-model="form.pointsRequired" /></el-form-item>
-        <el-form-item label="开始时间"><el-date-picker v-model="form.startTime" type="date" /></el-form-item>
-        <el-form-item label="结束时间"><el-date-picker v-model="form.endTime" type="date" /></el-form-item>
+        <el-form-item label="所需积分"><el-input v-model="form.points_required" /></el-form-item>
+        <el-form-item label="剩余数量"><el-input v-model="form.quantity" /></el-form-item>
+        <el-form-item label="开始时间"><el-date-picker v-model="form.begin_time" type="date" /></el-form-item>
+        <el-form-item label="结束时间"><el-date-picker v-model="form.end_time" type="date" /></el-form-item>
       </el-form>
       <template #footer>
         <el-button @click="dialogVisible = false">取消</el-button>
@@ -40,18 +42,20 @@ import { ref, computed } from 'vue'
 interface RedeemItem {
   id: number
   name: string
-  pointsRequired: number
-  startTime: string
-  endTime: string
+  points_required: number
+  quantity: number
+  begin_time: string
+  end_time: string
 }
 
 const generateFakeItems = (): RedeemItem[] => {
   return Array.from({ length: 20 }, (_, i) => ({
     id: i + 1,
     name: `礼品${i + 1}`,
-    pointsRequired: (i + 1) * 10,
-    startTime: '2025-01-01',
-    endTime: '2025-12-31'
+    points_required: (i + 1) * 10,
+    quantity: 100 - i,
+    begin_time: '2025-01-01',
+    end_time: '2025-12-31',
   }))
 }
 
