@@ -1,14 +1,44 @@
--- 考勤
+-- 考勤记录表
+-- status 字段含义：
+--   present       : 正常
+--   late          : 迟到
+--   early_leave   : 早退
+--   absent        : 缺勤
+-- leave_type 字段含义（仅当 status = 'absent' 时填写）：
+--   sick_leave    : 病假
+--   personal_leave: 事假
+--   annual_leave  : 年假
+--   other         : 其他
 CREATE TABLE IF NOT EXISTS attendance_record (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  attendance_id TEXT NOT NULL,
-  employee_id TEXT NOT NULL,
+  record_id TEXT NOT NULL UNIQUE,
+  employee_rk_id INTEGER NOT NULL,
   date DATE NOT NULL,
-  dock_in DATETIME NOT NULL,
-  dock_out DATETIME,
-  status TEXT NOT NULL CHECK (status IN ('正常', '迟到', '早退', '缺勤')),
-  leave_type TEXT,
+  clock_in DATETIME NOT NULL,
+  clock_out DATETIME,
+  status TEXT NOT NULL CHECK (
+    status IN ('present', 'late', 'early_leave', 'absent')
+  ),
+  leave_type TEXT CHECK (
+    leave_type IS NULL
+    OR leave_type IN (
+      'sick_leave',
+      'personal_leave',
+      'annual_leave',
+      'other'
+    )
+  ),
   remark TEXT,
-  FOREIGN KEY (employee_id) REFERENCES employee (employee_id),
-  UNIQUE (employee_id, date)
+  FOREIGN KEY (employee_rk_id) REFERENCES employee (id),
+  UNIQUE (employee_rk_id, date),
+  CHECK (
+    (
+      status = 'absent'
+      AND leave_type IS NOT NULL
+    )
+    OR (
+      status != 'absent'
+      AND leave_type IS NULL
+    )
+  )
 );
