@@ -6,5 +6,5 @@ CREATE TABLE IF NOT EXISTS member_purchase_record (
   transaction_date DATETIME NOT NULL,
   amount REAL NOT NULL CHECK (amount >= 0),
   earned_points INTEGER NOT NULL DEFAULT 0,
-  FOREIGN KEY (member_rk_id) REFERENCES members (id) ON DELETE SET NULL
+  FOREIGN KEY (member_rk_id) REFERENCES member (id) ON DELETE SET NULL
 );
