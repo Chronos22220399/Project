@@ -9,12 +9,27 @@
 
 // DTO for warehouse table
 
-namespace warehouse::warehouse {
-static const std::vector<std::string> status_domain = {"active", "inactive",
-                                                       "maintenance", "closed"};
-};
 
 struct WarehouseDTO {
+  // for check
+  inline static const std::array<const char*, 9> required_fields = {
+    "warehouse_id",    // warehouse_id 在创建时无需填写，这是给其他部分用的
+    "warehouse_name",  // 必须有仓库名
+    "location",        // 仓库地址必填
+    "capacity",        // available_capacity 在创建时等于 capacity
+    "manager_id",      // manager_id 用于通过 cache 找到 manager_rk_id
+    "phone",           // 电话必填
+    "status"           // 处理状态初始可设置为 inactive 这种需求
+    "remark"           // 备注
+  };
+
+  inline static const std::array<const char*, 4> status_domain = {
+    "active",       // 启用
+    "inactive",     // 停用
+    "maintenance",  // 维护中
+    "closed"        // 已关闭
+  };
+
   in_id_type id = 0;
   ex_id_type warehouse_id = "";
   name_type warehouse_name = "";

@@ -60,6 +60,7 @@ using remark_type = std::string;
 
 using status_type = std::string;
 
+
 /**
  * @brief 打印带有文件名、函数名和行号的格式化日志信息。
  *

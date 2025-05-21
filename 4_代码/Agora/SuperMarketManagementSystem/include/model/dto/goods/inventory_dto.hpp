@@ -15,16 +15,22 @@ struct InventoryDTO {
   in_id_type id = 0;
   in_id_type goods_rk_id = 0;
   in_id_type warehouse_rk_id = 0;
-  quantity_type quantity = 0;
+  quantity_type quantity = 0.0;
+  quantity_type min_threshold = 0.0;
+  quantity_type max_threshold = 0.0;
+  datetime_type last_updated = {};
 
   static InventoryDTO from_json(const nlohmann::json& j)
   {
     auto& cache = GlobalIdCache::getInstance();
-    return InventoryDTO{.goods_rk_id = cache.getInternalId(
-                          "goods", j.at("goods_id").get<std::string>()),
-                        .warehouse_rk_id = cache.getInternalId(
-                          "warehosue", j.at("warehosue_id").get<std::string>()),
-                        .quantity = j.at("quantity").get<quantity_type>()};
+    return InventoryDTO{
+      .goods_rk_id =
+        cache.getInternalId("goods", j.at("goods_id").get<std::string>()),
+      .warehouse_rk_id = cache.getInternalId(
+        "warehosue", j.at("warehosue_id").get<std::string>()),
+      .quantity = j.at("quantity").get<quantity_type>(),
+      .min_threshold = j.at("min_threshold").get<quantity_type>(),
+      .max_threshold = j.at("max_threshold").get<quantity_type>()};
   }
 };
 
@@ -35,7 +41,10 @@ inline void to_json(nlohmann::json& j, const InventoryDTO& inventory_dto)
     {"goods_id", cache.getExternalId("goods", inventory_dto.goods_rk_id)},
     {"warehouse_id",
      cache.getExternalId("warehouse", inventory_dto.warehouse_rk_id)},
-    {"quantity", inventory_dto.quantity}};
+    {"quantity", inventory_dto.quantity},
+    {"min_threshold", inventory_dto.min_threshold},
+    {"max_threshold", inventory_dto.max_threshold},
+    {"last_updated", utils::time_to_string(inventory_dto.last_updated)}};
 }
 
 // ORM mapping
@@ -46,7 +55,10 @@ template <> struct ReflectTable<InventoryDTO, db::inventory> {
     std::make_pair(&InventoryDTO::goods_rk_id, &db::inventory::goods_rk_id),
     std::make_pair(&InventoryDTO::warehouse_rk_id,
                    &db::inventory::warehouse_rk_id),
-    std::make_pair(&InventoryDTO::quantity, &db::inventory::quantity));
+    std::make_pair(&InventoryDTO::quantity, &db::inventory::quantity),
+    std::make_pair(&InventoryDTO::min_threshold, &db::inventory::min_threshold),
+    std::make_pair(&InventoryDTO::max_threshold, &db::inventory::max_threshold),
+    std::make_pair(&InventoryDTO::last_updated, &db::inventory::last_updated));
 };
 
 // mapping
@@ -57,7 +69,10 @@ struct ReflectTableRow<InventoryDTO, InventoryRow> {
     return InventoryDTO{.id = row.id,
                         .goods_rk_id = row.goods_rk_id,
                         .warehouse_rk_id = row.warehouse_rk_id,
-                        .quantity = row.quantity};
+                        .quantity = row.quantity,
+                        .min_threshold = row.min_threshold,
+                        .max_threshold = row.max_threshold,
+                        .last_updated = row.last_updated};
   }
 };
 

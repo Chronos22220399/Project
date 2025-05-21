@@ -9,7 +9,7 @@
 class InventoryService {
   public:
   // create
-  static ServiceResult create(const InventoryDTO& inventory_dto);
+  static ServiceResult create(InventoryDTO& inventory_dto);
   // get
   static ServiceResult getByGoodsId(const std::string& goods_id);
   static ServiceResult getByWarehouseId(const std::string& warehouse_id);
@@ -17,5 +17,5 @@ class InventoryService {
   static ServiceResult getAll();
   // update
   static ServiceResult updateByGoodsId(const in_id_type goods_rk_id,
-                                       const InventoryDTO& inventory_dto);
+                                       InventoryDTO& inventory_dto);
 };

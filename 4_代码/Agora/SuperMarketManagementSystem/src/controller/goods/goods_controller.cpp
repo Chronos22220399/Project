@@ -19,32 +19,6 @@ const std::vector<std::string> required_fields = {
 
 void GoodsController::registerRoutes(crow::SimpleApp& app)
 {
-  // MARK: 商品创建接口 - POST /api/goods/create
-  //
-  // 请求JSON：
-  // {
-  //   "goods_name": string,    // 必填
-  //   "category_id": string,   // 必填（外部ID）
-  //   "supplier_id": string,   // 必填（外部ID）
-  //   "unit_id": string,       // 必填（单位外部ID）
-  //   "shelf_life_days": int,  // 必填（保质期天数 >=0）
-  //   "barcode": string,       // 必填（商品条码）
-  //   "image_url": string,     // 必填（商品图片URL）
-  //   "description": string    // 必填（商品描述）
-  // }
-  //
-  // 成功响应 (201):
-  // {
-  //   "code": 201,
-  //   "data": {
-  //     "goods_id": "Gxxxx",   // 外部ID（字符串）
-  //     "create_time": "ISO8601时间"
-  //   }
-  // }
-  //
-  // 错误响应：
-  // 400 - JSON解析失败/字段缺失/数值非法
-  // 500 - 数据库错误
   CROW_ROUTE(app, "/api/goods/create")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;

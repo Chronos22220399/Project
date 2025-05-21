@@ -2,8 +2,8 @@
 #include <service/goods/inventory_service.h>
 
 
-const std::vector<std::string> required_fields = {"goods_id", "warehouse_id",
-                                                  "quantity"};
+const std::vector<std::string> required_fields = {
+  "goods_id", "warehouse_id", "quantity", "min_threshold", "max_threshold"};
 
 void InventoryController::registerRoutes(crow::SimpleApp& app)
 {

@@ -5,45 +5,15 @@
 void PromotionController::registerRoutes(crow::SimpleApp& app)
 {
   // MARK: 创建促销活动接口 - POST /api/promotion/create
-  //
-  // 请求JSON：
-  // {
-  //   "promotion_id": string,   // 必填，促销活动ID
-  //   "name": string,           // 必填，促销活动名称
-  //   "description": string,    // 必填，促销活动描述
-  //   "type": string,           // 必填，活动类型（"discount" 或 "full
-  //   reduction"） "start_time": string,     //
-  //   必填，活动开始时间（ISO8601格式） "end_time": string,       //
-  //   必填，活动结束时间（ISO8601格式） "status": string          //
-  //   必填，状态（"active"、"expired"、"draft"）
-  // }
-  //
-  // 成功响应 (201):
-  // {
-  //   "code": 201
-  // }
-  //
-  // 错误响应：
-  // {
-  //   "code": 400    // JSON解析失败/缺少必填字段
-  // }
-  // {
-  //   "code": 404    // 类型或状态非法
-  // }
-  // {
-  //   "code": 500    // 数据库插入异常
-  // }
   CROW_ROUTE(app, "/api/promotion/create")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
-
       // 检查必填字段
-      CHECK_REQUIRED_FIELDS(j, required_fields);
+      CHECK_REQUIRED_FIELDS(j, PromotionDTO::required_fields);
 
       auto promotion_dto = PromotionDTO::from_json(j);
-      promotion_dto.promotion_id = utils::create_id("P-");
 
       auto res = PromotionService::create(promotion_dto);
       return utils::to_response(res, 201);
@@ -118,7 +88,7 @@ void PromotionController::registerRoutes(crow::SimpleApp& app)
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
       // 检查必填字段
-      CHECK_REQUIRED_FIELDS(j, required_fields);
+      CHECK_REQUIRED_FIELDS(j, PromotionDTO::required_fields);
 
       auto promotion_dto = PromotionDTO::from_json(j);
       auto promotion_id = promotion_dto.promotion_id;
