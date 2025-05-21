@@ -1,8 +1,8 @@
---角色权限关联表 (Role_Permission)
-CREATE TABLE Role_Permission (
-    role_id INT,
-    permission_id INT,
-    PRIMARY KEY (role_id, permission_id),
-    FOREIGN KEY (role_id) REFERENCES Role(role_id),
-    FOREIGN KEY (permission_id) REFERENCES Permission(permission_id)
+-- 角色权限关联表（role_permission）
+CREATE TABLE IF NOT EXISTS role_permission (
+  role_rk_id INTEGER NOT NULL, -- 角色内部ID，外键
+  permission_rk_id INTEGER NOT NULL, -- 权限内部ID，外键
+  PRIMARY KEY (role_rk_id, permission_rk_id),
+  FOREIGN KEY (role_rk_id) REFERENCES role (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (permission_rk_id) REFERENCES permission (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
