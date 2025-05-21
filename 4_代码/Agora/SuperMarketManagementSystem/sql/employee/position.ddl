@@ -5,5 +5,6 @@ CREATE TABLE IF NOT EXISTS position(
   position_name TEXT NOT NULL,
   base_salary REAL NOT NULL,
   is_manager BOOLEAN NOT NULL DEFAULT FALSE,
+  department_name TEXT NOT NULL,
   description TEXT
 );

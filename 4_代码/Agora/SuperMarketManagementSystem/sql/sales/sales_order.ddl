@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS sales_order (
   total_amount REAL NOT NULL CHECK (total_amount >= 0),
   paid_amount REAL NOT NULL CHECK (paid_amount >= 0),
   payment_method TEXT NOT NULL CHECK (
-    payment_method IN ('cash', 'wechat', 'alipay', 'bank_card')
+    payment_method IN ('cash', 'bank_card', 'wechat', 'alipay', 'other')
   ),
   discount_info TEXT,
   remark TEXT,
