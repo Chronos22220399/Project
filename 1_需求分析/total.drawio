@@ -1,6 +1,6 @@
 <mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36" version="27.0.6">
   <diagram id="SUN0jRyIorb10fhjrTKM" name="Page-1">
-    <mxGraphModel dx="6341" dy="4801" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+    <mxGraphModel dx="2202" dy="3129" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -1654,7 +1654,7 @@
           <mxGeometry y="50" width="940" height="540" as="geometry" />
         </mxCell>
         <mxCell id="Cqctsg-84ahSRrbPyVCj-393" value="会员信息（M&lt;span style=&quot;background-color: transparent; color: light-dark(rgb(0, 0, 0), rgb(255, 255, 255));&quot;&gt;emberInfo）&lt;/span&gt;" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="Cqctsg-84ahSRrbPyVCj-440" vertex="1">
-          <mxGeometry x="520" y="90" width="140" height="270" as="geometry" />
+          <mxGeometry x="520" y="90" width="140" height="300" as="geometry" />
         </mxCell>
         <mxCell id="Cqctsg-84ahSRrbPyVCj-394" value="会员id（member_id）" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="Cqctsg-84ahSRrbPyVCj-393" vertex="1">
           <mxGeometry y="30" width="140" height="30" as="geometry" />
@@ -1679,6 +1679,9 @@
         </mxCell>
         <mxCell id="Cqctsg-84ahSRrbPyVCj-401" value="注册日期（registration_date）" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" parent="Cqctsg-84ahSRrbPyVCj-393" vertex="1">
           <mxGeometry y="240" width="140" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="6AiDUI-msZ7OhvSutSLj-282" value="会员状态（status）注销、活跃" style="text;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;" vertex="1" parent="Cqctsg-84ahSRrbPyVCj-393">
+          <mxGeometry y="270" width="140" height="30" as="geometry" />
         </mxCell>
         <mxCell id="Cqctsg-84ahSRrbPyVCj-402" value="会员等级表（MemberLevel）" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;" parent="Cqctsg-84ahSRrbPyVCj-440" vertex="1">
           <mxGeometry x="750" y="120" width="140" height="150" as="geometry" />
