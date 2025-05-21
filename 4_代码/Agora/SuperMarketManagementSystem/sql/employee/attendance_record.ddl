@@ -30,15 +30,5 @@ CREATE TABLE IF NOT EXISTS attendance_record (
   ),
   remark TEXT,
   FOREIGN KEY (employee_rk_id) REFERENCES employee (id),
-  UNIQUE (employee_rk_id, date),
-  CHECK (
-    (
-      status = 'absent'
-      AND leave_type IS NOT NULL
-    )
-    OR (
-      status != 'absent'
-      AND leave_type IS NULL
-    )
-  )
+  UNIQUE (employee_rk_id, date)
 );

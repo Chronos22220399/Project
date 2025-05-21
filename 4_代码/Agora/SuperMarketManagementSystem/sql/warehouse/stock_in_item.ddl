@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS stock_in_item (
   unit_price REAL NOT NULL,
   remark TEXT,
   FOREIGN KEY (stock_in_rk_id) REFERENCES stock_in (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  FOREIGN KEY (goods_rk_id) REFERENCES product_information (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+  FOREIGN KEY (goods_rk_id) REFERENCES product_information (id) ON DELETE RESTRICT ON UPDATE CASCADE
 );
