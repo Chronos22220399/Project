@@ -10,7 +10,7 @@
             <el-table-column prop="filePath" label="文件位置" />
             <el-table-column label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
+                    <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
@@ -52,12 +52,12 @@ const generateFakeRecords = (): BackupRecord[] => {
     }))
 }
 
-const tableData = ref < BackupRecord[] > (generateFakeRecords())
+const tableData = ref<BackupRecord[]>(generateFakeRecords())
 const currentPage = ref(1)
 const pageSize = ref(10)
 const dialogVisible = ref(false)
 const dialogTitle = ref('添加记录')
-const form = ref < Partial < BackupRecord >> ({})
+const form = ref<Partial<BackupRecord>>({})
 
 const paginatedData = computed(() => {
     const start = (currentPage.value - 1) * pageSize.value

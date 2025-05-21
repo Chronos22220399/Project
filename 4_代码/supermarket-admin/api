@@ -69,7 +69,7 @@
 库存盘点管理
 | 接口名称     | 请求方法   | 请求 URL                              | 请求参数 (POST/PUT)                                       | 返回格式                                                             | 说明            |
 | -------- | ------ | ----------------------------------- | ----------------------------------------------------- | ---------------------------------------------------------------- | ------------- |
-| 获取盘点记录列表 | GET    | /api/warehouse/inventory-check      | ?page=1\&pageSize=10（分页参数）                            | { code: 200, data: { items: InventoryCheck\[], total: number } } | 分页获取盘点记录      |
+| 获取盘点记录列表 | GET    | /api/warehouse/inventory-check      | ?page=1\&pageSize=10                            | { code: 200, data: { items: InventoryCheck\[], total: number } } | 分页获取盘点记录      |
 | 添加盘点记录   | POST   | /api/warehouse/inventory-check      | { warehouseId, productId, counted, actual, time }     | { code: 201, msg: "添加成功", data: { id: number } }                 | 新增盘点记录        |
 | 编辑盘点记录   | PUT    | /api/warehouse/inventory-check/{id} | { id, warehouseId, productId, counted, actual, time } | { code: 200, msg: "修改成功" }                                       | 修改指定盘点记录      |
 | 删除盘点记录   | DELETE | /api/warehouse/inventory-check/{id} | 无                                                     | { code: 200, msg: "删除成功" }                                       | 删除指定盘点记录      |

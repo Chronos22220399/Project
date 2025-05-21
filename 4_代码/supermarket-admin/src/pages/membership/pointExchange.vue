@@ -5,17 +5,17 @@
         </div>
         <el-table :data="paginatedData" border style="width: 100%">
             <el-table-column prop="id" label="记录ID" width="100" />
-            <el-table-column prop="memberId" label="会员ID" />
-            <el-table-column prop="redeemItemId" label="被兑换物品id">
+            <el-table-column prop="member_id" label="会员ID" />
+            <el-table-column prop="redeem_item_id" label="被兑换物品ID">
                 <template #default="scope">
-                    {{ getItemName(scope.row.redeemItemId) }}
+                    {{ getItemName(scope.row.redeem_item_id) }}
                 </template>
             </el-table-column>
-            <el-table-column prop="pointsUsed" label="消耗积分" />
+            <el-table-column prop="points_used" label="消耗积分" />
             <el-table-column prop="operator" label="操作员" />
             <el-table-column label="操作" width="180">
                 <template #default="scope">
-                    <el-button size="small" @click="openDialog(scope.row)">编辑</el-button>
+                    <el-button size="small" @click="openDialog(scope.row)">更新</el-button>
                     <el-button size="small" type="danger" @click="handleDelete(scope.row.id)">删除</el-button>
                 </template>
             </el-table-column>
@@ -26,13 +26,13 @@
 
         <el-dialog :title="dialogTitle" v-model="dialogVisible">
             <el-form :model="form">
-                <el-form-item label="会员ID"><el-input v-model="form.memberId" /></el-form-item>
+                <el-form-item label="会员ID"><el-input v-model="form.member_id" /></el-form-item>
                 <el-form-item label="兑换内容">
-                    <el-select v-model="form.redeemItemId" placeholder="请选择">
+                    <el-select v-model="form.redeem_item_id" placeholder="请选择">
                         <el-option v-for="item in items" :key="item.id" :label="item.name" :value="item.id" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="消耗积分"><el-input v-model="form.pointsUsed" /></el-form-item>
+                <el-form-item label="消耗积分"><el-input v-model="form.points_used" /></el-form-item>
                 <el-form-item label="操作员"><el-input v-model="form.operator" /></el-form-item>
             </el-form>
             <template #footer>
@@ -48,9 +48,9 @@ import { ref, computed } from 'vue'
 
 interface RedeemRecord {
     id: number
-    memberId: number
-    redeemItemId: number
-    pointsUsed: number
+    member_id: number
+    redeem_item_id: number
+    points_used: number
     operator: string
 }
 
@@ -62,9 +62,9 @@ interface RedeemItem {
 const generateFakeData = (): RedeemRecord[] => {
     return Array.from({ length: 50 }, (_, i) => ({
         id: i + 1,
-        memberId: 1000 + i,
-        redeemItemId: (i % 5) + 1,
-        pointsUsed: Math.floor(Math.random() * 100) + 10,
+        member_id: 1000 + i,
+        redeem_item_id: (i % 5) + 1,
+        points_used: Math.floor(Math.random() * 100) + 10,
         operator: `员工${(i % 3) + 1}`
     }))
 }
