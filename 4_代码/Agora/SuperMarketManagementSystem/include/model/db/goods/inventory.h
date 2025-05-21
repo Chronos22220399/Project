@@ -72,7 +72,7 @@ namespace db
             const T& operator()() const { return quantity; }
           };
       };
-      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
+      using _traits = sqlpp::make_traits<sqlpp::floating_point, sqlpp::tag::require_insert>;
     };
   } // namespace inventory_
 

@@ -1,15 +1,16 @@
--- 供应商表
+-- 创建供应商表
+-- status:
+--   active    : 正常
+--   inactive  : 停用
+--   blacklisted : 黑名单
 CREATE TABLE IF NOT EXISTS supplier (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    supplier_id TEXT UNIQUE, -- 逻辑ID
-    supplier_name TEXT NOT NULL,
-    contact_person TEXT,
-    phone TEXT,  -- 可以加上长度限制 phone TEXT(15) 如果你希望限制长度
-    email TEXT,
-    created_at DATETIME,
-    -- TODO: 类型需修改
-    status TEXT,
-    remark TEXT,
-    -- TODO: 待修改
-    CHECK(status IN ('A', 'B', 'C', 'D', 'E'))
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  supplier_id TEXT NOT NULL UNIQUE,
+  supplier_name TEXT NOT NULL,
+  contact_person TEXT NOT NULL,
+  contact_phone TEXT NOT NULL,
+  email TEXT,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  status TEXT CHECK (status IN ('active', 'inactive', 'blacklisted')) DEFAULT 'active',
+  remark TEXT
 );

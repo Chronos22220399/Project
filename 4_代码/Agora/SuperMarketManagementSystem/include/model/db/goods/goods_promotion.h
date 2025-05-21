@@ -120,7 +120,7 @@ namespace db
             const T& operator()() const { return buy_quantity; }
           };
       };
-      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::can_be_null>;
+      using _traits = sqlpp::make_traits<sqlpp::floating_point, sqlpp::tag::can_be_null>;
     };
     struct gift_product
     {
