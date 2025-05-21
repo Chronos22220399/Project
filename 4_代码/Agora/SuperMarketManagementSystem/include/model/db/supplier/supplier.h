@@ -40,7 +40,7 @@ namespace db
             const T& operator()() const { return supplier_id; }
           };
       };
-      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
+      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
     };
     struct supplier_name
     {
@@ -72,52 +72,84 @@ namespace db
             const T& operator()() const { return contact_person; }
           };
       };
-      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
+      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
     };
-    struct phone
+    struct contact_phone
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "phone";
+        static constexpr const char _literal[] =  "contact_phone";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T phone;
-            T& operator()() { return phone; }
-            const T& operator()() const { return phone; }
+            T contact_phone;
+            T& operator()() { return contact_phone; }
+            const T& operator()() const { return contact_phone; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
+    };
+    struct email
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "email";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T email;
+            T& operator()() { return email; }
+            const T& operator()() const { return email; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
     };
-    struct address
+    struct created_at
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "address";
+        static constexpr const char _literal[] =  "created_at";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T address;
-            T& operator()() { return address; }
-            const T& operator()() const { return address; }
+            T created_at;
+            T& operator()() { return created_at; }
+            const T& operator()() const { return created_at; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::time_point, sqlpp::tag::can_be_null>;
+    };
+    struct status
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "status";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T status;
+            T& operator()() { return status; }
+            const T& operator()() const { return status; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
     };
-    struct rating_level
+    struct remark
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "rating_level";
+        static constexpr const char _literal[] =  "remark";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T rating_level;
-            T& operator()() { return rating_level; }
-            const T& operator()() const { return rating_level; }
+            T remark;
+            T& operator()() { return remark; }
+            const T& operator()() const { return remark; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
@@ -129,9 +161,11 @@ namespace db
                supplier_::supplier_id,
                supplier_::supplier_name,
                supplier_::contact_person,
-               supplier_::phone,
-               supplier_::address,
-               supplier_::rating_level>
+               supplier_::contact_phone,
+               supplier_::email,
+               supplier_::created_at,
+               supplier_::status,
+               supplier_::remark>
   {
     struct _alias_t
     {

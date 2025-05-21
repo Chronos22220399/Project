@@ -1,17 +1,31 @@
 #pragma once
+#include <common/common_utils.hpp>
 #include <crow.h>
+#include <model/dto/goods/promotion_dto.hpp>
+#include <nlohmann/json.hpp>
 #include <string>
 
+inline const std::vector<std::string> required_fields = {
+  "promotion_id", "name",     "description", "type",
+  "start_time",   "end_time", "status"};
+
+inline const std::vector<std::string> required_type = {"discount",
+                                                       "full reduction"};
+
+inline const std::vector<std::string> required_status = {"active", "expired",
+                                                         "draft"};
+
 class PromotionService {
-public:
+  public:
   // Implemented
-  static crow::response create(const std::string &body);
+  static ServiceResult create(const PromotionDTO& promotion_dto);
 
-  static crow::response removeByPromotionId(const std::string &body);
+  static ServiceResult removeByPromotionId(const std::string& promotion_id);
 
-  static crow::response updateByPromotionId(const std::string &body);
+  static ServiceResult updateByPromotionId(const std::string& promotion_id,
+                                           const PromotionDTO& promotion_dto);
 
+  static ServiceResult getByPage(const int page, const int page_size);
   // Not implemented
-  static crow::response getByPage(const std::string &body);
-  static crow::response getAll();
+  static ServiceResult getAll();
 };

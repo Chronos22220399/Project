@@ -35,7 +35,7 @@ namespace details {
  */
 template <std::size_t N, std::size_t... Is>
 struct make_even_or_odd_sequence
-    : make_even_or_odd_sequence<N - 2, N - 2, Is...> {};
+  : make_even_or_odd_sequence<N - 2, N - 2, Is...> {};
 
 /**
  * @brief 停止条件（N 为 0），用于生成 std::index_sequence。
@@ -64,11 +64,12 @@ template <std::size_t... Is> struct make_even_or_odd_sequence<1, Is...> {
  * @return std::index_sequence<N + Is...> 新的索引序列。
  */
 template <std::size_t N, std::size_t... Is>
-auto make_index_sequence_from(std::index_sequence<Is...>) {
+auto make_index_sequence_from(std::index_sequence<Is...>)
+{
   return std::index_sequence<N + Is...>{};
 }
 
-} // namespace details
+}  // namespace details
 
 namespace utils {
 
@@ -80,14 +81,15 @@ namespace utils {
  * @return std::filesystem::path 项目根路径。
  */
 inline std::filesystem::path get_project_root_path(std::filesystem::path path,
-                                                   std::string root_dir_name) {
+                                                   std::string root_dir_name)
+{
   std::string current_path = std::string(path.c_str());
-  bool in_root_dir =
-      (current_path.rfind(root_dir_name) + root_dir_name.length() ==
-       current_path.length());
+  bool in_root_dir = (current_path.rfind(root_dir_name) + root_dir_name.length()
+                      == current_path.length());
   if (!in_root_dir) {
     return get_project_root_path(path.parent_path(), root_dir_name);
-  } else {
+  }
+  else {
     return path;
   }
 }
@@ -107,15 +109,16 @@ template <size_t LoopNum> struct ForLoop {
    * @param args 传递给函数的参数。
    */
   template <typename Function, typename... Args>
-  static auto run(Function &&func, Args &&...args) {
+  static auto run(Function&& func, Args&&... args)
+  {
     std::vector<std::future<void>> futures;
     futures.reserve(LoopNum);
     for (auto i = 0; i < LoopNum; ++i) {
-      futures.emplace_back(std::async(std::launch::async, [&func, &args...] {
+      futures.emplace_back(std::async(std::launch::async, [ &func, &args... ] {
         std::invoke(std::forward<Function>(func), std::forward<Args>(args)...);
       }));
     }
-    for (auto &future : futures) {
+    for (auto& future : futures) {
       future.wait();
     }
   }
@@ -128,7 +131,7 @@ template <size_t LoopNum> struct ForLoop {
  */
 template <size_t N>
 using make_even_index_sequence =
-    typename details::make_even_or_odd_sequence<N + 2>::type;
+  typename details::make_even_or_odd_sequence<N + 2>::type;
 
 /**
  * @brief 生成一个从 N 开始，长度为 L 的索引序列。
@@ -138,7 +141,8 @@ using make_even_index_sequence =
  *
  * @return std::index_sequence<N, N+1, ..., N+L-1>
  */
-template <size_t N, size_t L> auto make_index_sequence_from() {
+template <size_t N, size_t L> auto make_index_sequence_from()
+{
   // 调用 details 命名空间中的辅助函数生成索引序列
   return details::make_index_sequence_from<N>(std::make_index_sequence<L>{});
 }
@@ -148,7 +152,8 @@ template <size_t N, size_t L> auto make_index_sequence_from() {
  *
  * @return std::string 有 boost::uuid 得到的 uuid（测试阶段固定）。
  */
-inline std::string create_id(const std::string &prefix) {
+inline std::string create_id(const std::string& prefix)
+{
   // 使用 Boost 库生成随机 UUID
   boost::uuids::uuid uuid = boost::uuids::random_generator()();
   // 将 UUID 转换为字符串并添加前缀
@@ -162,11 +167,13 @@ inline std::string create_id(const std::string &prefix) {
  * @return std::optional<nlohmann::json> 如果解析成功，返回 JSON 对象；否则返回
  * std::nullopt。
  */
-inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {
+inline std::optional<nlohmann::json> try_parse_json(const std::string& body)
+{
   try {
     // 使用 nlohmann::json 解析字符串
     return nlohmann::json::parse(body);
-  } catch (...) {
+  }
+  catch (...) {
     // 捕获所有异常并返回空值
     return std::nullopt;
   }
@@ -179,7 +186,8 @@ inline std::optional<nlohmann::json> try_parse_json(const std::string &body) {
  * @return datetime_type 转换后的时间点。
  * @throws std::invalid_argument 如果时间字符串格式非法。
  */
-inline datetime_type string_to_time(const std::string &str) {
+inline datetime_type string_to_time(const std::string& str)
+{
   std::tm tm = {};
   int microseconds = 0;
   std::istringstream iss(str);
@@ -198,12 +206,12 @@ inline datetime_type string_to_time(const std::string &str) {
   }
 
   // 构造时间点
-  auto sys_time = std::chrono::system_clock::from_time_t(std::mktime(&tm)) +
-                  std::chrono::microseconds(microseconds);
+  auto sys_time = std::chrono::system_clock::from_time_t(std::mktime(&tm))
+                  + std::chrono::microseconds(microseconds);
 
   // 转换为自定义的 datetime_type 类型
   return datetime_type(
-      std::chrono::time_point_cast<datetime_type::duration>(sys_time));
+    std::chrono::time_point_cast<datetime_type::duration>(sys_time));
 }
 
 /**
@@ -212,19 +220,20 @@ inline datetime_type string_to_time(const std::string &str) {
  * @param tp 时间点。
  * @return std::string 转换后的时间字符串，格式为 "YYYY-MM-DD HH:MM:SS.ffffff"。
  */
-inline std::string time_to_string(const datetime_type &tp) {
+inline std::string time_to_string(const datetime_type& tp)
+{
   const auto sys_time = std::chrono::system_clock::to_time_t(
-      std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp));
+    std::chrono::time_point_cast<std::chrono::system_clock::duration>(tp));
 
   std::ostringstream oss;
   // 格式化基础时间部分
   oss << std::put_time(std::localtime(&sys_time), "%Y-%m-%d %H:%M:%S");
 
   // 添加微秒部分
-  const auto us = std::chrono::duration_cast<std::chrono::microseconds>(
-                      tp.time_since_epoch())
-                      .count() %
-                  1000000;
+  const auto us =
+    std::chrono::duration_cast<std::chrono::microseconds>(tp.time_since_epoch())
+      .count()
+    % 1000000;
 
   if (us > 0) {
     // 格式化微秒部分为 6 位数字
@@ -241,7 +250,8 @@ inline std::string time_to_string(const datetime_type &tp) {
  * @param value 要转换的值。
  * @return 转换后的 SQL++ 值。
  */
-template <typename T> inline auto to_sqlpp_value(T &&value) {
+template <typename T> inline auto to_sqlpp_value(T&& value)
+{
   // 使用 sqlpp::value 包装值
   return sqlpp::value(std::forward<T>(value));
 }
@@ -252,9 +262,10 @@ template <typename T> inline auto to_sqlpp_value(T &&value) {
  * @param value 要转换的字符串值。
  * @return 转换后的 SQL++ 值。
  */
-template <> inline auto to_sqlpp_value<std::string>(std::string &&value) {
+template <> inline auto to_sqlpp_value<std::string>(std::string&& value)
+{
   // 使用 sqlpp::value 包装字符串值
-  return sqlpp::value(value); // 使用 value 而不是 text
+  return sqlpp::value(value);  // 使用 value 而不是 text
 }
 
 /**
@@ -268,9 +279,10 @@ template <> inline auto to_sqlpp_value<std::string>(std::string &&value) {
  * @return false 如果元素不存在于容器中。
  */
 template <typename Elem, typename Container>
-bool in(const Elem &elem, const Container &container) {
+bool in(const Elem& elem, const Container& container)
+{
   // 遍历容器中的每个元素
-  for (auto &e : container) {
+  for (auto& e : container) {
     if (e == elem) {
       // 如果找到匹配的元素，返回 true
       return true;
@@ -280,7 +292,8 @@ bool in(const Elem &elem, const Container &container) {
   return false;
 }
 
-inline std::string get_current_iso8601() {
+inline std::string get_current_iso8601()
+{
   auto now = std::chrono::system_clock::now();
   auto in_time_t = std::chrono::system_clock::to_time_t(now);
 
@@ -292,26 +305,39 @@ inline std::string get_current_iso8601() {
   return ss.str();
 }
 
-template <typename Func, typename ErrHandler = std::function<
-                             crow::response(const std::exception &)>>
+template <typename Func, typename ErrHandler =
+                           std::function<crow::response(const std::exception&)>>
 auto safeJsonExecution(
-    const std::string &body, Func &&servFunc,
-    ErrHandler &&errFunc = [](const std::exception &e) {
-      return SET_ERR_RESPONSE(500, "Unknown error");
-    }) -> std::invoke_result_t<Func, const nlohmann::json &> {
+  const std::string& body, Func&& servFunc,
+  ErrHandler&& errFunc = [](const std::exception& e) {
+    return SET_ERR_RESPONSE(500, "Unknown error");
+  }) -> std::invoke_result_t<Func, const nlohmann::json&>
+{
 
   nlohmann::json j;
   CHECK_AND_GET_JSON(j);
 
   try {
     return std::forward<Func>(servFunc)(j);
-  } catch (const std::exception &e) {
-    if constexpr (std::is_same_v<
-                      void, std::invoke_result_t<ErrHandler,
-                                                 const std::exception &>>) {
+  }
+  catch (const std::exception& e) {
+    if constexpr (std::is_same_v<void, std::invoke_result_t<
+                                         ErrHandler, const std::exception&>>) {
       return SET_ERR_RESPONSE(500, e.what());
     }
     return std::forward<ErrHandler>(errFunc)(e);
   }
 }
-} // namespace utils
+
+inline crow::response to_response(const ServiceResult& res,
+                                  int success_code = 200)
+{
+  if (!res.success) {
+    return crow::response(
+      500, nlohmann::json{{"code", 500}, {"error", res.error}}.dump());
+  }
+  return crow::response(
+    success_code,
+    nlohmann::json{{"code", success_code}, {"data", res.data}}.dump());
+}
+}  // namespace utils

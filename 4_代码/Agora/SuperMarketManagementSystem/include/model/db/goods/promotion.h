@@ -40,7 +40,7 @@ namespace db
             const T& operator()() const { return promotion_id; }
           };
       };
-      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::can_be_null>;
+      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
     };
     struct promotion_name
     {
