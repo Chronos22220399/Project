@@ -6,7 +6,7 @@ CREATE TABLE IF NOT EXISTS member (
   member_phone TEXT NOT NULL UNIQUE,
   registration_date DATETIME NOT NULL,
   level_rk_id INTEGER,
-  points INTEGER DEFAULT 0,
+  points REAL DEFAULT 0,
   gender TEXT,
   birthday DATE,
   status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active',

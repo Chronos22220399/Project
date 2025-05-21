@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS points_exchange_record (
   member_rk_id INTEGER NOT NULL,
   item_rk_id INTEGER NOT NULL,
   operator_rk_id INTEGER,
-  points_spent INTEGER NOT NULL,
+  points_spent REAL NOT NULL CHECK (points_spent >= 0),
   redemption_time DATETIME NOT NULL,
   FOREIGN KEY (member_rk_id) REFERENCES member (id) ON DELETE SET NULL,
   FOREIGN KEY (item_rk_id) REFERENCES points_reward_item (id),
