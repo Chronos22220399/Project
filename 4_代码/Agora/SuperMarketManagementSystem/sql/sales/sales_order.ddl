@@ -1,12 +1,21 @@
---销售订单表 (Sales_Order)
-CREATE TABLE Sales_Order (
-    order_id INT PRIMARY KEY,
-    sale_time DATETIME NOT NULL,
-    cashier_id INT NOT NULL,
-    member_id INT,
-    total_amount DECIMAL(10, 2) NOT NULL,
-    paid_amount DECIMAL(10, 2) NOT NULL,
-    payment_method VARCHAR(50) NOT NULL,
-    discount_info VARCHAR(255),
-    remark TEXT
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+-- 支付方式说明：
+-- cash：现金
+-- wechat：微信
+-- alipay：支付宝
+-- bank_card：银行卡
+CREATE TABLE IF NOT EXISTS sales_order (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  order_id TEXT NOT NULL UNIQUE,
+  sale_time DATETIME NOT NULL,
+  cashier_rk_id INTEGER NOT NULL,
+  member_rk_id INTEGER,
+  total_amount REAL NOT NULL CHECK (total_amount >= 0),
+  paid_amount REAL NOT NULL CHECK (paid_amount >= 0),
+  payment_method TEXT NOT NULL CHECK (
+    payment_method IN ('cash', 'wechat', 'alipay', 'bank_card')
+  ),
+  discount_info TEXT,
+  remark TEXT,
+  FOREIGN KEY (cashier_rk_id) REFERENCES employee (id),
+  FOREIGN KEY (member_rk_id) REFERENCES member (id)
+);
