@@ -1,33 +1,29 @@
 -- 创建供应商评价表
-CREATE TABLE SupplierEvaluation (
-    -- 有Employee表之后需要添加的代码
-	  -- evaluator_id INT COMMENT '评价人员（外键关联员工编号）',
-		-- FOREIGN KEY (evaluator_id) REFERENCES Employee(employee_id) ON DELETE RESTRICT ON UPDATE CASCADE,
-		-- INDEX idx_evaluator_id (evaluator_id)
-			
-
-	  evaluation_id INT PRIMARY KEY AUTO_INCREMENT COMMENT '评价ID（主键）',
-		supplier_id INT COMMENT '供应商ID（外键）',
-		evaluation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP COMMENT '评价时间',
-		-- evaluator_id INT COMMENT '评价人员（外键关联员工编号）',
-		service_score DECIMAL(2,1) COMMENT '服务评分（5分制 一位小数）',
-		qualify_score DECIMAL(2,1) COMMENT '供货质量评分（5分制 一位小数）',
-		timeliness_score DECIMAL(2,1) COMMENT '供货及时性评分（5分制 一位小数）',
-		comment VARCHAR(255) COMMENT '综合评价（文字描述）',
-		total_score DECIMAL(3,2) COMMENT '根据service score，qualify_score，timeliness_score的平均分来自动生成',
-		remark VARCHAR(255) COMMENT '备注',
-			
-		-- 外键约束：确保supplier_id引用Supplier表中的supplier_id
-		FOREIGN KEY (supplier_id) REFERENCES Supplier(supplier_id) ON DELETE RESTRICT ON UPDATE CASCADE,
-			
-		-- 外键约束：evaluator_id
-		-- FOREIGN KEY (evaluator_id) REFERENCES Employee(employee_id) ON DELETE RESTRICT ON UPDATE CASCADE,
-			
-		-- 索引：supplier_id
-		INDEX idx_supplier_id (supplier_id)
-			
-		-- 索引：evaluator_id
-		-- INDEX idx_evaluator_id (evaluator_id)
-    
-			
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='供应商评价表';
+-- Supplier Evaluation Table
+-- service_score, qualify_score, timeliness_score: 评分范围 0.0 ~ 5.0（1 位小数）
+-- total_score: 三项平均分，建议由程序自动计算存入
+CREATE TABLE IF NOT EXISTS supplier_evaluation (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  evaluation_id TEXT NOT NULL UNIQUE,
+  supplier_rk_id INTEGER NOT NULL,
+  evaluation_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+  service_score REAL CHECK (
+    service_score >= 0.0
+    AND service_score <= 5.0
+  ),
+  qualify_score REAL CHECK (
+    qualify_score >= 0.0
+    AND qualify_score <= 5.0
+  ),
+  timeliness_score REAL CHECK (
+    timeliness_score >= 0.0
+    AND timeliness_score <= 5.0
+  ),
+  total_score REAL CHECK (
+    total_score >= 0.0
+    AND total_score <= 5.0
+  ),
+  comment TEXT,
+  remark TEXT,
+  FOREIGN KEY (supplier_rk_id) REFERENCES supplier (id) ON DELETE RESTRICT ON UPDATE CASCADE
+);
