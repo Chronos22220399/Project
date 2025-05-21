@@ -1,8 +1,10 @@
-CREATE TABLE IF NOT EXISTS member_transactions (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    member_id INTEGER NOT NULL,
-    transaction_date DATE NOT NULL,
-    amount DECIMAL(10, 2) NOT NULL CHECK (amount >= 0),
-    earned_points INTEGER NOT NULL,
-    FOREIGN KEY (member_id) REFERENCES members(id)
+-- 会员消费记录表
+CREATE TABLE IF NOT EXISTS member_purchase_record (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  record_id TEXT NOT NULL UNIQUE,
+  member_rk_id INTEGER NOT NULL,
+  transaction_date DATETIME NOT NULL,
+  amount REAL NOT NULL CHECK (amount >= 0),
+  earned_points INTEGER NOT NULL DEFAULT 0,
+  FOREIGN KEY (member_rk_id) REFERENCES members (id) ON DELETE SET NULL
 );
