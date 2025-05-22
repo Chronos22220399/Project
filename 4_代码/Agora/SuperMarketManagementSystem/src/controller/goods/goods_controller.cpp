@@ -12,11 +12,6 @@
 #include <nlohmann/json.hpp>
 
 
-const std::vector<std::string> required_fields = {
-  "goods_name",      "goods_category_id", "supplier_id", "unit_id",
-  "shelf_life_days", "barcode",           "image_url",   "description"};
-
-
 void GoodsController::registerRoutes(crow::SimpleApp& app)
 {
   CROW_ROUTE(app, "/api/goods/create")
@@ -26,7 +21,7 @@ void GoodsController::registerRoutes(crow::SimpleApp& app)
       // 检查并解析 JSON
       CHECK_AND_GET_JSON(j);
       // 检查所需字段
-      CHECK_REQUIRED_FIELDS(j, required_fields);
+      CHECK_REQUIRED_FIELDS(j, GoodsDTO::required_fields);
       // 将 JSON 转换为 DTO
       auto goods_dto = GoodsDTO::from_json(j);
 
@@ -35,41 +30,34 @@ void GoodsController::registerRoutes(crow::SimpleApp& app)
       return utils::to_response(result);
     });
 
-  // MARK: 分页查询接口 - POST /api/goods/get_by_page
-  //
-  // 请求JSON：
-  // {
-  //   "page":      int?,  // 页码（>=1，默认1）
-  //   "page_size": int?   // 每页数量（5-100，默认20）
-  // }
-  //
-  // 成功响应 (200):
-  // {
-  //   "code": 200,
-  //   "data": {
-  //     "total": 235,         // 总商品数
-  //     "current_page": 2,    // 当前页码
-  //     "page_size": 20,      // 实际使用的分页大小
-  //     "total_pages": 12,    // 总页数
-  //     "items": [{
-  //       "goods_id": "62d1a9d8e7b4b7712a6e3d7a",  // 外部ID(string)
-  //       "goods_name": "商品示例",
-  //       "category_name": "食品类",
-  //       "stock": 100,       // 当前库存
-  //       "external_info": {  // 外部关联信息（不暴露内部ID）
-  //         "supplier_code": "SP-8848",
-  //         "warehouse_code": "WH-SH01"
-  //       }
-  //     }]
-  //   }
-  // }
-  //
-  // 错误响应示例 (400 参数错误):
-  // {
-  //   "code": 400,
-  //   "error": "INVALID_PAGINATION",
-  //   "detail": "page_size must between 5 and 100"
-  // }
+  CROW_ROUTE(app, "/api/goods/update")
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+      CHECK_REQUIRED_FIELDS(j, GoodsDTO::required_fields);
+
+      auto goods_dto = GoodsDTO::from_json(j);
+      auto goods_id = goods_dto.goods_id;
+
+      auto res = GoodsService::updateByGoodsId(goods_id, goods_dto);
+      return utils::to_response(res, 200);
+    });
+
+  CROW_ROUTE(app, "/api/goods/remove")
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+
+      CHECK_AND_GET_JSON(j);
+      CHECK_REQUIRED_FIELD(j, "goods_id");
+
+      auto goods_id = j.at("goods_id").get<ex_id_type>();
+      auto res = GoodsService::removeByGoodsId(goods_id);
+      return utils::to_response(res, 200);
+    });
+
+
   CROW_ROUTE(app, "/api/goods/get_by_page")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;

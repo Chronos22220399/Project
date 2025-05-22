@@ -44,14 +44,6 @@ GoodsCategoryRepository::getByName(const std::string& goods_category_name)
                  == goods_category_name);
 }
 
-update_ret_type GoodsCategoryRepository::updateByGoodsCategoryId(
-  const std::string& goods_category_id,
-  const GoodsCategoryDTO& goods_category_dto)
-{
-  return _update(goods_category_dto,
-                 db::goods_category{}.goods_category_id == goods_category_id);
-}
-
 delete_ret_type GoodsCategoryRepository::removeByGoodsCategoryId(
   const std::string& goods_category_id)
 {

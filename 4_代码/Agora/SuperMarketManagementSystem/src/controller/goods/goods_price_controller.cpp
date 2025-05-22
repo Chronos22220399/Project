@@ -43,22 +43,6 @@ void GoodsPriceController::registerRoutes(crow::SimpleApp& app)
     });
 
 
-  // MARK: 删除商品价格接口 - POST /api/goods_price/remove
-  //
-  // 请求JSON：
-  // {
-  //   "goods_id": string    // 必填，商品外部ID
-  // }
-  //
-  // 成功响应 (200):
-  // {
-  //   "code": 200
-  // }
-  //
-  // 错误响应：
-  // 400 - JSON解析失败/缺少goods_id
-  // 404 - 商品不存在或商品价格不存在
-  // 500 - 数据库删除异常
   CROW_ROUTE(app, "/api/goods_price/remove")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
@@ -72,25 +56,7 @@ void GoodsPriceController::registerRoutes(crow::SimpleApp& app)
       return utils::to_response(res, 200);
     });
 
-  // MARK: 修改商品价格接口 - POST /api/goods_price/update
-  //
-  // 请求JSON：
-  // {
-  //   "goods_id": string,        // 必填，商品外部ID
-  //   "price": double,           // 必填，新的商品价格
-  //   "start_time": string,      // 必填，价格生效时间（ISO8601格式）
-  //   "note": string             // 必填，备注信息
-  // }
-  //
-  // 成功响应 (200):
-  // {
-  //   "code": 200
-  // }
-  //
-  // 错误响应：
-  // 400 - JSON解析失败/缺少必填字段
-  // 404 - 商品不存在或商品价格不存在
-  // 500 - 数据库更新异常
+
   CROW_ROUTE(app, "/api/goods_price/update")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;

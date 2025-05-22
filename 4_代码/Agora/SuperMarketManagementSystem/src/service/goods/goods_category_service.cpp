@@ -112,6 +112,7 @@ ServiceResult GoodsCategoryService::updateByGoodsCategoryId(
   }
 
   bool success = GoodsCategoryRepository::updateById(id, gc_dto);
+  bool success = GoodsCategoryRepository::updateById(id, gc_dto);
 
   if (!success) {
     return {false, "Update goods category failed"};

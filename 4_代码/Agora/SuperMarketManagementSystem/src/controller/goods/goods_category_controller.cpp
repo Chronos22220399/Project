@@ -174,6 +174,8 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp& app)
 
       auto res =
         GoodsCategoryService::removeByGoodsCategoryId(goods_category_id);
+      auto res =
+        GoodsCategoryService::removeByGoodsCategoryId(goods_category_id);
       return utils::to_response(res, 200);
     });
 

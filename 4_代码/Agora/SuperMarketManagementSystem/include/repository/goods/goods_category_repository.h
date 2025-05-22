@@ -15,13 +15,13 @@ public:
   // 面向业务 CRUD（external）
   static select_ret_type<GoodsCategoryDTO>
   getByGoodsCategoryId(const std::string &goods_category_id);
+
   static select_ret_type<GoodsCategoryDTO>
   getByName(const std::string &goods_category_name);
-  static update_ret_type
-  updateByGoodsCategoryId(const std::string &goods_category_id,
-                          const GoodsCategoryDTO &goods_category_dto);
+
   static delete_ret_type
   removeByGoodsCategoryId(const std::string &goods_category_id);
+
   static bool existsByGoodsCategoryId(const std::string &goods_category_id);
 
   // other
