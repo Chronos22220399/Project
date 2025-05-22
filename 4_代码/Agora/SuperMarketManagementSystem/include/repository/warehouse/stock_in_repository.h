@@ -15,6 +15,10 @@ class StockInRepository : public model::GenericModel<StockInDTO, db::stock_in> {
   static select_ret_type<StockInDTO> getByPage(int page_size, int offset);
   static count_type count();
 
+  // 获取 id 用于缓存映射
+  static in_id_type getInternalId(const std::string& stock_in_id);
 
+  // 获取 external id 用于缓存映射
+  static std::string getExternalId(in_id_type id);
   // Foreign Key Relations
 };

@@ -12,7 +12,7 @@ void WarehouseController::registerRoutes(crow::SimpleApp& app)
       // 检查并解析 JSON
       CHECK_AND_GET_JSON(j);
       // 检查所需字段
-      check_required_fields(j, WarehouseDTO::required_fields);
+      utils::check_required_fields(j, WarehouseDTO::required_fields);
 
 
       auto warehouse_dto = WarehouseDTO::from_json(j);

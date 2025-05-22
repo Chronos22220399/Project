@@ -15,6 +15,9 @@
 #include <repository/warehouse/warehouse_repository.h>
 // router
 #include <router/init_router.h>
+// register
+#include <register/include.h>
+
 using namespace std;
 
 // void insert_test_data() {
@@ -38,33 +41,19 @@ using namespace std;
 //   }
 // }
 
-static void initCache() {
-  auto &cache = GlobalIdCache::getInstance();
-  // regist goods
-  cache.registForward("goods", &GoodsRepository::getInternalId);
-  cache.registReverse("goods", &GoodsRepository::getExternalId);
-  // regist goods_category
-  cache.registForward("goods_category", &GoodsCategoryRepository::getInternalId);
-  cache.registReverse("goods_category", &GoodsCategoryRepository::getExternalId);
-  // regist promotion
-  cache.registForward("promotion", &PromotionRepository::getInternalId);
-  cache.registReverse("promotion", &PromotionRepository::getExternalId);
-  // regist warehouse
-  cache.registForward("warehouse", &WarehouseRepository::getInternalId);
-  cache.registReverse("warehouse", &WarehouseRepository::getExternalId);
-  // regist unit
-  cache.registForward("unit", &UnitRepository::getInternalId);
-  cache.registReverse("unit", &UnitRepository::getExternalId);
-  // regist
-  // regist supplier
-  // cache.registForward("supplier", &Supplier)
-}
 
-void testPromotionCreation();
-void testGoodsCreation();
-void testWarehouseCreation();
+// void testPromotionCreation();
+// void testGoodsCreation();
+// void testWarehouseCreation();
 
 void testCrowServer();
+
+void initCache()
+{
+  common::initCache();
+  goods::initCache();
+  warehouse::initCache();
+}
 
 int main() {
   initCache();
