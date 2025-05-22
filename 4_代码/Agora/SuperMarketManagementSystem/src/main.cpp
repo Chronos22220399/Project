@@ -44,8 +44,8 @@ static void initCache() {
   cache.registForward("goods", &GoodsRepository::getInternalId);
   cache.registReverse("goods", &GoodsRepository::getExternalId);
   // regist goods_category
-  cache.registForward("goods_category", &GoodsRepository::getInternalId);
-  cache.registReverse("goods_category", &GoodsRepository::getExternalId);
+  cache.registForward("goods_category", &GoodsCategoryRepository::getInternalId);
+  cache.registReverse("goods_category", &GoodsCategoryRepository::getExternalId);
   // regist promotion
   cache.registForward("promotion", &PromotionRepository::getInternalId);
   cache.registReverse("promotion", &PromotionRepository::getExternalId);

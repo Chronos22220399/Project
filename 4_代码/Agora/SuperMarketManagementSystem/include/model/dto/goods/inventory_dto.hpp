@@ -12,6 +12,10 @@
 
 // DTO for inventory table
 struct InventoryDTO {
+  inline static const std::vector<std::string> required_fields = {
+    "goods_id", "warehouse_id", "quantity", "min_threshold", "max_threshold"};
+
+
   in_id_type id = 0;
   in_id_type goods_rk_id = 0;
   in_id_type warehouse_rk_id = 0;
@@ -27,7 +31,7 @@ struct InventoryDTO {
       .goods_rk_id =
         cache.getInternalId("goods", j.at("goods_id").get<std::string>()),
       .warehouse_rk_id = cache.getInternalId(
-        "warehosue", j.at("warehosue_id").get<std::string>()),
+        "warehouse", j.at("warehouse_id").get<std::string>()),
       .quantity = j.at("quantity").get<quantity_type>(),
       .min_threshold = j.at("min_threshold").get<quantity_type>(),
       .max_threshold = j.at("max_threshold").get<quantity_type>()};
