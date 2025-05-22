@@ -23,9 +23,9 @@ void InventoryCheckOrderController::registerRoutes(crow::SimpleApp& app) {
             CHECK_REQUIRED_FIELDS(j, InventoryCheckOrderDTO::required_fields);
             
             auto inventory_check_order_dto = InventoryCheckOrderDTO::from_json(j);
-            auto inventory_check_order_id = inventory_check_order_dto.inventory_check_order_id;
-            
-            auto res = InventoryCheckOrderService::updateByInventoryCheckOrderId(inventory_check_order_id, InventoryCheckOrderDTO);
+            auto order_id = inventory_check_order_dto.order_id;
+
+            auto res = InventoryCheckOrderService::updateByOrderId(order_id, inventory_check_order_dto);
             return utils::to_response(res, 200);
         });
         
@@ -37,9 +37,9 @@ void InventoryCheckOrderController::registerRoutes(crow::SimpleApp& app) {
             // 检查必填字段
             CHECK_REQUIRED_FIELD(j, "inventory_check_order_id");
             
-            auto inventory_check_order_id = j.at("inventory_check_order_id").get<ex_id_type>();
-            
-            auto res = InventoryCheckOrderService::removeByInventoryCheckOrderId(inventory_check_order_id);
+            auto order_id = j.at("inventory_check_order_id").get<ex_id_type>();
+
+            auto res = InventoryCheckOrderService::removeByOrderId(order_id);
             
             return utils::to_response(res, 200);
         });
@@ -63,7 +63,7 @@ void InventoryCheckOrderController::registerRoutes(crow::SimpleApp& app) {
     CROW_ROUTE(app, "/api/inventory_check_order/getAll")
         .methods("GET"_method)([]() {
             auto res = InventoryCheckOrderService::getAll();
-            return utils::to_reponse(res, 200);
+            return utils::to_response(res, 200);
         });
         
     // 其他路由...

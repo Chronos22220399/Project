@@ -7,16 +7,16 @@ insert_ret_type InventoryCheckOrderRepository::create(const InventoryCheckOrderD
     return _insert(inventory_check_order_dto);
 };
 
-select_ret_type<InventoryCheckOrderDTO> InventoryCheckOrderRepository::get(const std::string& inventory_check_order_name) {
-  return _select(db::inventory_check_order{}.inventory_check_order_name == inventory_check_order_name);
+select_ret_type<InventoryCheckOrderDTO> InventoryCheckOrderRepository::getById(const in_id_type id) {
+  return _select(db::inventory_check_order{}.id == id);
 };
 
-update_ret_type InventoryCheckOrderRepository::update(const InventoryCheckOrderDTO &dto) {
-    return _update(dto, db::inventory_check_order{}.inventory_check_order_id == dto.inventory_check_order_id);
+update_ret_type InventoryCheckOrderRepository::updateById(const in_id_type id, const InventoryCheckOrderDTO &dto) {
+    return _update(dto, db::inventory_check_order{}.id == id);
 };
 
-delete_ret_type InventoryCheckOrderRepository::remove(const std::string& inventory_check_order_id) {
-  return _remove(db::inventory_check_order{}.inventory_check_order_id == inventory_check_order_id);
+delete_ret_type InventoryCheckOrderRepository::removeById(const in_id_type id) {
+  return _remove(db::inventory_check_order{}.id == id);
 }
 
 // Custom Queries
