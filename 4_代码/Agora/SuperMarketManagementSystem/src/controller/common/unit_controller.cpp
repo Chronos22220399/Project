@@ -1,17 +1,15 @@
 #include <controller/common/unit_controller.h>
 #include <service/common/unit_service.h>
 
-static const std::vector<std::string> required_fields = {
-  "unit_name",  // 单位名称
-};
-
 void UnitController::registerRoutes(crow::SimpleApp& app)
 {
   CROW_ROUTE(app, "/api/unit/create")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
-      CHECK_REQUIRED_FIELDS(j, required_fields);
+      CHECK_AND_GET_JSON(j);
+      CHECK_REQUIRED_FIELD(j, "unit_id");
+      CHECK_REQUIRED_FIELDS(j, UnitDTO::required_fields);
 
       auto unit_dto = UnitDTO::from_json(j);
       unit_dto.unit_id = utils::create_id("U-");
@@ -25,9 +23,9 @@ void UnitController::registerRoutes(crow::SimpleApp& app)
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
 
-      CHECK_REQUIRED_FIELDS(j, required_fields);
-      CHECK_REQUIRED_FIELD(j, "unit_id");
+      CHECK_REQUIRED_FIELDS(j, UnitDTO::required_fields);
 
       auto unit_dto = UnitDTO::from_json(j);
       auto unit_id = unit_dto.unit_id;
@@ -40,6 +38,7 @@ void UnitController::registerRoutes(crow::SimpleApp& app)
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
       CHECK_REQUIRED_FIELD(j, "unit_id");
       auto unit_id = j.at("unit_id").get<ex_id_type>();
 
@@ -51,8 +50,8 @@ void UnitController::registerRoutes(crow::SimpleApp& app)
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
-
       CHECK_AND_GET_JSON(j);
+
       CHECK_REQUIRED_FIELD(j, "page");
       CHECK_REQUIRED_FIELD(j, "page_size");
 

@@ -8,6 +8,11 @@
 
 // DTO for unit table
 struct UnitDTO {
+  inline static const std::vector<std::string> required_fields = {
+    "unit_id",
+    "unit_name"  // 单位名称
+  };
+
   in_id_type id = 0;
   std::string unit_id = "";
   std::string unit_name = "";

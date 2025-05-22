@@ -14,6 +14,7 @@
 #include <sqlpp11/data_types.h>
 #include <sqlpp11/sqlpp11.h>
 #include <vector>
+#include <nlohmann/json.hpp>
 
 /**
  * @file utils.hpp
@@ -169,16 +170,34 @@ inline std::string create_id(const std::string& prefix)
  */
 inline std::optional<nlohmann::json> try_parse_json(const std::string& body)
 {
+  using json = nlohmann::json;
   try {
-    // 使用 nlohmann::json 解析字符串
-    return nlohmann::json::parse(body);
+    return json::parse(body);
+  }
+  catch (const json::parse_error& e) {
+    LOG("JSON parse error: {}", e.what());
+  }
+  catch (const json::type_error& e) {
+    LOG("JSON type error: {}", e.what());
+  }
+  catch (const json::out_of_range& e) {
+    LOG("JSON out of range error: {}", e.what());
+  }
+  catch (const json::invalid_iterator& e) {
+    LOG("JSON invalid iterator error: {}", e.what());
+  }
+  catch (const json::other_error& e) {
+    LOG("JSON other error: {}", e.what());
+  }
+  catch (const std::exception& e) {
+    LOG("Standard exception during JSON parsing: {}", e.what());
   }
   catch (...) {
-    // 捕获所有异常并返回空值
-    LOG("parse json failed");
-    return std::nullopt;
+    LOG("Unknown exception during JSON parsing");
   }
+  return std::nullopt;
 }
+
 
 /**
  * @brief 将字符串转换为时间点。

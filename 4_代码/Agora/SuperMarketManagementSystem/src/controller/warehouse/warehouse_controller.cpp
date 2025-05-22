@@ -12,7 +12,8 @@ void WarehouseController::registerRoutes(crow::SimpleApp& app)
       // 检查并解析 JSON
       CHECK_AND_GET_JSON(j);
       // 检查所需字段
-      CHECK_REQUIRED_FIELDS(j, WarehouseDTO::required_fields);
+      check_required_fields(j, WarehouseDTO::required_fields);
+
 
       auto warehouse_dto = WarehouseDTO::from_json(j);
 
@@ -25,6 +26,7 @@ void WarehouseController::registerRoutes(crow::SimpleApp& app)
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
       // 检查字段
       CHECK_REQUIRED_FIELDS(j, WarehouseDTO::required_fields);
 

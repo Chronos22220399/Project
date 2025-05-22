@@ -12,18 +12,18 @@
 
 struct WarehouseDTO {
   // for check
-  inline static const std::array<const char*, 9> required_fields = {
+  inline static const std::vector<std::string> required_fields = {
     "warehouse_id",    // warehouse_id 在创建时无需填写，这是给其他部分用的
     "warehouse_name",  // 必须有仓库名
     "location",        // 仓库地址必填
     "capacity",        // available_capacity 在创建时等于 capacity
     "manager_id",      // manager_id 用于通过 cache 找到 manager_rk_id
     "phone",           // 电话必填
-    "status"           // 处理状态初始可设置为 inactive 这种需求
+    "status",           // 处理状态初始可设置为 inactive 这种需求
     "remark"           // 备注
   };
 
-  inline static const std::array<const char*, 4> status_domain = {
+  inline static const std::vector<std::string> status_domain = {
     "active",       // 启用
     "inactive",     // 停用
     "maintenance",  // 维护中
@@ -52,18 +52,14 @@ struct WarehouseDTO {
         .warehouse_name = j.at("warehouse_name").get<std::string>(),
         .location = j.at("location").get<std::string>(),
         .capacity = j.at("capacity").get<slot_mount_type>(),
-        .available_capacity = j.at("available_capacity").get<slot_mount_type>(),
         .manager_rk_id =
           cache.getInternalId("employee", j.at("manager_id").get<ex_id_type>()),
         .phone = j.at("phone").get<std::string>(),
-        .created_at =
-          utils::string_to_time(j.at("created_at").get<std::string>()),
         .status = j.at("status").get<status_type>(),
         .remark = j.at("remark").get<remark_type>()};
     }
     catch (const std::exception& e) {
-      std::cerr << "[from_json error] " << e.what() << "\n"
-                << "Input JSON: " << j.dump(2) << std::endl;
+      LOG("[from_json] {}\nINPUT JSON: {}\n", e.what(), j.dump(2));
       throw;
     }
   }
