@@ -60,7 +60,7 @@ import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 
 interface GoodsCategory {
-    goods_category_id: number
+    goods_category_id: string
     category_name: string
     category_description: string
     parent_category_id: string
@@ -73,7 +73,7 @@ const generateRandomData = (): GoodsCategory[] => {
     for (let i = 1; i <= 50; i++) {
         const parentCategoryIndex = Math.floor(Math.random() * categories.length)
         randomData.push({
-            goods_category_id: i,
+            goods_category_id: `${i}`,
             category_name: `${categories}子类${i}`,
             category_description: `${categories[parentCategoryIndex]}的描述${i}`,
             parent_category_id: (parentCategoryIndex + 1).toString(),
@@ -86,7 +86,7 @@ const categoryList = ref<GoodsCategory[]>(generateRandomData())
 const dialogVisible = ref(false)
 const isEdit = ref(false)
 const form = ref<GoodsCategory>({
-    goods_category_id: 0,
+    goods_category_id: '',
     category_name: '',
     category_description: '',
     parent_category_id: '0'
@@ -111,7 +111,7 @@ const handlePageChange = (page: number) => {
 const openDialog = () => {
     isEdit.value = false
     form.value = {
-        goods_category_id: Date.now(),
+        goods_category_id: '',
         category_name: '',
         category_description: '',
         parent_category_id: '0'
@@ -129,7 +129,7 @@ const deleteCategory = (id: number) => {
     ElMessageBox.confirm('确定要删除该分类吗？', '提示', {
         type: 'warning'
     }).then(() => {
-        const index = categoryList.value.findIndex(item => item.goods_category_id === id)
+        const index = categoryList.value.findIndex(item => item.goods_category_id === id.toString())
         if (index !== -1) {
             categoryList.value.splice(index, 1)
             ElMessage.success('删除成功')

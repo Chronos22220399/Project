@@ -13,8 +13,8 @@
 
 
 const std::vector<std::string> required_fields = {
-  "goods_name",      "category_id", "supplier_id", "unit_id",
-  "shelf_life_days", "barcode",     "image_url",   "description"};
+  "goods_name",      "goods_category_id", "supplier_id", "unit_id",
+  "shelf_life_days", "barcode",           "image_url",   "description"};
 
 
 void GoodsController::registerRoutes(crow::SimpleApp& app)

@@ -4,8 +4,7 @@
         <el-dialog v-model="dialogVisible" :title="isEdit ? '编辑商品' : '创建商品'" width="50%">
             <el-form :model="product" :rules="rules" ref="productForm" label-width="100px">
                 <el-form-item label="商品名称" prop="goods_name">
-                    <el-autocomplete v-model="product.goods_name" :fetch-suggestions="querySearch" placeholder="请输入商品名称"
-                        clearable />
+                    <el-input v-model="product.goods_name" placeholder="请输入商品名称" clearable />
                 </el-form-item>
 
                 <el-form-item label="分类" prop="category_id">
