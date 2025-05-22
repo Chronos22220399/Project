@@ -158,6 +158,13 @@ class CodeGenerator:
 
 // DTO for {self.table_name} table
 struct {self.dto_name_camel} {{
+    inline static const std::vector<std::string> required_fields = {
+    ...
+    };
+    inline static const std::vector<std::string> _domain = {
+    ...
+    };
+
     {chr(10).join(fields)}
 
     // JSON serialization/deserialization
@@ -339,22 +346,60 @@ public:
 void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
     CROW_ROUTE(app, "/api/{self.table_name}/create")
         .methods("POST"_method)([](const crow::request& req) {{
-            return {self.service_name_camel}::create(req.body);
+            nlohmann::json j;
+            auto &body = req.body;
+            CHECK_AND_GET_JSON(j);
+            CHECK_REQUIRED_FIELDS(j, {self.dto_name_camel}::required_fields);
+            
+            auto {self.dto_name_snake} = {self.dto_name_camel}::from_json(j);
+            
+            auto res = {self.service_name_camel}::create({self.dto_name_snake});
+            return utils::to_response(res, 201);
         }});
         
     CROW_ROUTE(app, "/api/{self.table_name}/update")
         .methods("POST"_method)([](const crow::request& req) {{
-            return {self.service_name_camel}::update(req.body);
+            nlohmann::json j;
+            auto &body = req.body;
+            CHECK_AND_GET_JSON(j);
+            CHECK_REQUIRED_FIELDS(j, {self.dto_name_camel}::required_fields);
+            
+            auto {self.dto_name_snake} = {self.dto_name_camel}::from_json(j);
+            auto {self.table_name_snake}_id = {self.dto_name_camel}.{self.table_name_snake}_id;
+            
+            auto res = {self.service_name_camel}::updateBy{self.table_name_camel}Id({self.table_name_snake}_id, {self.dto_name_camel});
+            return utils::to_response(res, 200);
         }});
         
     CROW_ROUTE(app, "/api/{self.table_name}/remove")
         .methods("POST"_method)([](const crow::request& req) {{
-            return {self.service_name_camel}::remove(req.body);
+            nlohmann::json j;
+            auto& body = req.body;
+            CHECK_AND_GET_JSON(j);
+            // 检查必填字段
+            CHECK_REQUIRED_FIELD(j, "{self.table_name_snake}_id");
+            
+            auto {self.table_name_snake}_id = j.at("{self.table_name_snake}_id").get<ex_id_type>();
+            
+            auto res = {self.service_name_camel}::removeBy{self.table_name_camel}Id({self.table_name_snake}_id);
+            
+            return utils::to_response(res, 200);
         }});
         
     CROW_ROUTE(app, "/api/{self.table_name}/getByPage")
         .methods("POST"_method)([](const crow::request& req) {{
-            return {self.service_name_camel}::getByPage(req.body);
+            nlohmann::json j;
+            auto& body = req.body;
+            CHECK_AND_GET_JSON(j);
+
+            CHECK_REQUIRED_FIELD(j, "page");
+            CHECK_REQUIRED_FIELD(j, "page_size");
+
+            int page = j.value("page", 1);
+            int page_size = j.value("page_size", 10);
+
+            auto res = {self.service_name_camel}::remove(req.body);
+            return utils::to_response(res, 200);
         }});
         
     CROW_ROUTE(app, "/api/{self.table_name}/getAll")
@@ -483,10 +528,10 @@ def process_ddl(ddl_path: Path, interactive: bool = True):
 
     # 生成Service
     service_func_list = [
-        "static crow::response create(const std::string &body)",
-        "static crow::response update(const std::string &body)",
-        "static crow::response remove(const std::string &body)",
-        "static crow::response getByPage(const std::string &body)",
+        "static crow::response create({} &dto)",
+        "static crow::response update(const std::string &ex_id, {} &dto)",
+        "static crow::response remove(const std::string &ex_id)",
+        "static crow::response getByPage(const int page, const int page_size)",
         "static crow::response getAll()"
     ]
     srv_h, srv_cpp = generator.generate_service(db_dir_name, service_func_list)

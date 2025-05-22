@@ -2,6 +2,7 @@
 
 import sys
 import os
+from pathlib import Path
 from code_generator import process_ddl
 
 def main():
@@ -16,7 +17,9 @@ def main():
         sys.exit(1)
 
     try:
-        result = process_ddl(ddl_path)
-        print(f"[SUCCESS] Generated module: {result['module']}")
+        result = process_ddl(Path(ddl_path))
     except Exception as e:
         print(f"[ERROR] Code generation failed: {e}")
+
+if __name__ == "__main__":
+    main()
