@@ -33,6 +33,7 @@
                 <el-table-column prop="start_time" label="开始时间" />
                 <el-table-column prop="remark" label="备注" />
                 <el-table-column label="操作" width="180">
+
                     <template #default="scope">
                         <el-button size="small" @click="editItem(scope.row)">更新</el-button>
                         <el-button type="danger" size="small" @click="removeItem(scope.row.id)">删除</el-button>
