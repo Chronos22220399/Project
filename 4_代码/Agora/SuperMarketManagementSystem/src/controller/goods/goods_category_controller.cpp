@@ -2,8 +2,8 @@
 #include <service/goods/goods_category_service.h>
 
 const std::vector<std::string> required_fields = {
-  "goods_category_id", "goods_category_name", "goods_category_description",
-  "parent_category_id"};
+  "goods_category_id", "goods_category_name", "goods_category_description"
+  };
 
 void GoodsCategoryController::registerRoutes(crow::SimpleApp& app)
 {
@@ -16,7 +16,7 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp& app)
       // 检查必填字段
       CHECK_REQUIRED_FIELDS(j, required_fields);
       auto gc_dto = GoodsCategoryDTO::from_json(j);
-      gc_dto.goods_category_id = utils::create_id("GC");  // 生成外部ID
+      gc_dto.goods_category_id = utils::create_id("GC-");  // 生成外部ID
 
       auto res = GoodsCategoryService::create(gc_dto);
       return utils::to_response(res, 201);

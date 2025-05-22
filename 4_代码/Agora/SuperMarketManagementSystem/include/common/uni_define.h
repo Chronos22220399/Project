@@ -220,3 +220,19 @@ struct ServiceResult {
   std::string error;
   nlohmann::json data;
 };
+
+inline crow::response check_required_fields(const nlohmann::json& j, const std::vector<std::string>& fields) {
+  try {
+    for (const auto& field : fields) {
+      if (!j.contains(field)) {
+        LOG("Missing required field: {}", field);
+        return crow::response(
+          400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field)));
+      }
+    }
+  } catch (const std::exception& e) {
+    LOG("Exception during required field check: {}", e.what());
+    return crow::response(500, SET_ERR_JSON(500, "Internal server error."));
+  }
+  return crow::response();  // 默认构造表示无错误
+}
