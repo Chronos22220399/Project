@@ -272,8 +272,8 @@ public:
     static delete_ret_type remove(const std::string &{self.table_name_snake}_id);
     
     // Custom Queries
-    static select_ret_type<{self.dto_name_camel}> get_all();
-    static select_ret_type<{self.dto_name_camel}> get_by_page(int page_size, int offset);
+    static select_ret_type<{self.dto_name_camel}> getAll();
+    static select_ret_type<{self.dto_name_camel}> getByPage(int page_size, int offset);
     static count_type count();
     
     
@@ -365,7 +365,7 @@ void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
             CHECK_REQUIRED_FIELDS(j, {self.dto_name_camel}::required_fields);
             
             auto {self.dto_name_snake} = {self.dto_name_camel}::from_json(j);
-            auto {self.table_name_snake}_id = {self.dto_name_camel}.{self.table_name_snake}_id;
+            auto {self.table_name_snake}_id = {self.dto_name_snake}.{self.table_name_snake}_id;
             
             auto res = {self.service_name_camel}::updateBy{self.table_name_camel}Id({self.table_name_snake}_id, {self.dto_name_camel});
             return utils::to_response(res, 200);
@@ -398,13 +398,14 @@ void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
             int page = j.value("page", 1);
             int page_size = j.value("page_size", 10);
 
-            auto res = {self.service_name_camel}::remove(req.body);
+            auto res = {self.service_name_camel}::getByPage(page, page_size);
             return utils::to_response(res, 200);
         }});
         
     CROW_ROUTE(app, "/api/{self.table_name}/getAll")
         .methods("GET"_method)([]() {{
-            return {self.service_name_camel}::getAll();
+            auto res = {self.service_name_camel}::getAll();
+            return utils::to_reponse(res, 200);
         }});
         
     // 其他路由...
@@ -454,7 +455,7 @@ using json = nlohmann::json;
             func_info = func_sig.split(' ')
             _, ret_type, content = self._get_func_info(func_info)
             # 构造出函数定义
-            func_define = ret_type + " " + f"{self.service_name_camel}" + "::" + content + " {\n\treturn crow::response(501, \"Not implemented yet.\");\n }";
+            func_define = ret_type + " " + f"{self.service_name_camel}" + "::" + content + " {\n\treturn {false, \"Not implemented yet.\"};\n }";
 
             func_define_list.append(func_define)
             func_define = "\n\n".join(func_define_list)
@@ -528,11 +529,11 @@ def process_ddl(ddl_path: Path, interactive: bool = True):
 
     # 生成Service
     service_func_list = [
-        "static crow::response create({} &dto)",
-        "static crow::response update(const std::string &ex_id, {} &dto)",
-        "static crow::response remove(const std::string &ex_id)",
-        "static crow::response getByPage(const int page, const int page_size)",
-        "static crow::response getAll()"
+        "static ServiceResult create({} &dto)",
+        "static ServiceResult update(const std::string &ex_id, {} &dto)",
+        "static ServiceResult remove(const std::string &ex_id)",
+        "static ServiceResult getByPage(const int page, const int page_size)",
+        "static ServiceResult getAll()"
     ]
     srv_h, srv_cpp = generator.generate_service(db_dir_name, service_func_list)
     srv_h_path = SERVICE_DIR / db_dir_name / f"{table_info['table_name']}_service.h"

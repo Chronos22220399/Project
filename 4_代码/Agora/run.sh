@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cmake -S . -B build -DEnableTest=OFF # default turn off unit test
+cmake -S . -B build -G Ninja -DEnableTest=OFF # default turn off unit test
 
 ARCH=$(uname -m)
 
