@@ -175,6 +175,7 @@ inline std::optional<nlohmann::json> try_parse_json(const std::string& body)
   }
   catch (...) {
     // 捕获所有异常并返回空值
+    LOG("parse json failed");
     return std::nullopt;
   }
 }
