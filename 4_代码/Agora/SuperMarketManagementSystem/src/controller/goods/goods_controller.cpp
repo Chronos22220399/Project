@@ -69,67 +69,20 @@ void GoodsController::registerRoutes(crow::SimpleApp& app)
       CHECK_REQUIRED_FIELD(j, "page");
       CHECK_REQUIRED_FIELD(j, "page_size");
 
-      int page = j.value("page", 1);
-      int page_size = j.value("page_size", 10);
+      auto page = j.at("page").get<int>();
+      auto page_size = j.at("page_size").get<int>();
 
       auto res = GoodsService::getByPage(page, page_size);
-
 
       return utils::to_response(res, 200);
     });
 
-  // MARK: 获取全部商品概要信息 - GET /api/goods/get_all
-  //
-  // 成功响应 (200):
-  // {
-  //   "code": 200,
-  //   "data": [
-  //     {
-  //       "goods_id": "Gxxxx",
-  //       "goods_name": "商品名称",
-  //       "category_name": "分类名称",
-  //       "stock": 100,
-  //       "external_info": {
-  //         "supplier_code": "SP-8848",
-  //         "warehouse_code": "WH-SH01"
-  //       }
-  //     }
-  //   ]
-  // }
-  //
-  // 错误响应：
-  // 500 - 数据库查询失败
   CROW_ROUTE(app, "/api/goods/get_all")
     .methods("GET"_method)([](const crow::request& req) {
       auto res = GoodsService::getAll();
       return utils::to_response(res, 200);
     });
 
-  // MARK: 获取商品详细信息 - POST /api/goods/get_goods_detail_info
-  //
-  // 请求JSON：
-  // {
-  //   "goods_id": string  // 必填（商品外部ID）
-  // }
-  //
-  // 成功响应 (200):
-  // {
-  //   "code": 200,
-  //   "data": {
-  //     "goods_id": "Gxxxx",
-  //     "goods_name": "商品名称",
-  //     "quantity": 1000,         // 库存总量
-  //     "unit": "件",             // 计量单位
-  //     "warehouse_name": "上海仓库",
-  //     "location": "A区-12号货架",
-  //     "shelf_life_days": 365    // 保质期天数
-  //   }
-  // }
-  //
-  // 错误响应：
-  // 400 - 商品ID缺失或格式错误
-  // 404 - 商品不存在
-  // 500 - 数据库查询失败
   CROW_ROUTE(app, "/api/goods/get_goods_detail_info")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
