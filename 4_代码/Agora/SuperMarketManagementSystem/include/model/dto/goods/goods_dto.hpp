@@ -33,6 +33,11 @@
 //
 
 struct GoodsDTO {
+  inline static const std::vector<std::string> required_fields = {
+    "goods_name",      "goods_category_id", "supplier_id", "unit_id",
+    "shelf_life_days", "barcode",     "image_url",   "description"};
+
+
   in_id_type id;
   ex_id_type goods_id;
   in_id_type goods_category_rk_id;

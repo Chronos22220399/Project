@@ -190,6 +190,7 @@ using status_type = std::string;
  */
 #define CHECK_REQUIRED_FIELD(j, field) \
   if (!(j).contains((field)))          \
+  LOG("Field '{}' not found", (field));\
   return crow::response(               \
     400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field))))
 
@@ -208,6 +209,7 @@ using status_type = std::string;
 #define CHECK_REQUIRED_FIELDS(j, container)                                \
   for (const auto& field : (container)) {                                  \
     if (!(j).contains(field)) {                                            \
+      LOG("Field '{}' not found", (field));                                \
       return crow::response(                                               \
         400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field))); \
     }                                                                      \
