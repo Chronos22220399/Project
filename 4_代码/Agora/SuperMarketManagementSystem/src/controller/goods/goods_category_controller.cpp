@@ -172,7 +172,7 @@ void GoodsCategoryController::registerRoutes(crow::SimpleApp& app)
       CHECK_REQUIRED_FIELD(j, "goods_category_id");
       auto goods_category_id = j.at("goods_category_id").get<ex_id_type>();
 
-      auto res = GoodsCategoryService::removeByGoodsCategoryId(req.body);
+      auto res = GoodsCategoryService::removeByGoodsCategoryId(goods_category_id);
       return utils::to_response(res, 200);
     });
 
