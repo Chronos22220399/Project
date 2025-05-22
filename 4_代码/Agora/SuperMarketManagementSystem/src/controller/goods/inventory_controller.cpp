@@ -58,7 +58,7 @@ void InventoryController::registerRoutes(crow::SimpleApp& app)
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
 
-      CHECK_REQUIRED_FIELD(j, "warehouse_id");
+      utils::check_required_field(j, "warehouse_id");
       auto warehouse_id = j.at("warehouse_id").get<ex_id_type>();
 
       auto res = InventoryService::getByGoodsId(warehouse_id);
@@ -79,6 +79,18 @@ void InventoryController::registerRoutes(crow::SimpleApp& app)
       auto res = InventoryService::getByPage(page, page_size);
       return utils::to_response(res, 200);
     });
+
+  CROW_ROUTE(app, "/api/inventory/remove").methods("POST"_method)([](const crow::request& req) {
+    nlohmann::json j;
+    auto &body = req.body;
+    CHECK_AND_GET_JSON(j);
+    utils::check_required_field(j, "inventory_id");
+
+    auto inventory_id = j.at("inventory_id").get<ex_id_type>();
+    auto res = InventoryService::removeByInventoryId(inventory_id);
+
+    return utils::to_response(res, 200);
+  });
 
   // Not implement !
   CROW_ROUTE(app, "/api/inventory/get_all").methods("GET"_method)([]() {

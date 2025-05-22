@@ -11,7 +11,6 @@
 // DTO for stock_in table
 struct StockInDTO : public IdGetter {
   inline static const std::vector<std::string> required_fields = {
-    "id",            // 主键ID（自增长）
     "stock_in_id",   // 入库单号（唯一）
     "warehouse_id",  // 仓库ID
     "created_by",    // 创建人ID
@@ -44,8 +43,6 @@ struct StockInDTO : public IdGetter {
         .stock_in_id = j.at("stock_in_id").get<std::string>(),
         .warehouse_rk_id =
           getInternalId("warehouse", j.at("warehouse_id").get<ex_id_type>()),
-        .created_at =
-          utils::string_to_time(j.at("created_at").get<std::string>()),
         .created_by =
           getInternalId("employee", j.at("created_by").get<ex_id_type>()),
         .source_type = j.at("source_type").get<std::string>(),

@@ -8,7 +8,7 @@ void StockInController::registerRoutes(crow::SimpleApp& app)
       nlohmann::json j;
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
-      CHECK_REQUIRED_FIELDS(j, StockInDTO::required_fields);
+      utils::check_required_fields(j, StockInDTO::required_fields);
 
       auto stock_in_dto = StockInDTO::from_json(j);
 
