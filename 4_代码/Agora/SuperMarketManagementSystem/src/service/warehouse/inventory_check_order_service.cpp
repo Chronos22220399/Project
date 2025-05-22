@@ -6,15 +6,15 @@
 
 using json = nlohmann::json;
 
-ServiceResult InventoryCheckOrderService::create({} &dto) {
+ServiceResult InventoryCheckOrderService::create(InventoryCheckOrderDTO &dto) {
 	return {false, "Not implemented yet."};
  }
 
-ServiceResult InventoryCheckOrderService::update(const std::string &ex_id, {} &dto) {
+ServiceResult InventoryCheckOrderService::updateByOrderId(const std::string &ex_id, InventoryCheckOrderDTO &dto) {
 	return {false, "Not implemented yet."};
  }
 
-ServiceResult InventoryCheckOrderService::remove(const std::string &ex_id) {
+ServiceResult InventoryCheckOrderService::removeByOrderId(const std::string &ex_id) {
 	return {false, "Not implemented yet."};
  }
 

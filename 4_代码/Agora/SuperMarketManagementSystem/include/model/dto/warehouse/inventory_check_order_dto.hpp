@@ -1,6 +1,7 @@
 #pragma once
 #include <common/id_getter.h>
 #include <model/db/warehouse/inventory_check_order.h>
+#include <common/generic_model.hpp>
 #include <nlohmann/json.hpp>
 #include <string>
 
@@ -39,7 +40,7 @@ struct InventoryCheckOrderDTO : public IdGetter {
         .created_by =
           getInternalId("employee", j.at("created_by").get<ex_id_type>()),
         .status = j.at("status").get<std::string>(),
-        .remark = j.at("remark").get<std::string>(),
+        .remark = j.at("remark").get<std::string>()
       };
     }
     catch (const std::exception& e) {
@@ -84,8 +85,6 @@ struct ReflectTable<InventoryCheckOrderDTO, db::inventory_check_order> {
                    &db::inventory_check_order::audited_at),
     std::make_pair(&InventoryCheckOrderDTO::status,
                    &db::inventory_check_order::status),
-    std::make_pair(&InventoryCheckOrderDTO::status,
-                   &db::inventory_check_order::status),
     std::make_pair(&InventoryCheckOrderDTO::remark,
                    &db::inventory_check_order::remark));
 };
@@ -96,13 +95,12 @@ struct ReflectTableRow<InventoryCheckOrderDTO, Inventory_check_orderRow> {
   static InventoryCheckOrderDTO assign_model(Inventory_check_orderRow&& row)
   {
     return InventoryCheckOrderDTO{.id = row.id,
-                                  .check_id = row.check_id,
+                                  .order_id = row.order_id,
                                   .warehouse_rk_id = row.warehouse_rk_id,
                                   .created_at = row.created_at,
                                   .created_by = row.created_by,
                                   .audited_by = row.audited_by,
                                   .audited_at = row.audited_at,
-                                  .status = row.status,
                                   .status = row.status,
                                   .remark = row.remark};
   }
