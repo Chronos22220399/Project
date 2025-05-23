@@ -42,6 +42,22 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
     };
+    struct user_rk_id
+    {
+      struct _alias_t
+      {
+        static constexpr const char _literal[] =  "user_rk_id";
+        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
+        template<typename T>
+        struct _member_t
+          {
+            T user_rk_id;
+            T& operator()() { return user_rk_id; }
+            const T& operator()() const { return user_rk_id; }
+          };
+      };
+      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
+    };
     struct member_phone
     {
       struct _alias_t
@@ -159,6 +175,7 @@ namespace db
   struct member: sqlpp::table_t<member,
                member_::id,
                member_::member_id,
+               member_::user_rk_id,
                member_::member_phone,
                member_::registration_date,
                member_::level_rk_id,

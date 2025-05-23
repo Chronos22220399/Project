@@ -3,6 +3,7 @@
 CREATE TABLE IF NOT EXISTS member (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   member_id TEXT NOT NULL UNIQUE,
+  user_rk_id INTEGER NOT NULL UNIQUE,
   member_phone TEXT NOT NULL UNIQUE,
   registration_date DATETIME NOT NULL,
   level_rk_id INTEGER,
@@ -10,5 +11,6 @@ CREATE TABLE IF NOT EXISTS member (
   gender TEXT,
   birthday DATE,
   status TEXT CHECK (status IN ('active', 'inactive')) DEFAULT 'active',
-  FOREIGN KEY (level_rk_id) REFERENCES member_levels (id) ON DELETE SET NULL
+  FOREIGN KEY (level_rk_id) REFERENCES member_levels (id) ON DELETE SET NULL,
+  FOREIGN KEY (user_rk_id) REFERENCES user (id) ON DELETE CASCADE
 );
