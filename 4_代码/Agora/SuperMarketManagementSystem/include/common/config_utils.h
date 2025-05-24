@@ -1,17 +1,20 @@
 #pragma once
 #include <nlohmann/json.hpp>
 
-namespace utils {
 
 class ConfigManager {
   using json = nlohmann::json;
 
-public:
-  ConfigManager() = default;
+  public:
+  static ConfigManager& getInstance()
+  {
+    static ConfigManager instance;
+    return instance;
+  }
 
-  ConfigManager(const std::string &filename);
+  void init(const std::string& filename) const;
 
-  void readFromFile(const std::string &filename) const;
+  void readFromFile(const std::string& filename) const;
 
   std::uint16_t getPort() const;
 
@@ -19,7 +22,17 @@ public:
 
   std::string getDatabasePath() const;
 
-private:
+  // vcode
+  int getVCodeTTL() const;
+
+  // jwt
+  std::string getSecret() const;
+
+  int getTokenExpireMinutes() const;
+
+  private:
+  ConfigManager() = default;
+
+  private:
   mutable json config;
 };
-} // namespace utils

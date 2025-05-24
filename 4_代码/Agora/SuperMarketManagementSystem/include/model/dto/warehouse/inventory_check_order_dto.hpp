@@ -1,12 +1,12 @@
 #pragma once
-#include <common/id_getter.h>
-#include <model/db/warehouse/inventory_check_order.h>
+#include <common/cache_func_getter.h>
 #include <common/generic_model.hpp>
+#include <model/db/warehouse/inventory_check_order.h>
 #include <nlohmann/json.hpp>
 #include <string>
 
 // DTO for inventory_check_order table
-struct InventoryCheckOrderDTO : public IdGetter {
+struct InventoryCheckOrderDTO : public CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
     "warehouse_id",  //
     "created_by",    //
@@ -40,8 +40,7 @@ struct InventoryCheckOrderDTO : public IdGetter {
         .created_by =
           getInternalId("employee", j.at("created_by").get<ex_id_type>()),
         .status = j.at("status").get<std::string>(),
-        .remark = j.at("remark").get<std::string>()
-      };
+        .remark = j.at("remark").get<std::string>()};
     }
     catch (const std::exception& e) {
       std::cerr << "[from_json error] " << e.what() << "\n"

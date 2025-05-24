@@ -4,3 +4,6 @@
 [submodule "4_代码/Agora/SuperMarketManagementSystem/third_party/sqlpp11"]
 	path = 4_代码/Agora/SuperMarketManagementSystem/third_party/sqlpp11
 	url = https://github.com/rbock/sqlpp11.git
+[submodule "4_代码/Agora/SuperMarketManagementSystem/third_party/jwt-cpp"]
+	path = 4_代码/Agora/SuperMarketManagementSystem/third_party/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp.git

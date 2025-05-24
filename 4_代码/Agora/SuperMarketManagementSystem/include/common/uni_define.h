@@ -60,6 +60,9 @@ using remark_type = std::string;
 
 using status_type = std::string;
 
+using ExternalId = std::string;
+
+using InternalId = in_id_type;
 
 /**
  * @brief 打印带有文件名、函数名和行号的格式化日志信息。
@@ -188,11 +191,12 @@ using status_type = std::string;
  * CHECK_REQUIRED_FIELD(j, "name");
  * @endcode
  */
-#define CHECK_REQUIRED_FIELD(j, field) \
-  if (!(j).contains((field))) {          \
-  LOG("Field '{}' not found", (field)); \
-  return crow::response(               \
-    400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field))));}
+#define CHECK_REQUIRED_FIELD(j, field)                                     \
+  if (!(j).contains((field))) {                                            \
+    LOG("Field '{}' not found", (field));                                  \
+    return crow::response(                                                 \
+      400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field)))); \
+  }
 
 /**
  * @brief 批量检查 JSON 中是否包含所有指定字段，不存在则返回 400 错误。

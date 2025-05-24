@@ -1,15 +1,15 @@
 #pragma once
+#include <common/cache_func_getter.h>
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/global_id_cache.hpp>
-#include <common/id_getter.h>
 #include <common/uni_define.h>
 #include <model/db/warehouse/stock_in.h>
 #include <nlohmann/json.hpp>
 #include <string>
 
 // DTO for stock_in table
-struct StockInDTO : public IdGetter {
+struct StockInDTO : public CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
     "stock_in_id",   // 入库单号（唯一）
     "warehouse_id",  // 仓库ID

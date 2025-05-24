@@ -6,7 +6,6 @@ CREATE TABLE IF NOT EXISTS employee (
   employee_name TEXT NOT NULL,
   gender TEXT NOT NULL,
   birthday DATE NOT NULL,
-  phone TEXT NOT NULL UNIQUE,
   id_number TEXT NOT NULL UNIQUE,
   hire_date DATETIME NOT NULL,
   position_rk_id INTEGER NOT NULL,
