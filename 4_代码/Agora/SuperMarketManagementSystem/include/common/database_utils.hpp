@@ -44,17 +44,6 @@ using pooled_conn_type = sqlpp::sqlite3::pooled_connection;
  */
 using pooled_conn_ptr_type = std::shared_ptr<pooled_conn_type>;
 
-/**
- * @var config_file
- * @brief Path to the configuration file.
- */
-inline auto config_file = "./SuperMarketManagementSystem/config/config.json";
-
-/**
- * @var configManager
- * @brief Instance of ConfigManager initialized with the configuration file.
- */
-inline utils::ConfigManager configManager(config_file);
 
 /**
  * @brief Retrieves a unique pointer to a pooled SQLite connection.
@@ -75,7 +64,7 @@ inline utils::ConfigManager configManager(config_file);
     fmt::println("Current Path: {}", root_dir_path.c_str());
     config.debug = true;
     config.flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE;
-    auto databasePath = configManager.getDatabasePath();
+    auto databasePath = ConfigManager::getInstance().getDatabasePath();
     // config.path_to_database = std::string(root_dir_path) + databasePath;
     config.path_to_database = databasePath;
   });

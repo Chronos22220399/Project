@@ -14,7 +14,7 @@ ServiceResult UnitService::create(const UnitDTO& unit_dto)
   auto& cache = GlobalIdCache::getInstance();
 
   if (UnitRepository::_exists(db::unit{}.unit_name == unit_dto.unit_name)) {
-    return {false, "Unit name created"};
+    return {false, "Unit name has created"};
   }
 
   auto id = UnitRepository::create(unit_dto);
@@ -35,7 +35,7 @@ ServiceResult UnitService::updateByUnitId(const std::string& unit_id,
   auto id = cache.getInternalId("unit", unit_id);
 
   if (id == 0) {
-    return {false, "Goods category not found."};
+    return {false, "Unit not found."};
   }
 
   bool success = UnitRepository::updateById(id, unit_dto);
@@ -92,8 +92,12 @@ ServiceResult UnitService::getByPage(const int page, const int page_size)
 ServiceResult UnitService::getAll()
 {
   auto unit_list = UnitRepository::getAll();
-  nlohmann::json data{
-    {"success", true}, {"total", unit_list.size()}, {"items", unit_list}};
-
-  return {true, data};
+  try {
+    nlohmann::json data{
+      {"success", true}, {"total", unit_list.size()}, {"items", unit_list}};
+    return {true, "", data};
+  } catch (const std::exception& e) {
+    LOG("Exception occured while getting all, {}", e.what());
+    return {false, e.what()};
+  }
 }
