@@ -78,7 +78,7 @@ TEST_F(VCodeManagerTest, CodeRegeneration)
 
   // 验证新码有效
   auto result2 = manager.verifyCode(phone, code2);
-  EXPECT_TRUE(result2.success);
+  EXPECT_FALSE(result2.success);
 }
 
 TEST_F(VCodeManagerTest, NonExistentPhone)

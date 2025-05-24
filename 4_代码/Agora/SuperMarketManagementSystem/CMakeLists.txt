@@ -21,18 +21,15 @@ find_package(ZLIB REQUIRED)
 find_package(Crow REQUIRED)
 find_package(Sodium REQUIRED)
 find_package(OpenSSL REQUIRED)
-find_package(jwt-cpp REQUIRED)
 
 set(
   libs 
-  
   fmt::fmt
   sqlpp11::sqlpp11 
   sqlpp11::sqlite3
   ZLIB::ZLIB 
   Crow::Crow
   ${sodium_LIBRARY_DEBUG}
-  ${JWT_CPP_LIBRARIES}
   ${OPENSSL_SSL_LIBRARY}
   ${OPENSSL_CRYPTO_LIBRARY}
 )
@@ -48,6 +45,7 @@ target_include_directories(
   PRIVATE 
   ${Sqlpp11_DIR}
   ${CMAKE_CURRENT_LIST_DIR}/include
+  ${CMAKE_CURRENT_LIST_DIR}/third_party/jwt-cpp
 )
 
 target_link_libraries(

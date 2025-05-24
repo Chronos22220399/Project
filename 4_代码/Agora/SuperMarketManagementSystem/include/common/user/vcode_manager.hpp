@@ -1,5 +1,6 @@
 #pragma once
 
+#include <algorithm>
 #include <chrono>
 #include <mutex>
 #include <random>
@@ -54,7 +55,7 @@ class VCodeManager {
     auto now = std::chrono::steady_clock::now();
     std::string message = "Code expired.";
     if (now - it->second.expire_timestamp <= std::chrono::seconds(m_ttl)) {
-      valid = it->second.code == code;
+      valid = (it->second.code == code);
       message = valid ? "" : "Code is not matched.";
     }
 
