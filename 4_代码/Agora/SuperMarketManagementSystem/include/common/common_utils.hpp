@@ -14,6 +14,7 @@
 #include <sqlpp11/data_types.h>
 #include <sqlpp11/sqlpp11.h>
 #include <vector>
+#include <nlohmann/json.hpp>
 
 /**
  * @file utils.hpp
@@ -169,15 +170,34 @@ inline std::string create_id(const std::string& prefix)
  */
 inline std::optional<nlohmann::json> try_parse_json(const std::string& body)
 {
+  using json = nlohmann::json;
   try {
-    // 使用 nlohmann::json 解析字符串
-    return nlohmann::json::parse(body);
+    return json::parse(body);
+  }
+  catch (const json::parse_error& e) {
+    LOG("JSON parse error: {}", e.what());
+  }
+  catch (const json::type_error& e) {
+    LOG("JSON type error: {}", e.what());
+  }
+  catch (const json::out_of_range& e) {
+    LOG("JSON out of range error: {}", e.what());
+  }
+  catch (const json::invalid_iterator& e) {
+    LOG("JSON invalid iterator error: {}", e.what());
+  }
+  catch (const json::other_error& e) {
+    LOG("JSON other error: {}", e.what());
+  }
+  catch (const std::exception& e) {
+    LOG("Standard exception during JSON parsing: {}", e.what());
   }
   catch (...) {
-    // 捕获所有异常并返回空值
-    return std::nullopt;
+    LOG("Unknown exception during JSON parsing");
   }
+  return std::nullopt;
 }
+
 
 /**
  * @brief 将字符串转换为时间点。
@@ -340,4 +360,36 @@ inline crow::response to_response(const ServiceResult& res,
     success_code,
     nlohmann::json{{"code", success_code}, {"data", res.data}}.dump());
 }
+
+
+inline crow::response check_required_fields(const nlohmann::json& j, const std::vector<std::string>& fields) {
+  try {
+    for (const auto& field : fields) {
+      if (!j.contains(field)) {
+        LOG("Missing required field: {}", field);
+        return crow::response(
+          400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field)));
+      }
+    }
+  } catch (const std::exception& e) {
+    LOG("Exception during required field check: {}", e.what());
+    return crow::response(500, SET_ERR_JSON(500, "Internal server error."));
+  }
+  return crow::response();  // 默认构造表示无错误
+}
+
+inline crow::response check_required_field(const nlohmann::json& j, const std::string& field) {
+  try {
+    if (!j.contains(field)) {
+      LOG("Missing required field: {}", field);
+      return crow::response(
+        400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field)));
+    }
+  } catch (const std::exception& e) {
+    LOG("Exception during required field check: {}", e.what());
+    return crow::response(500, SET_ERR_JSON(500, "Internal server error."));
+  }
+  return crow::response();  // 默认构造表示无错误
+}
+
 }  // namespace utils

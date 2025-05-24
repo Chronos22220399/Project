@@ -27,6 +27,9 @@ ServiceResult InventoryService::create(InventoryDTO& inventory_dto)
     return {false, "Warehouse not found."};
   }
 
+  if (inventory_dto.min_threshold > inventory_dto.max_threshold)
+    return {false, "max_threshold must greater than min_threshold."};
+
   // 获取当前时间作为更新时间
   inventory_dto.last_updated =
     time_point_cast<microseconds>(system_clock::now());
@@ -57,6 +60,9 @@ ServiceResult InventoryService::updateByGoodsId(const in_id_type goods_rk_id,
     return {false, "Warehouse not found."};
   }
 
+  if (inventory_dto.min_threshold > inventory_dto.max_threshold)
+    return {false, "max_threshold must greater than min_threshold."};
+
   inventory_dto.last_updated =
     time_point_cast<microseconds>(system_clock::now());
   // 更新库存记录
@@ -69,15 +75,21 @@ ServiceResult InventoryService::updateByGoodsId(const in_id_type goods_rk_id,
   return {true};
 }
 
+ServiceResult InventoryService::removeByInventoryId(const std::string& inventory_id){
+  auto &cache = GlobalIdCache::getInstance();
 
-// MARK: 库存-根据商品ID查询服务
-//
-// @param body - 请求体（JSON字符串），包含 goods_id
-// @return crow::response
-//   成功: 200, JSON 包含库存记录信息（含success, total, data）
-//   失败: 400, JSON解析或字段缺失
-//         404, 商品不存在
-//         500, 数据库查询异常
+  auto id = cache.getInternalId("warehouse", inventory_id);
+  if (!id) return {false, "Warehouse id doesn't exists."};
+
+  auto res = InventoryRepository::removeById(id);
+  if (!res) {
+    cache.invalidate("inventory", id);
+    return {false, "Remove inventory failed."};
+  }
+  return {true};
+}
+
+
 ServiceResult InventoryService::getByGoodsId(const std::string& goods_id)
 {
   auto& cache = GlobalIdCache::getInstance();
@@ -96,14 +108,7 @@ ServiceResult InventoryService::getByGoodsId(const std::string& goods_id)
   return {true, "", data};
 }
 
-// MARK: 库存-根据仓库ID查询服务
-//
-// @param body - 请求体（JSON字符串），包含 warehouse_id
-// @return crow::response
-//   成功: 200, JSON 包含库存记录信息（含success, total, data）
-//   失败: 400, JSON解析或字段缺失
-//         404, 仓库不存在
-//         500, 数据库查询异常
+
 ServiceResult
 InventoryService::getByWarehouseId(const std::string& warehouse_id)
 {
@@ -124,12 +129,6 @@ InventoryService::getByWarehouseId(const std::string& warehouse_id)
   return {true, data};
 }
 
-// MARK: 库存-分页查询服务
-//
-// @param body - 请求体（JSON字符串），包含 page 和 page_size，默认值为 1 和 10
-// @return crow::response
-//   成功: 200, JSON 包含分页后的库存记录信息（含success, total, page,
-//   page_size, data） 失败: 400, 分页参数非法; 500, 数据库查询异常
 ServiceResult InventoryService::getByPage(const int page, const int page_size)
 {
   // 校验分页参数有效性

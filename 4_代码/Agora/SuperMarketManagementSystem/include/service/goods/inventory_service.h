@@ -18,4 +18,6 @@ class InventoryService {
   // update
   static ServiceResult updateByGoodsId(const in_id_type goods_rk_id,
                                        InventoryDTO& inventory_dto);
+  // remove
+  static ServiceResult removeByInventoryId(const std::string& warehouse_id);
 };

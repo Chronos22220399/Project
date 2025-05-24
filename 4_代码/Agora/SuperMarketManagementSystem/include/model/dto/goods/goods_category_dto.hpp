@@ -34,7 +34,7 @@ struct GoodsCategoryDTO {
           .goods_category_name = j.at("goods_category_name").get<std::string>(),
           .goods_category_description =
               j.value("goods_category_description", ""), // 默认值为空字符串
-          .parent_category_id = j.at("parent_category_id").get<in_id_type>()};
+          .parent_category_id = 0};
     } catch (const std::exception &e) {
       std::cerr << "[from_json error] " << e.what() << "\n"
                 << "Input JSON: " << j.dump(2) << std::endl;
