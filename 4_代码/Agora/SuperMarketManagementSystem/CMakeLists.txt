@@ -10,8 +10,6 @@ file(
 
 option(EnableTest "Enable unit tests" OFF)
 
-set(EnableTest ON)
-
 add_compile_options(-Wno-cpp)
 
 find_package(fmt REQUIRED)

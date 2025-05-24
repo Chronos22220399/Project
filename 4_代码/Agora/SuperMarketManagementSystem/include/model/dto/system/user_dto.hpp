@@ -64,8 +64,8 @@ inline void to_json(nlohmann::json& j, const UserDTO& user_dto)
     {"phone_number", user_dto.phone_number},
     {"role_id", UserDTO::getExternalId("user", user_dto.role_rk_id)},
     {"status", user_dto.status},
-    {"created_at", utils::time_to_string(user_dto.created_at)},
-    {"last_login_at", utils::time_to_string(user_dto.last_login_at)}};
+    {"created_at", utils::datetime_to_string(user_dto.created_at)},
+    {"last_login_at", utils::datetime_to_string(user_dto.last_login_at)}};
 }
 
 // ORM mapping

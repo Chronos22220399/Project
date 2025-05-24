@@ -41,8 +41,9 @@ struct PromotionDTO {
         .description = j.at("description").get<std::string>(),
         .type = j.at("type").get<std::string>(),
         .start_time =
-          utils::string_to_time(j.at("start_time").get<std::string>()),
-        .end_time = utils::string_to_time(j.at("end_time").get<std::string>()),
+          utils::string_to_datetime(j.at("start_time").get<std::string>()),
+        .end_time =
+          utils::string_to_datetime(j.at("end_time").get<std::string>()),
         .status = j.at("status").get<std::string>(),
       };
     }
@@ -62,8 +63,8 @@ inline void to_json(nlohmann::json& j, const PromotionDTO& promotion_dto)
     {"promotion_name", promotion_dto.promotion_name},
     {"description", promotion_dto.description},
     {"type", promotion_dto.type},
-    {"start_time", utils::time_to_string(promotion_dto.start_time)},
-    {"end_time", utils::time_to_string(promotion_dto.end_time)},
+    {"start_time", utils::datetime_to_string(promotion_dto.start_time)},
+    {"end_time", utils::datetime_to_string(promotion_dto.end_time)},
     {"status", promotion_dto.status}};
 }
 

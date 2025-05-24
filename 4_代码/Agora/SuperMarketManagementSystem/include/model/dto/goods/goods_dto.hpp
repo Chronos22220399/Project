@@ -16,27 +16,12 @@
 #include <common/global_id_cache.hpp>
 #include <common/uni_define.h>
 
-// CREATE TABLE goods (
-//     id INTEGER PRIMARY KEY AUTOINCREMENT,
-//     goods_id TEXT UNIQUE NOT NULL,
-//     category_id INTEGER,
-//     supplier_id INTEGER,
-//     unit_id INTEGER,
-//     goods_name TEXT NOT NULL,
-//     shelf_life_days INTEGER,
-//     barcode TEXT,
-//     image_url TEXT,
-//     description TEXT,
-//     FOREIGN KEY (category_id) REFERENCES category(id),
-//     FOREIGN KEY (unit_id) REFERENCES unit(id)
-// );
-//
 
 struct GoodsDTO {
   inline static const std::vector<std::string> required_fields = {
-    "goods_id",
-    "goods_name",      "goods_category_id", "supplier_id", "unit_id",
-    "shelf_life_days", "barcode",     "image_url",   "description"};
+    "goods_id",    "goods_name", "goods_category_id",
+    "supplier_id", "unit_id",    "shelf_life_days",
+    "barcode",     "image_url",  "description"};
 
 
   in_id_type id;

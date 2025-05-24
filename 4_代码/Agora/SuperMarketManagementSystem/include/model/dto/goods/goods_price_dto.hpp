@@ -1,4 +1,5 @@
 #pragma once
+
 // tools
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
@@ -29,7 +30,7 @@ struct GoodsPriceDTO {
           cache.getInternalId("table", j.at("goods_id").get<std::string>()),
         .price = j.at("price").get<double>(),
         .start_time =
-          utils::string_to_time(j.at("start_time").get<std::string>()),
+          utils::string_to_datetime(j.at("start_time").get<std::string>()),
         .note = j.at("note").get<std::string>(),
       };
     }
@@ -47,7 +48,7 @@ inline void to_json(nlohmann::json& j, const GoodsPriceDTO& goods_price_dto)
   j = nlohmann::json{
     {"goods_id", cache.getExternalId("goods", goods_price_dto.goods_rk_id)},
     {"price", goods_price_dto.price},
-    {"start_time", utils::time_to_string(goods_price_dto.start_time)},
+    {"start_time", utils::datetime_to_string(goods_price_dto.start_time)},
     {"note", goods_price_dto.note}};
 }
 

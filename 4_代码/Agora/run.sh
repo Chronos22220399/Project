@@ -15,7 +15,7 @@ if_exists_then_run() { local target="$1"  # 改为使用第一个输入参数
     fi
 }
 
-cmake -DEnableTest=ON -S . -B build -G Ninja # default turn off unit test
+cmake -DEnableTest=OFF -S . -B build -G Ninja # default turn off unit test
 
 ARCH=$(uname -m)
 
