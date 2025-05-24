@@ -303,55 +303,60 @@ inline std::string date_to_string(const date_type& tp)
 
 
 /**
- * @brief 将字符串转换为时间。
- * @param str 时间字符串，格式为 "HH:MM:SS.ffffff"。
- * @return time_type 转换后的时间。
- * @throws std::invalid_argument 如果格式非法。
+ * @brief 将字符串转换为时间（微秒精度）。
+ * @param str 格式 "HH:MM:SS.ffffff"
+ * @return time_type
+ * @throws std::invalid_argument
  */
 inline time_type string_to_time(const std::string& str)
 {
-  int hour = 0, min = 0, sec = 0, microseconds_ = 0;
-  char sep1, sep2, dot;
-  std::istringstream iss(str);
-
+  int hour = 0, min = 0, sec = 0;
+  char sep1, sep2;
+  size_t dot_pos = str.find('.');
+  std::string time_part = str.substr(0, dot_pos);
+  std::istringstream iss(time_part);
   iss >> hour >> sep1 >> min >> sep2 >> sec;
-  if (iss.fail() || sep1 != ':' || sep2 != ':') {
+  if (iss.fail() || sep1 != ':' || sep2 != ':')
     throw std::invalid_argument("Invalid time format: " + str);
+  // 校验范围
+  if (hour < 0 || hour > 23 || min < 0 || min > 59 || sec < 0 || sec > 59)
+    throw std::invalid_argument("Time out of range: " + str);
+
+  int microseconds_ = 0;
+  if (dot_pos != std::string::npos) {
+    std::string micro_str = str.substr(dot_pos + 1);
+    if (micro_str.length() > 6)
+      micro_str = micro_str.substr(0, 6);
+    while (micro_str.length() < 6)
+      micro_str += '0';  // 补足6位
+    if (!micro_str.empty())
+      microseconds_ = std::stoi(micro_str);
   }
-  // 微秒部分（可选）
-  if (iss >> dot && dot == '.' && iss >> microseconds_) {
-    microseconds_ = std::min(microseconds_, 999999);
-  }
-  // 转为微秒表示
   using namespace std::chrono;
   auto us =
     hours(hour) + minutes(min) + seconds(sec) + microseconds(microseconds_);
   return time_type(us);
 }
 
-
 /**
- * @brief 将时间转换为字符串。
- * @param tp 时间点。
- * @return std::string 格式为 "HH:MM:SS.ffffff"。
+ * @brief 将时间类型（微秒）转换为字符串。
+ * @param tp
+ * @return "HH:MM:SS.ffffff"
  */
 inline std::string time_to_string(const time_type& tp)
 {
   using namespace std::chrono;
-  auto us = duration_cast<microseconds>(tp.time_since_epoch()).count();
-  int hour = us / (1000ll * 1000 * 60 * 60);
+  int64_t us = tp.count();
+  int hour = static_cast<int>(us / (1000ll * 1000 * 60 * 60));
   us %= (1000ll * 1000 * 60 * 60);
-  int min = us / (1000 * 1000 * 60);
+  int min = static_cast<int>(us / (1000 * 1000 * 60));
   us %= (1000ll * 1000 * 60);
-  int sec = us / (1000ll * 1000);
-  int micro = us % (1000ll * 1000);
+  int sec = static_cast<int>(us / (1000ll * 1000));
+  int micro = static_cast<int>(us % (1000ll * 1000));
   std::ostringstream oss;
   oss << std::setw(2) << std::setfill('0') << hour << ":" << std::setw(2)
       << std::setfill('0') << min << ":" << std::setw(2) << std::setfill('0')
-      << sec;
-  if (micro > 0) {
-    oss << "." << std::setw(6) << std::setfill('0') << micro;
-  }
+      << sec << "." << std::setw(6) << std::setfill('0') << micro;
   return oss.str();
 }
 

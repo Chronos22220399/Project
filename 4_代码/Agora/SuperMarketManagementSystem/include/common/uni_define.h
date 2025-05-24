@@ -33,7 +33,7 @@ using datetime_type = sqlpp::chrono::microsecond_point;
 
 using date_type = sqlpp::chrono::day_point;
 
-using time_type = sqlpp::chrono::microsecond_point;
+using time_type = std::chrono::microseconds;
 
 /// @brief 查询返回的统一模板类型（返回若干 Model 实例）
 template <typename Model> using select_ret_type = std::vector<Model>;
