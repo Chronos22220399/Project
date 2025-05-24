@@ -106,22 +106,6 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::day_point, sqlpp::tag::require_insert>;
     };
-    struct phone
-    {
-      struct _alias_t
-      {
-        static constexpr const char _literal[] =  "phone";
-        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
-        template<typename T>
-        struct _member_t
-          {
-            T phone;
-            T& operator()() { return phone; }
-            const T& operator()() const { return phone; }
-          };
-      };
-      using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
-    };
     struct id_number
     {
       struct _alias_t
@@ -211,7 +195,6 @@ namespace db
                employee_::employee_name,
                employee_::gender,
                employee_::birthday,
-               employee_::phone,
                employee_::id_number,
                employee_::hire_date,
                employee_::position_rk_id,

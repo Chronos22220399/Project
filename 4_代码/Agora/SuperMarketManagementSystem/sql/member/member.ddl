@@ -4,7 +4,6 @@ CREATE TABLE IF NOT EXISTS member (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   member_id TEXT NOT NULL UNIQUE,
   user_rk_id INTEGER NOT NULL UNIQUE,
-  member_phone TEXT NOT NULL UNIQUE,
   registration_date DATETIME NOT NULL,
   level_rk_id INTEGER,
   points REAL DEFAULT 0,

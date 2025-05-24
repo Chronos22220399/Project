@@ -367,7 +367,7 @@ void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
             auto {self.dto_name_snake} = {self.dto_name_camel}::from_json(j);
             auto {self.table_name_snake}_id = {self.dto_name_snake}.{self.table_name_snake}_id;
             
-            auto res = {self.service_name_camel}::updateBy{self.table_name_camel}Id({self.table_name_snake}_id, {self.dto_name_camel});
+            auto res = {self.service_name_camel}::updateBy{self.table_name_camel}Id({self.table_name_snake}_id, {self.dto_name_snake});
             return utils::to_response(res, 200);
         }});
         
@@ -405,7 +405,7 @@ void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
     CROW_ROUTE(app, "/api/{self.table_name}/getAll")
         .methods("GET"_method)([]() {{
             auto res = {self.service_name_camel}::getAll();
-            return utils::to_reponse(res, 200);
+            return utils::to_response(res, 200);
         }});
         
     // 其他路由...
