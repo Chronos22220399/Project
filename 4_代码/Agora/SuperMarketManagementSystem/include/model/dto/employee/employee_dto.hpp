@@ -8,7 +8,7 @@
 #include <string>
 
 // DTO for employee table
-struct EmployeeDTO : CacheFuncGetter {
+struct EmployeeDTO : public CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
     "employee_id",    //
     "user_id",        //

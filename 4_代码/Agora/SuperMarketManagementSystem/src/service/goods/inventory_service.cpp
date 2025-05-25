@@ -75,11 +75,14 @@ ServiceResult InventoryService::updateByGoodsId(const in_id_type goods_rk_id,
   return {true};
 }
 
-ServiceResult InventoryService::removeByInventoryId(const std::string& inventory_id){
-  auto &cache = GlobalIdCache::getInstance();
+ServiceResult
+InventoryService::removeByInventoryId(const std::string& inventory_id)
+{
+  auto& cache = GlobalIdCache::getInstance();
 
   auto id = cache.getInternalId("warehouse", inventory_id);
-  if (!id) return {false, "Warehouse id doesn't exists."};
+  if (!id)
+    return {false, "Warehouse id doesn't exists."};
 
   auto res = InventoryRepository::removeById(id);
   if (!res) {

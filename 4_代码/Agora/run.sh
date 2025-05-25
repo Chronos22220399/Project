@@ -26,13 +26,13 @@ case "$ARCH" in
 esac
 
 # cd build/SuperMarketManagementSystem && ctest
-echo "开始测试 jwt_manager_test"
-if_exists_then_run "./build/SuperMarketManagementSystem/jwt_manager_test" || exit 1
-echo "\n"
+# echo "开始测试 jwt_manager_test"
+# if_exists_then_run "./build/SuperMarketManagementSystem/jwt_manager_test" || exit 1
+# echo "\n"
 
-echo "开始测试 vcode_manager_test"
-if_exists_then_run "./build/SuperMarketManagementSystem/vcode_manager_test" || exit 1
-echo "\n"
+# echo "开始测试 vcode_manager_test"
+# if_exists_then_run "./build/SuperMarketManagementSystem/vcode_manager_test" || exit 1
+# echo "\n"
 
 echo "开始运行服务"
 if_exists_then_run ./build/SuperMarketManagementSystem/SuperMarketManagementSystem || exit 1

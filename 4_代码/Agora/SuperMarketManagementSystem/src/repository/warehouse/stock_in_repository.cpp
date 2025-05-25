@@ -43,21 +43,26 @@ count_type StockInRepository::count()
   return _count();
 }
 
-in_id_type StockInRepository::getInternalId(const std::string& stock_in_id){
+in_id_type StockInRepository::getInternalId(const std::string& stock_in_id)
+{
   auto result = utils::DataBaseHelper::execute<in_id_type>(
-    [&stock_in_id](const utils::pooled_conn_ptr_type& conn_) {
+    [ &stock_in_id ](const utils::pooled_conn_ptr_type& conn_) {
       static db::stock_in stock_in{};
-      auto rows = (*conn_)(select(stock_in.id).from(stock_in).where(stock_in.stock_in_id == stock_in_id));
+      auto rows = (*conn_)(select(stock_in.id)
+                             .from(stock_in)
+                             .where(stock_in.stock_in_id == stock_in_id));
       return rows.empty() ? 0 : rows.front().id;
     });
   return result;
 }
 
-ex_id_type StockInRepository::getExternalId(in_id_type id){
+ex_id_type StockInRepository::getExternalId(in_id_type id)
+{
   auto result = utils::DataBaseHelper::execute<ex_id_type>(
-    [&id](const utils::pooled_conn_ptr_type& conn_) {
+    [ &id ](const utils::pooled_conn_ptr_type& conn_) {
       static db::stock_in stock_in{};
-      auto rows = (*conn_)(select(stock_in.stock_in_id).from(stock_in).where(stock_in.id == id));
+      auto rows = (*conn_)(
+        select(stock_in.stock_in_id).from(stock_in).where(stock_in.id == id));
       return rows.empty() ? std::string() : rows.front().stock_in_id;
     });
   return result;
