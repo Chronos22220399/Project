@@ -1,0 +1,25 @@
+# must under Agora dir
+# change all sh file's mode
+sudo chmod +x ./scripts/*.sh
+
+# install fmt
+fmt: sudo ./scripts/install-fmt.sh
+
+# install sqlite3 and sqlpp11
+sqlite3 & sqlpp11: sudo ./scripts/install-sqlpp11.sh
+
+# install zlib
+zlib: sudo apt install zlib1g-dev
+
+# install Crow
+Crow: sudo ./scripts/install-crow.sh
+
+# install Sodium
+sodium: sudo apt install libsodium-dev
+
+# install openssl
+openssl: sudo apt install libssl-dev
+
+# install jwt-cpp
+jwt-cpp: sudo ./scripts/install-jwt-cpp.sh
+

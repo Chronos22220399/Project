@@ -45,7 +45,7 @@ target_include_directories(
   PRIVATE 
   ${Sqlpp11_DIR}
   ${CMAKE_CURRENT_LIST_DIR}/include
-  ${CMAKE_CURRENT_LIST_DIR}/third_party/jwt-cpp
+  # ${CMAKE_CURRENT_LIST_DIR}/third_party/jwt-cpp/include
 )
 
 target_link_libraries(
