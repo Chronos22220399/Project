@@ -19,7 +19,7 @@ struct WarehouseDTO {
     "capacity",        // available_capacity 在创建时等于 capacity
     "manager_id",      // manager_id 用于通过 cache 找到 manager_rk_id
     "phone",           // 电话必填
-    "status",           // 处理状态初始可设置为 inactive 这种需求
+    "status",          // 处理状态初始可设置为 inactive 这种需求
     "remark"           // 备注
   };
 
@@ -77,7 +77,7 @@ inline void to_json(nlohmann::json& j, const WarehouseDTO& warehouse_dto)
     {"manager_id",
      cache.getExternalId("employee", warehouse_dto.manager_rk_id)},
     {"phone", warehouse_dto.phone},
-    {"created_at", utils::time_to_string(warehouse_dto.created_at)},
+    {"created_at", utils::datetime_to_string(warehouse_dto.created_at)},
     {"status", warehouse_dto.status},
     {"remark", warehouse_dto.remark}};
 }

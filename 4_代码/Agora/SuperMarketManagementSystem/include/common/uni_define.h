@@ -31,6 +31,10 @@ using count_type = std::uint64_t;
 /// @brief 时间点类型（微秒精度）
 using datetime_type = sqlpp::chrono::microsecond_point;
 
+using date_type = sqlpp::chrono::day_point;
+
+using time_type = std::chrono::microseconds;
+
 /// @brief 查询返回的统一模板类型（返回若干 Model 实例）
 template <typename Model> using select_ret_type = std::vector<Model>;
 
@@ -60,6 +64,9 @@ using remark_type = std::string;
 
 using status_type = std::string;
 
+using ExternalId = std::string;
+
+using InternalId = in_id_type;
 
 /**
  * @brief 打印带有文件名、函数名和行号的格式化日志信息。
@@ -188,11 +195,12 @@ using status_type = std::string;
  * CHECK_REQUIRED_FIELD(j, "name");
  * @endcode
  */
-#define CHECK_REQUIRED_FIELD(j, field) \
-  if (!(j).contains((field))) {          \
-  LOG("Field '{}' not found", (field)); \
-  return crow::response(               \
-    400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field))));}
+#define CHECK_REQUIRED_FIELD(j, field)                                     \
+  if (!(j).contains((field))) {                                            \
+    LOG("Field '{}' not found", (field));                                  \
+    return crow::response(                                                 \
+      400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", (field)))); \
+  }
 
 /**
  * @brief 批量检查 JSON 中是否包含所有指定字段，不存在则返回 400 错误。
@@ -220,19 +228,3 @@ struct ServiceResult {
   std::string error;
   nlohmann::json data;
 };
-
-inline crow::response check_required_fields(const nlohmann::json& j, const std::vector<std::string>& fields) {
-  try {
-    for (const auto& field : fields) {
-      if (!j.contains(field)) {
-        LOG("Missing required field: {}", field);
-        return crow::response(
-          400, SET_ERR_JSON(400, fmt::format("Missing field: {}.", field)));
-      }
-    }
-  } catch (const std::exception& e) {
-    LOG("Exception during required field check: {}", e.what());
-    return crow::response(500, SET_ERR_JSON(500, "Internal server error."));
-  }
-  return crow::response();  // 默认构造表示无错误
-}

@@ -8,6 +8,7 @@ void UnitController::registerRoutes(crow::SimpleApp& app)
       nlohmann::json j;
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
+
       CHECK_REQUIRED_FIELD(j, "unit_id");
       CHECK_REQUIRED_FIELDS(j, UnitDTO::required_fields);
 

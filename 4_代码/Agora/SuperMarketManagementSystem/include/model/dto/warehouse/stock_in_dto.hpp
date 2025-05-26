@@ -1,17 +1,16 @@
 #pragma once
+#include <common/cache_func_getter.h>
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/global_id_cache.hpp>
-#include <common/id_getter.h>
 #include <common/uni_define.h>
 #include <model/db/warehouse/stock_in.h>
 #include <nlohmann/json.hpp>
 #include <string>
 
 // DTO for stock_in table
-struct StockInDTO : public IdGetter {
+struct StockInDTO : public CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
-    "id",            // 主键ID（自增长）
     "stock_in_id",   // 入库单号（唯一）
     "warehouse_id",  // 仓库ID
     "created_by",    // 创建人ID
@@ -44,8 +43,6 @@ struct StockInDTO : public IdGetter {
         .stock_in_id = j.at("stock_in_id").get<std::string>(),
         .warehouse_rk_id =
           getInternalId("warehouse", j.at("warehouse_id").get<ex_id_type>()),
-        .created_at =
-          utils::string_to_time(j.at("created_at").get<std::string>()),
         .created_by =
           getInternalId("employee", j.at("created_by").get<ex_id_type>()),
         .source_type = j.at("source_type").get<std::string>(),
@@ -67,7 +64,7 @@ inline void to_json(nlohmann::json& j, const StockInDTO& stock_in_dto)
     {"stock_in_id", stock_in_dto.stock_in_id},
     {"warehouse_id",
      stock_in_dto.getExternalId("warehouse", stock_in_dto.warehouse_rk_id)},
-    {"created_at", utils::time_to_string(stock_in_dto.created_at)},
+    {"created_at", utils::datetime_to_string(stock_in_dto.created_at)},
     {"created_by",
      stock_in_dto.getExternalId("employee", stock_in_dto.created_by)},
     {"source_type", stock_in_dto.source_type},

@@ -28,6 +28,7 @@ TYPE_MAPPING = {
     "BLOB": "std::vector<uint8_t>",
     "DATE": "datetime_type",
     "DATETIME": "datetime_type",
+    "TIME": "time_type",
     "TIMESTAMP": "std::string"
 }
 
@@ -151,13 +152,14 @@ class CodeGenerator:
         return f"""#pragma once
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
+#include <common/cache_func_getter.h>
 #include <common/uni_define.h>
 #include <model/db/{db_dir_name}/{self.table_name}.h>
 #include <nlohmann/json.hpp>
 #include <string>
 
 // DTO for {self.table_name} table
-struct {self.dto_name_camel} {{
+struct {self.dto_name_camel}: public CacheFuncGetter {{
     inline static const std::vector<std::string> required_fields = {
     ...
     };
@@ -333,6 +335,7 @@ count_type {self.repo_name_camel}::count() {{ return _count(); }}
     def generate_controller(self, db_dir_name: str) -> Tuple[str, str]:
         h_content = f"""#pragma once
 #include <crow.h>
+#include <nlohmann/json.hpp>
 
 class {self.controller_name_camel} {{
 public:
@@ -367,7 +370,7 @@ void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
             auto {self.dto_name_snake} = {self.dto_name_camel}::from_json(j);
             auto {self.table_name_snake}_id = {self.dto_name_snake}.{self.table_name_snake}_id;
             
-            auto res = {self.service_name_camel}::updateBy{self.table_name_camel}Id({self.table_name_snake}_id, {self.dto_name_camel});
+            auto res = {self.service_name_camel}::updateBy{self.table_name_camel}Id({self.table_name_snake}_id, {self.dto_name_snake});
             return utils::to_response(res, 200);
         }});
         
@@ -405,7 +408,7 @@ void {self.controller_name_camel}::registerRoutes(crow::SimpleApp& app) {{
     CROW_ROUTE(app, "/api/{self.table_name}/getAll")
         .methods("GET"_method)([]() {{
             auto res = {self.service_name_camel}::getAll();
-            return utils::to_reponse(res, 200);
+            return utils::to_response(res, 200);
         }});
         
     // 其他路由...

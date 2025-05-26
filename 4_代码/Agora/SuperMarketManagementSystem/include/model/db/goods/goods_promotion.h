@@ -10,22 +10,6 @@ namespace db
 {
   namespace goods_promotion_
   {
-    struct id
-    {
-      struct _alias_t
-      {
-        static constexpr const char _literal[] =  "id";
-        using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
-        template<typename T>
-        struct _member_t
-          {
-            T id;
-            T& operator()() { return id; }
-            const T& operator()() const { return id; }
-          };
-      };
-      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::must_not_insert, sqlpp::tag::must_not_update>;
-    };
     struct goods_rk_id
     {
       struct _alias_t
@@ -40,7 +24,7 @@ namespace db
             const T& operator()() const { return goods_rk_id; }
           };
       };
-      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::can_be_null>;
+      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
     };
     struct promotion_rk_id
     {
@@ -56,7 +40,7 @@ namespace db
             const T& operator()() const { return promotion_rk_id; }
           };
       };
-      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::can_be_null>;
+      using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::require_insert>;
     };
     struct discount_rate
     {
@@ -141,7 +125,6 @@ namespace db
   } // namespace goods_promotion_
 
   struct goods_promotion: sqlpp::table_t<goods_promotion,
-               goods_promotion_::id,
                goods_promotion_::goods_rk_id,
                goods_promotion_::promotion_rk_id,
                goods_promotion_::discount_rate,

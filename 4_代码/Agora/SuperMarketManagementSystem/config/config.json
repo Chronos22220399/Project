@@ -21,6 +21,9 @@
   },
   "auth": {
     "token_expire_minutes": 60,
-    "secret_key": "your-secret-key"
+    "secret_key": "AGORA_SECRET"
+  },
+  "register": {
+    "vcode_ttl_seconds": 60
   }
 }

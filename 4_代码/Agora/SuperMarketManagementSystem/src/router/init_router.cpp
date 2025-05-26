@@ -9,33 +9,40 @@
 #include <controller/goods/inventory_controller.h>
 #include <controller/goods/promotion_controller.h>
 // warehouse
+#include <controller/warehouse/stock_in_controller.h>
+#include <controller/warehouse/stock_out_controller.h>
 #include <controller/warehouse/warehouse_controller.h>
 
 // init all the routers
-void initRouters(crow::SimpleApp &app) {
-  // regist goods router
+void initRouters(crow::SimpleApp& app)
+{
+  // register goods router
   GoodsController::registerRoutes(app);
 
-  // regist goods_category router
+  // register goods_category router
   GoodsCategoryController::registerRoutes(app);
 
-  // regist goods_price router
+  // register goods_price router
   GoodsPriceController::registerRoutes(app);
 
-  // regist goods_promotion router
+  // register goods_promotion router
   GoodsPromotionController::registerRoutes(app);
 
-  // regist promotion router
+  // register promotion router
   PromotionController::registerRoutes(app);
 
-  // regist inventory router
+  // register inventory router
   InventoryController::registerRoutes(app);
 
-  // regist unit router
+  // register unit router
   UnitController::registerRoutes(app);
 
-  // regist warehouse router
+  // register warehouse router
   WarehouseController::registerRoutes(app);
 
-  // regist warehouse router
+  // register stock_in router
+  StockInController::registerRoutes(app);
+
+  // register stock_out router
+  StockOutController::registerRoutes(app);
 }

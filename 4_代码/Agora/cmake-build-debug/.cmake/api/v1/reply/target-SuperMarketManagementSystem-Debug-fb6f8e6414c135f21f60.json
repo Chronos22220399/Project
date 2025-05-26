@@ -182,16 +182,6 @@
 			},
 			"sourceIndexes" : 
 			[
-				95,
-				96,
-				97,
-				98,
-				99,
-				100,
-				101,
-				102,
-				103,
-				104,
 				105,
 				106,
 				107,
@@ -214,7 +204,20 @@
 				124,
 				125,
 				126,
-				127
+				127,
+				128,
+				129,
+				130,
+				131,
+				132,
+				133,
+				134,
+				135,
+				136,
+				137,
+				138,
+				139,
+				140
 			]
 		}
 	],
@@ -377,13 +380,6 @@
 				92,
 				93,
 				94,
-				128
-			]
-		},
-		{
-			"name" : "Source Files",
-			"sourceIndexes" : 
-			[
 				95,
 				96,
 				97,
@@ -394,6 +390,13 @@
 				102,
 				103,
 				104,
+				141
+			]
+		},
+		{
+			"name" : "Source Files",
+			"sourceIndexes" : 
+			[
 				105,
 				106,
 				107,
@@ -416,7 +419,20 @@
 				124,
 				125,
 				126,
-				127
+				127,
+				128,
+				129,
+				130,
+				131,
+				132,
+				133,
+				134,
+				135,
+				136,
+				137,
+				138,
+				139,
+				140
 			]
 		}
 	],
@@ -495,6 +511,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "SuperMarketManagementSystem/include/controller/goods/promotion_controller.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/controller/system/user_controller.h",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -709,6 +730,11 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/model/db/system/user_role.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "SuperMarketManagementSystem/include/model/db/warehouse/inventory_check_item.h",
 			"sourceGroupIndex" : 0
 		},
@@ -779,6 +805,11 @@
 		},
 		{
 			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/model/dto/system/user_dto.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "SuperMarketManagementSystem/include/model/dto/warehouse/inventory_check_order_dto.hpp",
 			"sourceGroupIndex" : 0
 		},
@@ -790,6 +821,31 @@
 		{
 			"backtrace" : 1,
 			"path" : "SuperMarketManagementSystem/include/model/dto/warehouse/warehouse_dto.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/register/common/init_cache.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/register/goods/init_cache.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/register/include.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/register/system/init_cache.hpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/register/warehouse/init_cache.hpp",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -825,6 +881,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "SuperMarketManagementSystem/include/repository/goods/promotion_repository.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/repository/system/user_repository.h",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -880,6 +941,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "SuperMarketManagementSystem/include/service/goods/promotion_service.h",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"path" : "SuperMarketManagementSystem/include/service/system/user_service.h",
 			"sourceGroupIndex" : 0
 		},
 		{
@@ -943,6 +1009,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "SuperMarketManagementSystem/src/controller/goods/promotion_controller.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "SuperMarketManagementSystem/src/controller/system/user_controller.cpp",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -1014,6 +1086,12 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
+			"path" : "SuperMarketManagementSystem/src/repository/system/user_repository.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
 			"path" : "SuperMarketManagementSystem/src/repository/warehouse/inventory_check_order_repository.cpp",
 			"sourceGroupIndex" : 1
 		},
@@ -1075,6 +1153,12 @@
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
 			"path" : "SuperMarketManagementSystem/src/service/goods/promotion_service.cpp",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "SuperMarketManagementSystem/src/service/system/user_service.cpp",
 			"sourceGroupIndex" : 1
 		},
 		{
