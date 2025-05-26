@@ -12,7 +12,6 @@
 #include <nlohmann/json.hpp>
 
 
-
 void GoodsController::registerRoutes(crow::SimpleApp& app)
 {
   CROW_ROUTE(app, "/api/goods/create")

@@ -2,6 +2,22 @@
 	"entries" : 
 	[
 		{
+			"name" : "ASIO_FOUND",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : ""
+				}
+			],
+			"type" : "UNINITIALIZED",
+			"value" : ""
+		},
+		{
 			"name" : "ASIO_INCLUDE_DIR",
 			"properties" : 
 			[
@@ -15,7 +31,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/opt/homebrew/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "CMAKE_ADDR2LINE",
@@ -31,7 +47,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_ADDR2LINE-NOTFOUND"
+			"value" : "/usr/bin/addr2line"
 		},
 		{
 			"name" : "CMAKE_AR",
@@ -47,7 +63,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ar"
+			"value" : "/usr/bin/ar"
 		},
 		{
 			"name" : "CMAKE_BUILD_TYPE",
@@ -71,7 +87,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug"
+			"value" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug"
 		},
 		{
 			"name" : "CMAKE_CACHE_MAJOR_VERSION",
@@ -131,7 +147,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cmake"
+			"value" : "/home/Ess/IDES/CLion-2024.3.4/clion-2024.3.4/bin/cmake/linux/x64/bin/cmake"
 		},
 		{
 			"name" : "CMAKE_CPACK_COMMAND",
@@ -143,7 +159,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/cpack"
+			"value" : "/home/Ess/IDES/CLion-2024.3.4/clion-2024.3.4/bin/cmake/linux/x64/bin/cpack"
 		},
 		{
 			"name" : "CMAKE_CTEST_COMMAND",
@@ -155,7 +171,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/bin/ctest"
+			"value" : "/home/Ess/IDES/CLion-2024.3.4/clion-2024.3.4/bin/cmake/linux/x64/bin/ctest"
 		},
 		{
 			"name" : "CMAKE_CXX_COMPILER",
@@ -171,7 +187,39 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++"
+			"value" : "/usr/bin/c++"
+		},
+		{
+			"name" : "CMAKE_CXX_COMPILER_AR",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "A wrapper around 'ar' adding the appropriate '--plugin' option for the GCC compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/gcc-ar"
+		},
+		{
+			"name" : "CMAKE_CXX_COMPILER_RANLIB",
+			"properties" : 
+			[
+				{
+					"name" : "ADVANCED",
+					"value" : "1"
+				},
+				{
+					"name" : "HELPSTRING",
+					"value" : "A wrapper around 'ranlib' adding the appropriate '--plugin' option for the GCC compiler"
+				}
+			],
+			"type" : "FILEPATH",
+			"value" : "/usr/bin/gcc-ranlib"
 		},
 		{
 			"name" : "CMAKE_CXX_FLAGS",
@@ -279,7 +327,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "MACHO"
+			"value" : "ELF"
 		},
 		{
 			"name" : "CMAKE_EXE_LINKER_FLAGS",
@@ -295,7 +343,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "-L/opt/homebrew/opt/mysql@8.4/lib"
+			"value" : ""
 		},
 		{
 			"name" : "CMAKE_EXE_LINKER_FLAGS_DEBUG",
@@ -399,7 +447,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/CMakeFiles/pkgRedirects"
+			"value" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/CMakeFiles/pkgRedirects"
 		},
 		{
 			"name" : "CMAKE_GENERATOR",
@@ -471,23 +519,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora"
-		},
-		{
-			"name" : "CMAKE_INSTALL_NAME_TOOL",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a program."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "/usr/bin/install_name_tool"
+			"value" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora"
 		},
 		{
 			"name" : "CMAKE_INSTALL_PREFIX",
@@ -500,6 +532,18 @@
 			],
 			"type" : "PATH",
 			"value" : "/usr/local"
+		},
+		{
+			"name" : "CMAKE_INSTALL_SO_NO_EXE",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "Install .so files without execute permission."
+				}
+			],
+			"type" : "INTERNAL",
+			"value" : "0"
 		},
 		{
 			"name" : "CMAKE_LINKER",
@@ -515,7 +559,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ld"
+			"value" : "/usr/bin/ld"
 		},
 		{
 			"name" : "CMAKE_MAKE_PROGRAM",
@@ -527,7 +571,7 @@
 				}
 			],
 			"type" : "UNINITIALIZED",
-			"value" : "/Applications/CLion.app/Contents/bin/ninja/mac/aarch64/ninja"
+			"value" : "/home/Ess/IDES/CLion-2024.3.4/clion-2024.3.4/bin/ninja/linux/x64/ninja"
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS",
@@ -543,7 +587,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "-L/opt/homebrew/opt/mysql@8.4/lib"
+			"value" : ""
 		},
 		{
 			"name" : "CMAKE_MODULE_LINKER_FLAGS_DEBUG",
@@ -623,7 +667,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/nm"
+			"value" : "/usr/bin/nm"
 		},
 		{
 			"name" : "CMAKE_NUMBER_OF_MAKEFILES",
@@ -651,7 +695,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_OBJCOPY-NOTFOUND"
+			"value" : "/usr/bin/objcopy"
 		},
 		{
 			"name" : "CMAKE_OBJDUMP",
@@ -667,43 +711,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/objdump"
-		},
-		{
-			"name" : "CMAKE_OSX_ARCHITECTURES",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Build architectures for OSX"
-				}
-			],
-			"type" : "STRING",
-			"value" : ""
-		},
-		{
-			"name" : "CMAKE_OSX_DEPLOYMENT_TARGET",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Minimum OS X version to target for deployment (at runtime); newer APIs weak linked. Set to empty string for default value."
-				}
-			],
-			"type" : "STRING",
-			"value" : "14.5"
-		},
-		{
-			"name" : "CMAKE_OSX_SYSROOT",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "The product will be built against the headers and libraries located inside the indicated SDK."
-				}
-			],
-			"type" : "PATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk"
+			"value" : "/usr/bin/objdump"
 		},
 		{
 			"name" : "CMAKE_PLATFORM_INFO_INITIALIZED",
@@ -827,7 +835,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/ranlib"
+			"value" : "/usr/bin/ranlib"
 		},
 		{
 			"name" : "CMAKE_READELF",
@@ -843,7 +851,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "CMAKE_READELF-NOTFOUND"
+			"value" : "/usr/bin/readelf"
 		},
 		{
 			"name" : "CMAKE_ROOT",
@@ -855,7 +863,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.30"
+			"value" : "/home/Ess/IDES/CLion-2024.3.4/clion-2024.3.4/bin/cmake/linux/x64/share/cmake-3.30"
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS",
@@ -871,7 +879,7 @@
 				}
 			],
 			"type" : "STRING",
-			"value" : "-L/opt/homebrew/opt/mysql@8.4/lib"
+			"value" : ""
 		},
 		{
 			"name" : "CMAKE_SHARED_LINKER_FLAGS_DEBUG",
@@ -1063,7 +1071,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip"
+			"value" : "/usr/bin/strip"
 		},
 		{
 			"name" : "CMAKE_TAPI",
@@ -1079,7 +1087,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/tapi"
+			"value" : "CMAKE_TAPI-NOTFOUND"
 		},
 		{
 			"name" : "CMAKE_UNAME",
@@ -1119,7 +1127,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/opt/homebrew/lib/cmake/Crow"
+			"value" : "/usr/lib/cmake/Crow"
 		},
 		{
 			"name" : "EnableTest",
@@ -1134,18 +1142,6 @@
 			"value" : "OFF"
 		},
 		{
-			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_OpenSSL",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : "Details about finding OpenSSL"
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "[/opt/homebrew/Cellar/openssl@3/3.5.0/lib/libcrypto.dylib][/opt/homebrew/Cellar/openssl@3/3.5.0/include][c ][v3.5.0()]"
-		},
-		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_SQLite3",
 			"properties" : 
 			[
@@ -1155,7 +1151,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include][/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libsqlite3.tbd][v3.43.2()]"
+			"value" : "[/usr/include][/usr/lib/libsqlite3.so][v3.49.1()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Sodium",
@@ -1167,7 +1163,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.dylib][/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.dylib][/opt/homebrew/Cellar/libsodium/1.0.20/include][v()]"
+			"value" : "[/usr/lib/libsodium.so][/usr/lib/libsodium.so][/usr/include][v()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_Threads",
@@ -1191,7 +1187,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libz.tbd][/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include][c ][v1.2.12()]"
+			"value" : "[/usr/lib/libz.so][/usr/include][c ][v1.3.1()]"
 		},
 		{
 			"name" : "FIND_PACKAGE_MESSAGE_DETAILS_asio",
@@ -1203,55 +1199,19 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "[/opt/homebrew/include][v()]"
+			"value" : "[/usr/include][v()]"
 		},
 		{
-			"name" : "OPENSSL_CRYPTO_LIBRARY",
+			"name" : "OpenSSL_DIR",
 			"properties" : 
 			[
 				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
 					"name" : "HELPSTRING",
-					"value" : "Path to a library."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib/libcrypto.dylib"
-		},
-		{
-			"name" : "OPENSSL_INCLUDE_DIR",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a file."
+					"value" : "The directory containing a CMake configuration file for OpenSSL."
 				}
 			],
 			"type" : "PATH",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/include"
-		},
-		{
-			"name" : "OPENSSL_SSL_LIBRARY",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a library."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib/libssl.dylib"
+			"value" : "/usr/lib/cmake/OpenSSL"
 		},
 		{
 			"name" : "PC_SQLite3_CFLAGS",
@@ -1263,7 +1223,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : ""
+			"value" : "-I/usr/include"
 		},
 		{
 			"name" : "PC_SQLite3_CFLAGS_I",
@@ -1311,7 +1271,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "PC_SQLite3_INCLUDE_DIRS",
@@ -1323,7 +1283,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : ""
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "PC_SQLite3_LDFLAGS",
@@ -1455,7 +1415,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/Library/Developer/CommandLineTools/SDKs/MacOSX14.sdk/usr"
+			"value" : "/usr"
 		},
 		{
 			"name" : "PC_SQLite3_STATIC_CFLAGS",
@@ -1467,7 +1427,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : ""
+			"value" : "-I/usr/include"
 		},
 		{
 			"name" : "PC_SQLite3_STATIC_CFLAGS_I",
@@ -1503,7 +1463,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : ""
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "PC_SQLite3_STATIC_LDFLAGS",
@@ -1515,7 +1475,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-L/usr/lib;-lsqlite3"
+			"value" : "-L/usr/lib;-lsqlite3;-lm;-lz"
 		},
 		{
 			"name" : "PC_SQLite3_STATIC_LDFLAGS_OTHER",
@@ -1551,7 +1511,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "sqlite3"
+			"value" : "sqlite3;m;z"
 		},
 		{
 			"name" : "PC_SQLite3_STATIC_LIBRARY_DIRS",
@@ -1623,7 +1583,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "3.43.2"
+			"value" : "3.49.1"
 		},
 		{
 			"name" : "PC_SQLite3_sqlite3_INCLUDEDIR",
@@ -1703,7 +1663,19 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/bin/pkg-config"
+			"value" : "/usr/bin/pkg-config"
+		},
+		{
+			"name" : "PkgConfig_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for PkgConfig."
+				}
+			],
+			"type" : "PATH",
+			"value" : "PkgConfig_DIR-NOTFOUND"
 		},
 		{
 			"name" : "Project_BINARY_DIR",
@@ -1715,7 +1687,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug"
+			"value" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug"
 		},
 		{
 			"name" : "Project_IS_TOP_LEVEL",
@@ -1739,7 +1711,19 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora"
+			"value" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora"
+		},
+		{
+			"name" : "SQLite3_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for SQLite3."
+				}
+			],
+			"type" : "PATH",
+			"value" : "SQLite3_DIR-NOTFOUND"
 		},
 		{
 			"name" : "SQLite3_INCLUDE_DIR",
@@ -1755,7 +1739,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "SQLite3_LIBRARY",
@@ -1771,7 +1755,19 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libsqlite3.tbd"
+			"value" : "/usr/lib/libsqlite3.so"
+		},
+		{
+			"name" : "Sodium_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Sodium."
+				}
+			],
+			"type" : "PATH",
+			"value" : "Sodium_DIR-NOTFOUND"
 		},
 		{
 			"name" : "Sqlpp11_DIR",
@@ -1795,7 +1791,7 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/SuperMarketManagementSystem"
+			"value" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/cmake-build-debug/SuperMarketManagementSystem"
 		},
 		{
 			"name" : "SuperMarketManagementSystem_IS_TOP_LEVEL",
@@ -1819,7 +1815,31 @@
 				}
 			],
 			"type" : "STATIC",
-			"value" : "/Users/wuming/Desktop/Project/4_\u4ee3\u7801/Agora/SuperMarketManagementSystem"
+			"value" : "/home/Ess/Code/Project/Project/4_\u4ee3\u7801/Agora/SuperMarketManagementSystem"
+		},
+		{
+			"name" : "Threads_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for Threads."
+				}
+			],
+			"type" : "PATH",
+			"value" : "Threads_DIR-NOTFOUND"
+		},
+		{
+			"name" : "ZLIB_DIR",
+			"properties" : 
+			[
+				{
+					"name" : "HELPSTRING",
+					"value" : "The directory containing a CMake configuration file for ZLIB."
+				}
+			],
+			"type" : "PATH",
+			"value" : "ZLIB_DIR-NOTFOUND"
 		},
 		{
 			"name" : "ZLIB_INCLUDE_DIR",
@@ -1835,7 +1855,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "ZLIB_LIBRARY_DEBUG",
@@ -1867,427 +1887,19 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libz.tbd"
+			"value" : "/usr/lib/libz.so"
 		},
 		{
-			"name" : "_OPENSSL_CFLAGS",
+			"name" : "_CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED",
 			"properties" : 
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : ""
+					"value" : "linker supports push/pop state"
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-I/opt/homebrew/Cellar/openssl@3/3.5.0/include"
-		},
-		{
-			"name" : "_OPENSSL_CFLAGS_I",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_CFLAGS_OTHER",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_FOUND",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "1"
-		},
-		{
-			"name" : "_OPENSSL_INCLUDEDIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/include"
-		},
-		{
-			"name" : "_OPENSSL_INCLUDE_DIRS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/include"
-		},
-		{
-			"name" : "_OPENSSL_LDFLAGS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "-L/opt/homebrew/Cellar/openssl@3/3.5.0/lib;-lssl;-lcrypto"
-		},
-		{
-			"name" : "_OPENSSL_LDFLAGS_OTHER",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_LIBDIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib"
-		},
-		{
-			"name" : "_OPENSSL_LIBRARIES",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "ssl;crypto"
-		},
-		{
-			"name" : "_OPENSSL_LIBRARY_DIRS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib"
-		},
-		{
-			"name" : "_OPENSSL_LIBS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_LIBS_L",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_LIBS_OTHER",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_LIBS_PATHS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_MODULE_NAME",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "openssl"
-		},
-		{
-			"name" : "_OPENSSL_PREFIX",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0"
-		},
-		{
-			"name" : "_OPENSSL_STATIC_CFLAGS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "-I/opt/homebrew/Cellar/openssl@3/3.5.0/include"
-		},
-		{
-			"name" : "_OPENSSL_STATIC_CFLAGS_I",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_STATIC_CFLAGS_OTHER",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_STATIC_INCLUDE_DIRS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/include"
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LDFLAGS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "-L/opt/homebrew/Cellar/openssl@3/3.5.0/lib;-lssl;-lcrypto"
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LDFLAGS_OTHER",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LIBDIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LIBRARIES",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "ssl;crypto"
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LIBRARY_DIRS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib"
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LIBS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LIBS_L",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LIBS_OTHER",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_STATIC_LIBS_PATHS",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_VERSION",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "3.5.0"
-		},
-		{
-			"name" : "_OPENSSL_openssl_INCLUDEDIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_openssl_LIBDIR",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_openssl_PREFIX",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
-		},
-		{
-			"name" : "_OPENSSL_openssl_VERSION",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : ""
+			"value" : "TRUE"
 		},
 		{
 			"name" : "__pkg_config_arguments_PC_SQLite3",
@@ -2300,18 +1912,6 @@
 			],
 			"type" : "INTERNAL",
 			"value" : "QUIET;sqlite3"
-		},
-		{
-			"name" : "__pkg_config_arguments__OPENSSL",
-			"properties" : 
-			[
-				{
-					"name" : "HELPSTRING",
-					"value" : ""
-				}
-			],
-			"type" : "INTERNAL",
-			"value" : "QUIET;openssl"
 		},
 		{
 			"name" : "__pkg_config_arguments_sodium_PKG",
@@ -2338,7 +1938,7 @@
 			"value" : "1"
 		},
 		{
-			"name" : "__pkg_config_checked__OPENSSL",
+			"name" : "__pkg_config_checked_sodium_PKG",
 			"properties" : 
 			[
 				{
@@ -2350,16 +1950,16 @@
 			"value" : "1"
 		},
 		{
-			"name" : "__pkg_config_checked_sodium_PKG",
+			"name" : "asio_DIR",
 			"properties" : 
 			[
 				{
 					"name" : "HELPSTRING",
-					"value" : ""
+					"value" : "The directory containing a CMake configuration file for asio."
 				}
 			],
-			"type" : "INTERNAL",
-			"value" : "1"
+			"type" : "PATH",
+			"value" : "asio_DIR-NOTFOUND"
 		},
 		{
 			"name" : "date_DIR",
@@ -2383,7 +1983,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/opt/homebrew/lib/cmake/fmt"
+			"value" : "/usr/lib/cmake/fmt"
 		},
 		{
 			"name" : "pkgcfg_lib_PC_SQLite3_sqlite3",
@@ -2399,39 +1999,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX15.2.sdk/usr/lib/libsqlite3.tbd"
-		},
-		{
-			"name" : "pkgcfg_lib__OPENSSL_crypto",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a library."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib/libcrypto.dylib"
-		},
-		{
-			"name" : "pkgcfg_lib__OPENSSL_ssl",
-			"properties" : 
-			[
-				{
-					"name" : "ADVANCED",
-					"value" : "1"
-				},
-				{
-					"name" : "HELPSTRING",
-					"value" : "Path to a library."
-				}
-			],
-			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib/libssl.dylib"
+			"value" : "/usr/lib/libsqlite3.so"
 		},
 		{
 			"name" : "pkgcfg_lib_sodium_PKG_sodium",
@@ -2447,7 +2015,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.dylib"
+			"value" : "/usr/lib/libsodium.so"
 		},
 		{
 			"name" : "prefix_result",
@@ -2459,7 +2027,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/openssl@3/3.5.0/lib"
+			"value" : "/usr/lib"
 		},
 		{
 			"name" : "sodium_INCLUDE_DIR",
@@ -2475,7 +2043,7 @@
 				}
 			],
 			"type" : "PATH",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "sodium_LIBRARY_DEBUG",
@@ -2491,7 +2059,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.dylib"
+			"value" : "/usr/lib/libsodium.so"
 		},
 		{
 			"name" : "sodium_LIBRARY_RELEASE",
@@ -2507,7 +2075,7 @@
 				}
 			],
 			"type" : "FILEPATH",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/lib/libsodium.dylib"
+			"value" : "/usr/lib/libsodium.so"
 		},
 		{
 			"name" : "sodium_PKG_CFLAGS",
@@ -2519,7 +2087,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-I/opt/homebrew/Cellar/libsodium/1.0.20/include"
+			"value" : "-I/usr/include"
 		},
 		{
 			"name" : "sodium_PKG_CFLAGS_I",
@@ -2567,7 +2135,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "sodium_PKG_INCLUDE_DIRS",
@@ -2579,7 +2147,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "sodium_PKG_LDFLAGS",
@@ -2591,7 +2159,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-L/opt/homebrew/Cellar/libsodium/1.0.20/lib;-lsodium"
+			"value" : "-L/usr/lib;-lsodium"
 		},
 		{
 			"name" : "sodium_PKG_LDFLAGS_OTHER",
@@ -2615,7 +2183,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/lib"
+			"value" : "/usr/lib"
 		},
 		{
 			"name" : "sodium_PKG_LIBRARIES",
@@ -2639,7 +2207,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/lib"
+			"value" : "/usr/lib"
 		},
 		{
 			"name" : "sodium_PKG_LIBS",
@@ -2711,7 +2279,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20"
+			"value" : "/usr"
 		},
 		{
 			"name" : "sodium_PKG_STATIC_CFLAGS",
@@ -2723,7 +2291,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-I/opt/homebrew/Cellar/libsodium/1.0.20/include"
+			"value" : "-I/usr/include"
 		},
 		{
 			"name" : "sodium_PKG_STATIC_CFLAGS_I",
@@ -2759,7 +2327,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/include"
+			"value" : "/usr/include"
 		},
 		{
 			"name" : "sodium_PKG_STATIC_LDFLAGS",
@@ -2771,7 +2339,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "-L/opt/homebrew/Cellar/libsodium/1.0.20/lib;-lsodium;-lpthread;-pthread"
+			"value" : "-L/usr/lib;-lsodium;-lpthread;-pthread"
 		},
 		{
 			"name" : "sodium_PKG_STATIC_LDFLAGS_OTHER",
@@ -2819,7 +2387,7 @@
 				}
 			],
 			"type" : "INTERNAL",
-			"value" : "/opt/homebrew/Cellar/libsodium/1.0.20/lib"
+			"value" : "/usr/lib"
 		},
 		{
 			"name" : "sodium_PKG_STATIC_LIBS",

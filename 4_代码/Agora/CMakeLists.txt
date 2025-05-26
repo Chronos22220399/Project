@@ -6,7 +6,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0077 NEW)  # 处理googletest的版本警告
 # 全局编译设置
 set(CMAKE_SUPPRESS_REGENERATION FALSE)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -30,5 +30,4 @@ project(
   LANGUAGES CXX
   VERSION 1.0)
 
-# add_subdirectory(SuperMarketManagementSystem)
-add_subdirectory(TestSqlpp11)
+add_subdirectory(SuperMarketManagementSystem)

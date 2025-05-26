@@ -9,11 +9,13 @@
 #include <controller/goods/inventory_controller.h>
 #include <controller/goods/promotion_controller.h>
 // warehouse
-#include <controller/warehouse/warehouse_controller.h>
 #include <controller/warehouse/stock_in_controller.h>
+#include <controller/warehouse/stock_out_controller.h>
+#include <controller/warehouse/warehouse_controller.h>
 
 // init all the routers
-void initRouters(crow::SimpleApp &app) {
+void initRouters(crow::SimpleApp& app)
+{
   // register goods router
   GoodsController::registerRoutes(app);
 
@@ -40,4 +42,7 @@ void initRouters(crow::SimpleApp &app) {
 
   // register stock_in router
   StockInController::registerRoutes(app);
+
+  // register stock_out router
+  StockOutController::registerRoutes(app);
 }
