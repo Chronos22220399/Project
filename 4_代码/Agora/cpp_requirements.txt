@@ -1,5 +1,25 @@
-# must under Agora dir
+
+# install accessesory
+sudo apt install build-essential cmake git ninja
+
+# git configure
+git config --global user.name 'xxx'
+git config --global user.email 'xxx'
+
+# clone the remote repo
+git clone https://gitee.com/esskhronos/Project.git
+
+# into the Project
+cd Project
+
+# init the ref
+git submodule update --init --recursive
+
+# into Agora dir
+cd ./4_xxx/Agora
+
 # change all sh file's mode
+sudo chmod +x ./*.sh
 sudo chmod +x ./scripts/*.sh
 
 # install fmt
