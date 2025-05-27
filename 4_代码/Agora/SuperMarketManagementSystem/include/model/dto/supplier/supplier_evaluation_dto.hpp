@@ -1,4 +1,5 @@
 #pragma once
+#include <common/cache_func_getter.h>
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/uni_define.h>
@@ -7,11 +8,17 @@
 #include <string>
 
 // DTO for supplier_evaluation table
-struct SupplierEvaluationDTO {
+struct SupplierEvaluationDTO : CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
-    "evaluation_id", "supplier_id",   "evaluation_date",
-    "service_score", "qualify_score", "timeliness_score",
-    "total_score",   "comment",       "remark"
+    "evaluation_id",     //
+    "supplier_id",       //
+    "evaluation_date",   //
+    "service_score",     //
+    "qualify_score",     //
+    "timeliness_score",  //
+    "total_score",       //
+    "comment",           //
+    "remark"             //
   };
 
   in_id_type id = 0;
@@ -32,7 +39,7 @@ struct SupplierEvaluationDTO {
       return SupplierEvaluationDTO{
         .evaluation_id = j.at("evaluation_id").get<std::string>(),
         .supplier_rk_id =
-          getInternalId("myvenv", j.at("supplier_rk_id").get<ex_id_type>()),
+          getInternalId("supplier", j.at("supplier_id").get<ex_id_type>()),
         .evaluation_date =
           utils::string_to_datetime(j.at("evaluation_date").get<std::string>()),
         .service_score = j.at("service_score").get<double>(),
@@ -58,7 +65,7 @@ inline void to_json(nlohmann::json& j,
     {"id", supplier_evaluation_dto.id},
     {"evaluation_id", supplier_evaluation_dto.evaluation_id},
     {"supplier_id", SupplierEvaluationDTO::getExternalId(
-                      "myvenv", supplier_evaluation_dto.supplier_rk_id)},
+                      "supplier", supplier_evaluation_dto.supplier_rk_id)},
     {"evaluation_date",
      utils::datetime_to_string(supplier_evaluation_dto.evaluation_date)},
     {"service_score", supplier_evaluation_dto.service_score},

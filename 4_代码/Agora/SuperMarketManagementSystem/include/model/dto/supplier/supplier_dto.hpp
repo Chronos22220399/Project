@@ -9,11 +9,20 @@
 // DTO for myvenv table
 struct SupplierDTO {
   inline static const std::vector<std::string> required_fields = {
-    "supplier_id", "supplier_name", "contact_person", "contact_phone",
-    "email",       "create_at",     "status",         "remark"};
+    "supplier_id",     //
+    "supplier_name",   //
+    "contact_person",  //
+    "contact_phone",   //
+    "email",           //
+    "status",          //
+    "remark"           //
+  };
 
   inline static const std::vector<std::string> status_domain = {
-    "normal", "inactive", "blacklisted"};
+    "normal",      //
+    "inactive",    //
+    "blacklisted"  //
+  };
 
 
   in_id_type id = 0;
@@ -37,7 +46,7 @@ struct SupplierDTO {
         .contact_phone = j.at("contact_phone").get<std::string>(),
         .email = j.at("email").get<std::string>(),
         .created_at =
-          utils::string_to_time(j.at("created_at").get<std::string>()),
+          utils::string_to_datetime(j.at("created_at").get<std::string>()),
         .status = j.at("status").get<std::string>(),
         .remark = j.at("remark").get<std::string>(),
       };

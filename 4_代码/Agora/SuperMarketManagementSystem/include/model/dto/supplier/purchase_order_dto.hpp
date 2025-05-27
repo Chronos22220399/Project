@@ -1,4 +1,5 @@
 #pragma once
+#include <common/cache_func_getter.h>
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/uni_define.h>
@@ -7,19 +8,22 @@
 #include <string>
 
 // DTO for purchase_order table
-struct PurchaseOrderDTO {
+struct PurchaseOrderDTO : CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
-    "purchase_order_id",
-    "supplier_id",
-    "created_at",
-    "created_by",
-    "expected_arrival_date",
-    "actual_arrival_date",
-    "status",
-    "total_amount",
-    "remark"};
+    "purchase_order_id",      //
+    "supplier_id",            //
+    "created_by",             //
+    "expected_arrival_date",  //
+    "actual_arrival_date",    //
+    "status",                 //
+    "total_amount",           //
+    "remark"                  //
+  };
   inline static const std::vector<std::string> status_domain = {
-    "pending_review", "ordered", "received"};
+    "pending_review",  //
+    "ordered",         //
+    "received"         //
+  };
 
   in_id_type id = 0;
   std::string purchase_order_id = "";
@@ -37,17 +41,17 @@ struct PurchaseOrderDTO {
   {
     try {
       return PurchaseOrderDTO{
-        .purchase_order_id = j.at("purchase_order_id").get<std::string>(),
+        .purchase_order_id = j.at("purchase_order_id").get<ex_id_type>(),
         .supplier_rk_id =
-          getInternalId("myvenv", j.at("supplier_rk_id").get<ex_id_type>()),
+          getInternalId("supplier", j.at("supplier_id").get<ex_id_type>()),
         .created_at =
           utils::string_to_datetime(j.at("created_at").get<std::string>()),
         .created_by =
           getInternalId("employee", j.at("created_by").get<ex_id_type>()),
-        .expected_arrival_date = utils::string_to_time(
+        .expected_arrival_date = utils::string_to_datetime(
           j.at("expected_arrival_date").get<std::string>()),
-        .actual_arrival_date =
-          utils::string_to_datetime(j.at("actual_arrival_date").get<std::string>()),
+        .actual_arrival_date = utils::string_to_datetime(
+          j.at("actual_arrival_date").get<std::string>()),
         .status = j.at("status").get<std::string>(),
         .total_amount = j.at("total_amount").get<double>(),
         .remark = j.at("remark").get<std::string>(),

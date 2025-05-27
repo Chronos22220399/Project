@@ -27,7 +27,8 @@ ServiceResult MemberService::create(MemberDTO& member_dto)
   // 设置会员 id
   member_dto.member_id = utils::create_id("Mem-");
   // 设置注册日期
-  member_dto.registration_date = system_clock::now();
+  member_dto.registration_date =
+    time_point_cast<microseconds>(system_clock::now());
   member_dto.points = 0.0;
 
   // 创建

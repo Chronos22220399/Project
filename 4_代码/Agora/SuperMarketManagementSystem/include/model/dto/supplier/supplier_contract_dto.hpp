@@ -1,4 +1,5 @@
 #pragma once
+#include <common/cache_func_getter.h>
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/uni_define.h>
@@ -7,13 +8,22 @@
 #include <string>
 
 // DTO for supplier_contract table
-struct SupplierContractDTO {
+struct SupplierContractDTO : CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
-    "contract_id",    "supplier_id", "start_date", "end_date",
-    "ontract_amount", "status",     "file_path"};
+    "contract_id",      //
+    "supplier_id",      //
+    "start_date",       //
+    "end_date",         //
+    "contract_amount",  //
+    "status",           //
+    "file_path"         //
+  };
 
-  inline static const std::vector<std::string> status_domain = {"active", "expired",
-                                                          "terminated"};
+  inline static const std::vector<std::string> status_domain = {
+    "active",     //
+    "expired",    //
+    "terminated"  //
+  };
 
   in_id_type id = 0;
   std::string contract_id = "";
@@ -28,15 +38,17 @@ struct SupplierContractDTO {
   static SupplierContractDTO from_json(const nlohmann::json& j)
   {
     try {
-            return SupplierContractDTO{
-                .contract_id = j.at("contract_id").get<std::string>(),
-                .supplier_rk_id = getInternalId("myvenv",j.at("supplier_id").get<ex_id_type>(),
-                .start_date = utils::string_to_datetime(j.at("start_date").get<std::string>()),
-                .end_date = utils::string_to_datetime(j.at("end_date").get<std::string>()),
-                .contract_amount = j.at("contract_amount").get<double>(),
-                .status = j.at("status").get<std::string>(),
-                .file_path = j.at("file_path").get<std::string>(),
-            };
+      return SupplierContractDTO{
+        .contract_id = j.at("contract_id").get<std::string>(),
+        .supplier_rk_id =
+          getInternalId("supplier", j.at("supplier_id").get<ex_id_type>()),
+        .start_date =
+          utils::string_to_datetime(j.at("start_date").get<std::string>()),
+        .end_date =
+          utils::string_to_datetime(j.at("end_date").get<std::string>()),
+        .contract_amount = j.at("contract_amount").get<double>(),
+        .status = j.at("status").get<std::string>(),
+        .file_path = j.at("file_path").get<std::string>()};
     }
     catch (const std::exception& e) {
       std::cerr << "[from_json error] " << e.what() << "\n"
@@ -53,7 +65,7 @@ inline void to_json(nlohmann::json& j,
     {"id", supplier_contract_dto.id},
     {"contract_id", supplier_contract_dto.contract_id},
     {"supplier_id", SupplierContractDTO::getExternalId(
-                      "myvenv", supplier_contract_dto.supplier_rk_id)},
+                      "supplier", supplier_contract_dto.supplier_rk_id)},
     {"start_date", utils::datetime_to_string(supplier_contract_dto.start_date)},
     {"end_date", utils::datetime_to_string(supplier_contract_dto.end_date)},
     {"contract_amount", supplier_contract_dto.contract_amount},
