@@ -1,0 +1,45 @@
+
+# install accessesory
+sudo apt install build-essential cmake git ninja
+
+# git configure
+git config --global user.name 'xxx'
+git config --global user.email 'xxx'
+
+# clone the remote repo
+git clone https://gitee.com/esskhronos/Project.git
+
+# into the Project
+cd Project
+
+# init the ref
+git submodule update --init --recursive
+
+# into Agora dir
+cd ./4_xxx/Agora
+
+# change all sh file's mode
+sudo chmod +x ./*.sh
+sudo chmod +x ./scripts/*.sh
+
+# install fmt
+fmt: sudo ./scripts/install-fmt.sh
+
+# install sqlite3 and sqlpp11
+sqlite3 & sqlpp11: sudo ./scripts/install-sqlpp11.sh
+
+# install zlib
+zlib: sudo apt install zlib1g-dev
+
+# install Crow
+Crow: sudo ./scripts/install-crow.sh
+
+# install Sodium
+sodium: sudo apt install libsodium-dev
+
+# install openssl
+openssl: sudo apt install libssl-dev
+
+# install jwt-cpp
+jwt-cpp: sudo ./scripts/install-jwt-cpp.sh
+
