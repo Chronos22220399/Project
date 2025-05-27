@@ -7,9 +7,12 @@
 class MemberService {
   public:
   static ServiceResult create(MemberDTO& dto);
-  static ServiceResult updateByMemberId(const std::string& ex_id,
+  static ServiceResult updateByMemberId(const ex_id_type& ex_id,
                                         MemberDTO& dto);
-  static ServiceResult removeByMemberId(const std::string& ex_id);
+  static ServiceResult removeByMemberId(const ex_id_type& ex_id);
   static ServiceResult getByPage(const int page, const int page_size);
   static ServiceResult getAll();
+
+  // 注销会员
+  static ServiceResult invalidMemberByMember(const ex_id_type& member_id);
 };

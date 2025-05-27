@@ -24,7 +24,7 @@ void SalesOrderController::registerRoutes(crow::SimpleApp& app)
       CHECK_REQUIRED_FIELDS(j, SalesOrderDTO::required_fields);
 
       auto sales_order_dto = SalesOrderDTO::from_json(j);
-      auto sales_order_id = sales_order_dto.sales_order_id;
+      auto sales_order_id = sales_order_dto.order_id;
 
       auto res = SalesOrderService::updateBySalesOrderId(sales_order_id,
                                                          sales_order_dto);

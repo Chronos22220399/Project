@@ -8,7 +8,7 @@ class SalesOrderService {
   static ServiceResult create(SalesOrderDTO& dto);
   static ServiceResult updateBySalesOrderId(const std::string& ex_id,
                                             SalesOrderDTO& dto);
-  static ServiceResult remove(const std::string& ex_id);
+  static ServiceResult removeBySalesOrderId(const std::string& ex_id);
   static ServiceResult getByPage(const int page, const int page_size);
   static ServiceResult getAll();
 };
