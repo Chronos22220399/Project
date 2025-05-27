@@ -43,5 +43,4 @@ count_type SupplierEvaluationRepository::count()
 {
   return _count();
 }
-
 // 其他方法实现...

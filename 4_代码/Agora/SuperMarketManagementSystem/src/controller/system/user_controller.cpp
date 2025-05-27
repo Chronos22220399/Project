@@ -49,17 +49,20 @@ void UserController::registerRoutes(crow::SimpleApp& app)
       auto res = UserService::login(username, password);
       return utils::to_response(res, 200);
     });
+
+
+  // MARK: 更新用户信息
+  // 需要指定是否登陆 change_password
   CROW_ROUTE(app, "/api/user/update")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
       CHECK_REQUIRED_FIELDS(j, UserDTO::required_fields);
-      CHECK_REQUIRED_FIELD(j, "change_password");
 
       auto user_dto = UserDTO::from_json(j);
       auto user_id = user_dto.user_id;
-      auto change_password = j.at("change_password").get<bool>();
+      auto change_password = j.value("change_password", false);
 
       auto res =
         UserService::updateByUserId(user_id, change_password, user_dto);

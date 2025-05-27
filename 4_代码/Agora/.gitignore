@@ -50,4 +50,8 @@ $RECYCLE.BIN/
 *.lnk
 
 # clion
+<<<<<<< HEAD
 cmake-build-*/
+=======
+cmake_build-*/
+>>>>>>> 535ab72b0c1ac37b88efea344e9b4f90c1b9c419

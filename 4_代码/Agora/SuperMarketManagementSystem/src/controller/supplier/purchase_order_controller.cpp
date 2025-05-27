@@ -1,8 +1,6 @@
 #include <controller/supplier/purchase_order_controller.h>
 #include <service/supplier/purchase_order_service.h>
 
-void PurchaseOrderController::registerRoutes(crow::SimpleApp& app)
-{
   CROW_ROUTE(app, "/api/purchase_order/create")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
@@ -26,8 +24,6 @@ void PurchaseOrderController::registerRoutes(crow::SimpleApp& app)
       auto purchase_order_dto = PurchaseOrderDTO::from_json(j);
       auto purchase_order_id = purchase_order_dto.purchase_order_id;
 
-      auto res = PurchaseOrderService::updateByPurchaseOrderId(
-        purchase_order_id, purchase_order_dto);
       return utils::to_response(res, 200);
     });
 
@@ -41,8 +37,6 @@ void PurchaseOrderController::registerRoutes(crow::SimpleApp& app)
 
       auto purchase_order_id = j.at("purchase_order_id").get<ex_id_type>();
 
-      auto res =
-        PurchaseOrderService::removeByPurchaseOrderId(purchase_order_id);
 
       return utils::to_response(res, 200);
     });
@@ -63,7 +57,6 @@ void PurchaseOrderController::registerRoutes(crow::SimpleApp& app)
       return utils::to_response(res, 200);
     });
 
-  CROW_ROUTE(app, "/api/purchase_order/getAll").methods("GET"_method)([]() {
     auto res = PurchaseOrderService::getAll();
     return utils::to_response(res, 200);
   });

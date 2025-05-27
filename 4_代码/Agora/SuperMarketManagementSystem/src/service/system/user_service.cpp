@@ -147,6 +147,7 @@ std::optional<std::string> UserService::hash_password(std::string& password)
   return std::nullopt;
 }
 
+
 // 通用检查
 ServiceResult UserService::uniCheck(UserDTO& user_dto)
 {

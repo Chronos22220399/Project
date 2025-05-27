@@ -160,8 +160,6 @@ class CodeGenerator:
 
 // DTO for {self.table_name} table
 struct {self.dto_name_camel}: public CacheFuncGetter {{
-    inline static const std::vector<std::string> required_fields = {{}};
-    inline static const std::vector<std::string> _domain = {{}};
 
     {chr(10).join(fields)}
 
