@@ -81,7 +81,7 @@ const form = ref({
     status: 'active'
 })
 
-const data = ref < any[] > ([])
+const data = ref<any[]>([])
 const currentPage = ref(1)
 const pageSize = ref(5)
 const total = ref(0)

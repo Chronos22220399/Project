@@ -45,7 +45,7 @@
                 <el-form-item label="手机号">
                     <el-input v-model="form.phone" />
                 </el-form-item>
-                <el-form-item label="注册时间">
+                <el-form-item label="注册日期">
                     <el-date-picker v-model="form.registration_date" type="date" placeholder="选择日期" />
                 </el-form-item>
                 <el-form-item label="会员等级">
