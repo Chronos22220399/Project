@@ -2,7 +2,7 @@
 #include <crow.h>
 #include <nlohmann/json.hpp>
 
-class EmployeeController {
+class AttendanceRecordController {
 public:
     static void registerRoutes(crow::SimpleApp& app);
 };

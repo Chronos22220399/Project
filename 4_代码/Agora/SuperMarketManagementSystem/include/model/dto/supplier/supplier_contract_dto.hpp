@@ -10,6 +10,7 @@
 // DTO for supplier_contract table
 struct SupplierContractDTO : CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
+<<<<<<< HEAD
     "contract_id",      //
     "supplier_id",      //
     "start_date",       //
@@ -18,6 +19,10 @@ struct SupplierContractDTO : CacheFuncGetter {
     "status",           //
     "file_path"         //
   };
+=======
+    "contract_id",    "supplier_id", "start_date", "end_date",
+    "contract_amount", "status",     "file_path"};
+>>>>>>> cb5c06304e05b003d27974bd5595af55dd36affe
 
   inline static const std::vector<std::string> status_domain = {
     "active",     //
@@ -38,6 +43,7 @@ struct SupplierContractDTO : CacheFuncGetter {
   static SupplierContractDTO from_json(const nlohmann::json& j)
   {
     try {
+<<<<<<< HEAD
       return SupplierContractDTO{
         .contract_id = j.at("contract_id").get<std::string>(),
         .supplier_rk_id =
@@ -49,6 +55,17 @@ struct SupplierContractDTO : CacheFuncGetter {
         .contract_amount = j.at("contract_amount").get<double>(),
         .status = j.at("status").get<std::string>(),
         .file_path = j.at("file_path").get<std::string>()};
+=======
+            return SupplierContractDTO{
+                .contract_id = j.at("contract_id").get<std::string>(),
+                .supplier_rk_id = getInternalId("supplier",j.at("supplier_id").get<ex_id_type>(),
+                .start_date = utils::string_to_datetime(j.at("start_date").get<std::string>()),
+                .end_date = utils::string_to_datetime(j.at("end_date").get<std::string>()),
+                .contract_amount = j.at("contract_amount").get<double>(),
+                .status = j.at("status").get<std::string>(),
+                .file_path = j.at("file_path").get<std::string>(),
+            };
+>>>>>>> cb5c06304e05b003d27974bd5595af55dd36affe
     }
     catch (const std::exception& e) {
       std::cerr << "[from_json error] " << e.what() << "\n"
