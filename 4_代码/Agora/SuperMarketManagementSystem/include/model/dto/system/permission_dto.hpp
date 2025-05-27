@@ -14,7 +14,6 @@ struct PermissionDTO : public CacheFuncGetter {
     "permission_name",  //
     "permission_code",  //
     "description",      //
-
   };
 
   in_id_type id = 0;

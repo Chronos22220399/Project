@@ -3,6 +3,6 @@
 #include <nlohmann/json.hpp>
 
 class RoleController {
-public:
-    static void registerRoutes(crow::SimpleApp& app);
+  public:
+  static void registerRoutes(crow::SimpleApp& app);
 };
