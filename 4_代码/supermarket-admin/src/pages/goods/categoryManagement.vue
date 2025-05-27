@@ -1,163 +1,181 @@
 <template>
-    <div class="page-container">
-        <el-card>
-            <template #header>
-                <div class="flex justify-between items-center">
-                    <h2>商品分类管理</h2>
-                </div>
-                <el-button type="primary" @click="openDialog">新增分类</el-button>
-            </template>
-
-            <el-table :data="categoryList" style="width: 100%">
-                <el-table-column prop="goods_category_id" label="分类ID" width="100" />
-                <el-table-column prop="category_name" label="分类名称" />
-                <el-table-column prop="category_description" label="分类描述" />
-                <el-table-column prop="parent_category_id" label="上级分类ID" width="120" />
+    <el-container>
+        <el-header>
+            <el-button type="primary" @click="showCreateDialog">添加分类</el-button>
+        </el-header>
+        <el-main>
+            <el-table :data="categories" border style="width: 100%">
+                <el-table-column prop="goods_category_id" label="分类ID" />
+                <el-table-column prop="goods_category_name" label="分类名称" />
+                <el-table-column prop="goods_category_description" label="分类描述" />
+                <el-table-column prop="parent_category_id" label="父级分类ID" />
                 <el-table-column label="操作" width="180">
                     <template #default="scope">
-                        <el-button size="small" @click="editCategory(scope.row)">更新</el-button>
+                        <el-button size="small" @click="showUpdateDialog(scope.row)">更新</el-button>
                         <el-button size="small" type="danger"
                             @click="deleteCategory(scope.row.goods_category_id)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
+        </el-main>
 
-            <!-- 分页 -->
-            <div class="mt-4 text-right">
-                <el-pagination background layout="prev, pager, next" :current-page="currentPage" :page-size="pageSize"
-                    :total="total" @current-change="handlePageChange" />
-            </div>
-        </el-card>
-
-        <!-- 弹窗表单 -->
-        <el-dialog :title="isEdit ? '编辑分类' : '新增分类'" v-model="dialogVisible" width="500px">
-            <el-form :model="form" label-width="100px">
-                <el-form-item label="分类名称">
-                    <el-input v-model="form.category_name" />
+        <!-- 添加弹窗 -->
+        <el-dialog v-model="createDialogVisible" title="添加分类" width="500px">
+            <el-form ref="createFormRef" :model="createForm" :rules="formRules" label-width="120px">
+                <el-form-item label="分类名称" prop="goods_category_name">
+                    <el-input v-model="createForm.goods_category_name" />
                 </el-form-item>
-                <el-form-item label="分类描述">
-                    <el-input v-model="form.category_description" />
+                <el-form-item label="分类描述" prop="goods_category_description">
+                    <el-input v-model="createForm.goods_category_description" />
                 </el-form-item>
-                <el-form-item label="上级分类">
-                    <el-select v-model="form.parent_category_id" placeholder="选择上级分类">
-                        <el-option label="无（顶级）" value="0" />
-                        <el-option v-for="item in categoryList" :key="item.goods_category_id"
-                            :label="item.category_name" :value="item.goods_category_id.toString()" />
-                    </el-select>
+                <el-form-item label="父级分类ID" prop="parent_category_id">
+                    <el-input-number v-model="createForm.parent_category_id" :min="0" />
                 </el-form-item>
             </el-form>
-
             <template #footer>
-                <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="submitForm">提交</el-button>
+                <el-button @click="createDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="createCategory">确认</el-button>
             </template>
         </el-dialog>
-    </div>
+
+        <!-- 更新弹窗 -->
+        <el-dialog v-model="updateDialogVisible" title="更新分类" width="500px">
+            <el-form ref="updateFormRef" :model="updateForm" :rules="formRules" label-width="120px">
+                <el-form-item label="分类名称" prop="goods_category_name">
+                    <el-input v-model="updateForm.goods_category_name" />
+                </el-form-item>
+                <el-form-item label="分类描述" prop="goods_category_description">
+                    <el-input v-model="updateForm.goods_category_description" />
+                </el-form-item>
+                <el-form-item label="父级分类ID" prop="parent_category_id">
+                    <el-input-number v-model="updateForm.parent_category_id" :min="0" />
+                </el-form-item>
+            </el-form>
+            <template #footer>
+                <el-button @click="updateDialogVisible = false">取消</el-button>
+                <el-button type="primary" @click="updateCategory">确认</el-button>
+            </template>
+        </el-dialog>
+    </el-container>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { ElMessage, ElMessageBox } from 'element-plus'
+import { ref, reactive, onMounted, toRaw } from 'vue';
+import { ElMessage } from 'element-plus';
+import axios from 'axios';
 
-interface GoodsCategory {
-    goods_category_id: number
-    category_name: string
-    category_description: string
-    parent_category_id: string
+const API_BASE = '/api/goods_category'; // 统一接口基础路径
+
+interface Category {
+    goods_category_id: number | string;
+    goods_category_name: string;
+    goods_category_description: string;
+    parent_category_id: number;
 }
 
-// 生成随机商品分类数据
-const generateRandomData = (): GoodsCategory[] => {
-    const categories = ['饮料', '零食', '方便食品', '生活用品', '乳制品']
-    const randomData: GoodsCategory[] = []
-    for (let i = 1; i <= 50; i++) {
-        const parentCategoryIndex = Math.floor(Math.random() * categories.length)
-        randomData.push({
-            goods_category_id: i,
-            category_name: `${categories}子类${i}`,
-            category_description: `${categories[parentCategoryIndex]}的描述${i}`,
-            parent_category_id: (parentCategoryIndex + 1).toString(),
-        })
-    }
-    return randomData
-}
+const categories = ref<Category[]>([]);
 
-const categoryList = ref<GoodsCategory[]>(generateRandomData())
-const dialogVisible = ref(false)
-const isEdit = ref(false)
-const form = ref<GoodsCategory>({
-    goods_category_id: 0,
-    category_name: '',
-    category_description: '',
-    parent_category_id: '0'
-})
+const createDialogVisible = ref(false);
+const updateDialogVisible = ref(false);
 
-const currentPage = ref(1)
-const pageSize = ref(10)
-const total = ref(categoryList.value.length)
+const createForm = reactive<Omit<Category, 'goods_category_id'>>({
+    goods_category_name: '',
+    goods_category_description: '',
+    parent_category_id: 0,
+});
 
-const loadData = () => {
-    const start = (currentPage.value - 1) * pageSize.value
-    const end = start + pageSize.value
-    categoryList.value = generateRandomData().slice(start, end)
-    total.value = 50 // 随机数据总数
-}
+const updateForm = reactive<Category>({
+    goods_category_id: '',
+    goods_category_name: '',
+    goods_category_description: '',
+    parent_category_id: 0,
+});
 
-const handlePageChange = (page: number) => {
-    currentPage.value = page
-    loadData()
-}
+const createFormRef = ref();
+const updateFormRef = ref();
 
-const openDialog = () => {
-    isEdit.value = false
-    form.value = {
-        goods_category_id: Date.now(),
-        category_name: '',
-        category_description: '',
-        parent_category_id: '0'
-    }
-    dialogVisible.value = true
-}
+const formRules = {
+    goods_category_name: [{ required: true, message: '请输入分类名称', trigger: 'blur' }],
+};
 
-const editCategory = (item: GoodsCategory) => {
-    isEdit.value = true
-    form.value = { ...item }
-    dialogVisible.value = true
-}
-
-const deleteCategory = (id: number) => {
-    ElMessageBox.confirm('确定要删除该分类吗？', '提示', {
-        type: 'warning'
-    }).then(() => {
-        const index = categoryList.value.findIndex(item => item.goods_category_id === id)
-        if (index !== -1) {
-            categoryList.value.splice(index, 1)
-            ElMessage.success('删除成功')
-            loadData()
+const fetchCategories = async () => {
+    try {
+        const res = await axios.get(API_BASE + '/get_all');
+        if (res.data?.code === 200 && res.data.data?.items) {
+            categories.value = res.data.data.items;  // 取到真正的数组
+            ElMessage.success('获取分类成功');
+        } else {
+            categories.value = [];
+            ElMessage.error('返回数据格式不正确');
         }
-    })
-}
-
-const submitForm = () => {
-    const index = categoryList.value.findIndex(item => item.goods_category_id === form.value.goods_category_id)
-    if (isEdit.value && index !== -1) {
-        categoryList.value[index] = { ...form.value }
-        ElMessage.success('更新成功')
-    } else {
-        categoryList.value.push({ ...form.value })
-        ElMessage.success('添加成功')
+    } catch (error) {
+        ElMessage.error('获取分类失败');
+        console.error(error);
     }
-    dialogVisible.value = false
-    loadData()
-}
+};
+
+
+
+const showCreateDialog = () => {
+    createForm.goods_category_name = '';
+    createForm.goods_category_description = '';
+    createForm.parent_category_id = 0;
+    createDialogVisible.value = true;
+};
+
+const createCategory = async () => {
+    if (!createFormRef.value) return;
+    (createFormRef.value as any).validate(async (valid: boolean) => {
+        if (valid) {
+            try {
+                const payload = { ...createForm };
+                await axios.post(`${API_BASE}/create`, payload);
+                createDialogVisible.value = false;
+                ElMessage.success('添加分类成功');
+                await fetchCategories();
+            } catch (err) {
+                console.error('创建分类失败:', err);
+                ElMessage.error('创建分类失败');
+            }
+        }
+    });
+};
+
+const showUpdateDialog = (row: Category) => {
+    Object.assign(updateForm, row);
+    updateDialogVisible.value = true;
+};
+
+const updateCategory = async () => {
+    if (!updateFormRef.value) return;
+    (updateFormRef.value as any).validate(async (valid: boolean) => {
+        if (valid) {
+            try {
+                const payload = toRaw(updateForm);
+                await axios.post(`${API_BASE}/update`, payload);
+                updateDialogVisible.value = false;
+                ElMessage.success('更新分类成功');
+                await fetchCategories();
+            } catch (err) {
+                console.error('更新分类失败:', err);
+                ElMessage.error('更新分类失败');
+            }
+        }
+    });
+};
+
+const deleteCategory = async (id: number | string) => {
+    try {
+        await axios.post(`${API_BASE}/remove`, { goods_category_id: id });
+        ElMessage.success('删除分类成功');
+        await fetchCategories();
+    } catch (err) {
+        console.error('删除分类失败:', err);
+        ElMessage.error('删除分类失败');
+    }
+};
 
 onMounted(() => {
-    loadData()
-})
+    fetchCategories();
+});
 </script>
-
-<style scoped>
-.page-container {
-    padding: 16px;
-}
-</style>

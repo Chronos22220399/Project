@@ -7,7 +7,7 @@
         <el-table :data="pagedData" border>
             <el-table-column prop="id" label="等级ID" width="80" />
             <el-table-column prop="name" label="等级名称" />
-            <el-table-column prop="discount" label="折扣率（%）" width="120" />
+            <el-table-column prop="discount" label="折扣率(%)" width="120" />
             <el-table-column prop="pointsRequired" label="所需积分" width="100" />
             <el-table-column prop="status" label="状态" width="100">
                 <template #default="{ row }">
