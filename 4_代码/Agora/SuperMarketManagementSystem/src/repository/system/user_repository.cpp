@@ -8,14 +8,16 @@ insert_ret_type UserRepository::create(const UserDTO& user_dto)
   return _insert(user_dto);
 };
 
-select_ret_type<UserDTO> UserRepository::get(const std::string& username)
+select_ret_type<UserDTO>
+UserRepository::getUserByUsername(const std::string& username)
 {
   return _select(db::user{}.username == username);
 };
 
-update_ret_type UserRepository::update(const UserDTO& dto)
+update_ret_type UserRepository::updateById(const in_id_type id,
+                                           const UserDTO& dto)
 {
-  return _update(dto, db::user{}.user_id == dto.user_id);
+  return _update(dto, db::user{}.id == dto.id);
 };
 
 delete_ret_type UserRepository::remove(const std::string& user_id)
@@ -41,7 +43,7 @@ count_type UserRepository::count()
 
 bool UserRepository::findUserName(const std::string& username)
 {
-  auto res = get(username);
+  auto res = getUserByUsername(username);
   return !res.empty();
 }
 

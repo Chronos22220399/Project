@@ -7,6 +7,7 @@
 using json = nlohmann::json;
 using namespace std::chrono;
 
+// MARK: 创建用户
 ServiceResult MemberService::create(MemberDTO& member_dto)
 {
   auto& cache = GlobalIdCache::getInstance();
@@ -39,6 +40,7 @@ ServiceResult MemberService::create(MemberDTO& member_dto)
   return {true};
 }
 
+// MARK: 根据 MemberId 进行更新
 ServiceResult MemberService::updateByMemberId(const std::string& member_id,
                                               MemberDTO& member_dto)
 {
@@ -71,6 +73,7 @@ ServiceResult MemberService::updateByMemberId(const std::string& member_id,
   return {true};
 }
 
+// MARK: 根据 MemberId 删除
 ServiceResult MemberService::removeByMemberId(const std::string& member_id)
 {
   auto id = GlobalIdCache::getInstance().getInternalId("member", member_id);
@@ -83,6 +86,7 @@ ServiceResult MemberService::removeByMemberId(const std::string& member_id)
   return {true};
 }
 
+// MARK:
 ServiceResult MemberService::getByPage(const int page, const int page_size)
 {
   // 校验分页参数有效性

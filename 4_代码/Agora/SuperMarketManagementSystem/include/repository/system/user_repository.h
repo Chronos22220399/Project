@@ -6,8 +6,10 @@ class UserRepository : public model::GenericModel<UserDTO, db::user> {
   public:
   // CRUD Operations
   static insert_ret_type create(const UserDTO& UserDTO);
-  static select_ret_type<UserDTO> get(const std::string& user_name);
-  static update_ret_type update(const UserDTO& user_dto);
+  static select_ret_type<UserDTO>
+  getUserByUsername(const std::string& user_name);
+  static update_ret_type updateById(const in_id_type id,
+                                    const UserDTO& user_dto);
   static delete_ret_type remove(const std::string& user_id);
 
   // Custom Queries

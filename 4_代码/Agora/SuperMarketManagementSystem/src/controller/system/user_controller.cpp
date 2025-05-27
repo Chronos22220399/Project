@@ -3,30 +3,58 @@
 
 void UserController::registerRoutes(crow::SimpleApp& app)
 {
-  CROW_ROUTE(app, "/api/user/create")
+  // MARK: 获取验证码
+  CROW_ROUTE(app, "/api/user/get_vcode")
+    .methods("GET"_method)([](const crow::request& req) {
+
+    });
+
+  // MARK: 注册
+  CROW_ROUTE(app, "/api/user/register")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
       CHECK_REQUIRED_FIELDS(j, UserDTO::required_fields);
+      CHECK_REQUIRED_FIELD(j, "vcode");
 
       auto user_dto = UserDTO::from_json(j);
+      auto vcode = j.at("vcode").get<std::string>();
 
-      auto res = UserService::create(user_dto);
+      auto res = UserService::regist(vcode, user_dto);
       return utils::to_response(res, 201);
     });
 
+  // MARK: 登陆
+  CROW_ROUTE(app, "/api/user/login")
+    .methods("POST"_method)([](const crow::request& req) {
+      nlohmann::json j;
+      auto& body = req.body;
+      CHECK_AND_GET_JSON(j);
+
+      CHECK_REQUIRED_FIELD(j, "username");
+      CHECK_REQUIRED_FIELD(j, "password");
+
+      auto username = j.at("username").get<std::string>();
+      auto password = j.at("password").get<std::string>();
+
+      auto res = UserService::login(username, password);
+      return utils::to_response(res, 200);
+    });
   CROW_ROUTE(app, "/api/user/update")
     .methods("POST"_method)([](const crow::request& req) {
       nlohmann::json j;
       auto& body = req.body;
       CHECK_AND_GET_JSON(j);
       CHECK_REQUIRED_FIELDS(j, UserDTO::required_fields);
+      CHECK_REQUIRED_FIELD(j, "change_password");
 
       auto user_dto = UserDTO::from_json(j);
       auto user_id = user_dto.user_id;
+      auto change_password = j.at("change_password").get<bool>();
 
-      auto res = UserService::updateByUserId(user_id, user_dto);
+      auto res =
+        UserService::updateByUserId(user_id, change_password, user_dto);
       return utils::to_response(res, 200);
     });
 
