@@ -3,11 +3,30 @@
 #include <common/user/vcode_manager.hpp>
 #include <fmt/format.h>
 #include <nlohmann/json.hpp>
+#include <regex>
 #include <repository/system/user_repository.h>
 #include <service/system/user_service.h>
 
 using json = nlohmann::json;
 using namespace std::chrono;
+
+
+ServiceResult UserService::getVCode(const std::string& phone)
+{
+  // 简单正则校验手机号格式（可根据需要调整）
+  std::regex phone_regex("^1[3-9]\\d{9}$");
+  if (!std::regex_match(phone, phone_regex))
+    return {false, "Invalid phone number format."};
+
+  auto& vcodeMgr = VCodeManager::getInstance();
+  std::string code = vcodeMgr.generateCode(phone);
+
+  // TODO: 集成实际短信服务商，这里仅 mock 返回
+  // 出于安全考虑，实际环境不要直接把验证码返回前端，这里仅便于调试
+  nlohmann::json data = {{"phone", phone}, {"vcode", code}};
+  return {true, "", data};
+}
+
 
 ServiceResult UserService::regist(const std::string& vcode, UserDTO& user_dto)
 {

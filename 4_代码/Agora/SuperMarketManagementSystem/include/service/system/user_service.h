@@ -19,6 +19,8 @@ class UserService {
   // 登陆
   static ServiceResult login(const std::string& username,
                              const std::string& password);
+  // 获取短信验证码
+  static ServiceResult getVCode(const std::string& phone);
 
   // check password
   static bool password_is_valid(const std::string& password);

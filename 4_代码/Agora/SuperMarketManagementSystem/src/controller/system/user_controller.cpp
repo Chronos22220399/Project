@@ -6,7 +6,15 @@ void UserController::registerRoutes(crow::SimpleApp& app)
   // MARK: 获取验证码
   CROW_ROUTE(app, "/api/user/get_vcode")
     .methods("GET"_method)([](const crow::request& req) {
-
+      auto phone = req.url_params.get("phone");
+      if (!phone) {
+        return crow::response(
+          400,
+          nlohmann::json{{"code", 400}, {"error", "Missing phone parameter"}}
+            .dump());
+      }
+      auto res = UserService::getVCode(phone);
+      return utils::to_response(res, 200);
     });
 
   // MARK: 注册
