@@ -64,7 +64,7 @@ inline void to_json(nlohmann::json& j, const StockInDTO& stock_in_dto)
     {"stock_in_id", stock_in_dto.stock_in_id},
     {"warehouse_id",
      stock_in_dto.getExternalId("warehouse", stock_in_dto.warehouse_rk_id)},
-    {"created_at", utils::time_to_string(stock_in_dto.created_at)},
+    {"created_at", utils::datetime_to_string(stock_in_dto.created_at)},
     {"created_by",
      stock_in_dto.getExternalId("employee", stock_in_dto.created_by)},
     {"source_type", stock_in_dto.source_type},

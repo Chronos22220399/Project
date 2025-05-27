@@ -28,6 +28,7 @@ TYPE_MAPPING = {
     "BLOB": "std::vector<uint8_t>",
     "DATE": "datetime_type",
     "DATETIME": "datetime_type",
+    "TIME": "time_type",
     "TIMESTAMP": "std::string"
 }
 
@@ -151,13 +152,14 @@ class CodeGenerator:
         return f"""#pragma once
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
+#include <common/cache_func_getter.h>
 #include <common/uni_define.h>
 #include <model/db/{db_dir_name}/{self.table_name}.h>
 #include <nlohmann/json.hpp>
 #include <string>
 
 // DTO for {self.table_name} table
-struct {self.dto_name_camel} {{
+struct {self.dto_name_camel}: public CacheFuncGetter {{
     inline static const std::vector<std::string> required_fields = {
     ...
     };
@@ -268,8 +270,8 @@ public:
     // CRUD Operations
     static insert_ret_type create(const {self.dto_name_camel}& {self.dto_name_camel});
     static select_ret_type<{self.dto_name_camel}> get(const std::string &{self.table_name_snake}_name);
-    static update_ret_type update(const {self.dto_name_camel}& {self.dto_name_snake});
-    static delete_ret_type remove(const std::string &{self.table_name_snake}_id);
+    static update_ret_type updateById(const in_id_type id, const {self.dto_name_camel}& {self.dto_name_snake});
+    static delete_ret_type removeById(const in_id_type id);
     
     // Custom Queries
     static select_ret_type<{self.dto_name_camel}> getAll();
@@ -333,6 +335,7 @@ count_type {self.repo_name_camel}::count() {{ return _count(); }}
     def generate_controller(self, db_dir_name: str) -> Tuple[str, str]:
         h_content = f"""#pragma once
 #include <crow.h>
+#include <nlohmann/json.hpp>
 
 class {self.controller_name_camel} {{
 public:

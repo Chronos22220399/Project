@@ -73,29 +73,35 @@ ServiceResult GoodsService::getAll()
   return {true, "", data};
 }
 
-ServiceResult GoodsService::updateByGoodsId(const std::string& goods_id, GoodsDTO& goods_dto){
-  auto &cache = GlobalIdCache::getInstance();
+ServiceResult GoodsService::updateByGoodsId(const std::string& goods_id,
+                                            GoodsDTO& goods_dto)
+{
+  auto& cache = GlobalIdCache::getInstance();
   auto id = cache.getInternalId("goods", goods_id);
 
-  if (id == 0) return {false, "No goods found", {}};
+  if (id == 0)
+    return {false, "No goods found", {}};
 
   auto success = GoodsRepository::updateByGoodsId(id, goods_dto);
 
-  if (!success) return {false, "Update goods failed", {}};
+  if (!success)
+    return {false, "Update goods failed", {}};
   return {true, "", goods_dto};
 }
 
-ServiceResult GoodsService::removeByGoodsId(const std::string& goods_id){
-  auto &cache = GlobalIdCache::getInstance();
+ServiceResult GoodsService::removeByGoodsId(const std::string& goods_id)
+{
+  auto& cache = GlobalIdCache::getInstance();
   auto id = cache.getInternalId("goods", goods_id);
 
-  if (id == 0) return {false, "No goods found", {}};
+  if (id == 0)
+    return {false, "No goods found", {}};
 
   auto success = GoodsRepository::removeById(id);
-  if (!success) return {false, "Remove goods failed", {}};
+  if (!success)
+    return {false, "Remove goods failed", {}};
   return {true};
 }
-
 
 
 // MARK: 商品详细信息查询接口 - POST /api/goods/get_goods_detail_info_by_id

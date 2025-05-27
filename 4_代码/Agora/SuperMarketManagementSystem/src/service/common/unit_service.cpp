@@ -96,7 +96,8 @@ ServiceResult UnitService::getAll()
     nlohmann::json data{
       {"success", true}, {"total", unit_list.size()}, {"items", unit_list}};
     return {true, "", data};
-  } catch (const std::exception& e) {
+  }
+  catch (const std::exception& e) {
     LOG("Exception occured while getting all, {}", e.what());
     return {false, e.what()};
   }

@@ -36,7 +36,7 @@ struct InventoryCheckOrderDTO : public CacheFuncGetter {
         .warehouse_rk_id =
           getInternalId("warehouse", j.at("warehouse_id").get<ex_id_type>()),
         .created_at =
-          utils::string_to_time(j.at("created_at").get<std::string>()),
+          utils::string_to_datetime(j.at("created_at").get<std::string>()),
         .created_by =
           getInternalId("employee", j.at("created_by").get<ex_id_type>()),
         .status = j.at("status").get<std::string>(),
@@ -55,10 +55,10 @@ inline void to_json(nlohmann::json& j, const InventoryCheckOrderDTO& dto)
   j = nlohmann::json{
     {"order_id", dto.order_id},
     {"warehouse_id", dto.getExternalId("warehouse", dto.warehouse_rk_id)},
-    {"created_at", utils::time_to_string(dto.created_at)},
+    {"created_at", utils::datetime_to_string(dto.created_at)},
     {"created_by", dto.created_by},
     {"audited_by", dto.audited_by},
-    {"audited_at", utils::time_to_string(dto.audited_at)},
+    {"audited_at", utils::datetime_to_string(dto.audited_at)},
     {"status", dto.status},
     {"status", dto.status},
     {"remark", dto.remark}};

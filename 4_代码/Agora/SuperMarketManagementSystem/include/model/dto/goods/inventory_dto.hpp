@@ -1,4 +1,5 @@
 #pragma once
+
 #include <common/common_utils.hpp>
 #include <common/generic_model.hpp>
 #include <common/global_id_cache.hpp>
@@ -48,7 +49,7 @@ inline void to_json(nlohmann::json& j, const InventoryDTO& inventory_dto)
     {"quantity", inventory_dto.quantity},
     {"min_threshold", inventory_dto.min_threshold},
     {"max_threshold", inventory_dto.max_threshold},
-    {"last_updated", utils::time_to_string(inventory_dto.last_updated)}};
+    {"last_updated", utils::datetime_to_string(inventory_dto.last_updated)}};
 }
 
 // ORM mapping
