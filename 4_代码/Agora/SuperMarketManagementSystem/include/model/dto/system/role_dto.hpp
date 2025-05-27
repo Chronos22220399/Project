@@ -13,7 +13,6 @@ struct RoleDTO : public CacheFuncGetter {
     "role_id",      //
     "role_name",    //
     "description",  //
-    "created_at"    //
   };
 
   in_id_type id = 0;
@@ -30,8 +29,6 @@ struct RoleDTO : public CacheFuncGetter {
         .role_id = j.at("role_id").get<std::string>(),
         .role_name = j.at("role_name").get<std::string>(),
         .description = j.at("description").get<std::string>(),
-        .created_at =
-          utils::string_to_datetime(j.at("created_at").get<std::string>()),
       };
     }
     catch (const std::exception& e) {
@@ -45,7 +42,6 @@ struct RoleDTO : public CacheFuncGetter {
 inline void to_json(nlohmann::json& j, const RoleDTO& role_dto)
 {
   j = nlohmann::json{
-    {"id", role_dto.id},
     {"role_id", role_dto.role_id},
     {"role_name", role_dto.role_name},
     {"description", role_dto.description},

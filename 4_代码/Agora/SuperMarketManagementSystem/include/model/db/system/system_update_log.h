@@ -26,18 +26,18 @@ namespace db
       };
       using _traits = sqlpp::make_traits<sqlpp::integer, sqlpp::tag::must_not_insert, sqlpp::tag::must_not_update>;
     };
-    struct external_id
+    struct update_id
     {
       struct _alias_t
       {
-        static constexpr const char _literal[] =  "external_id";
+        static constexpr const char _literal[] =  "update_id";
         using _name_t = sqlpp::make_char_sequence<sizeof(_literal), _literal>;
         template<typename T>
         struct _member_t
           {
-            T external_id;
-            T& operator()() { return external_id; }
-            const T& operator()() const { return external_id; }
+            T update_id;
+            T& operator()() { return update_id; }
+            const T& operator()() const { return update_id; }
           };
       };
       using _traits = sqlpp::make_traits<sqlpp::text, sqlpp::tag::require_insert>;
@@ -158,7 +158,7 @@ namespace db
 
   struct system_update_log: sqlpp::table_t<system_update_log,
                system_update_log_::id,
-               system_update_log_::external_id,
+               system_update_log_::update_id,
                system_update_log_::version,
                system_update_log_::user_rk_id,
                system_update_log_::update_type,

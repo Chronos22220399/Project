@@ -32,8 +32,6 @@ struct PermissionDTO : public CacheFuncGetter {
         .permission_name = j.at("permission_name").get<std::string>(),
         .permission_code = j.at("permission_code").get<std::string>(),
         .description = j.at("description").get<std::string>(),
-        .created_at =
-          utils::string_to_datetime(j.at("created_at").get<std::string>()),
       };
     }
     catch (const std::exception& e) {
@@ -47,7 +45,6 @@ struct PermissionDTO : public CacheFuncGetter {
 inline void to_json(nlohmann::json& j, const PermissionDTO& permission_dto)
 {
   j = nlohmann::json{
-    {"id", permission_dto.id},
     {"permission_id", permission_dto.permission_id},
     {"permission_name", permission_dto.permission_name},
     {"permission_code", permission_dto.permission_code},
