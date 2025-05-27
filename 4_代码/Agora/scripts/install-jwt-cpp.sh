@@ -1,10 +1,9 @@
 #!/bin/bash
 
-cd /tmp
 
-# 检查 crow 是否已存在
-if ! ls ./ | grep -q crow; then
-  echo "third_party 中不存在 crow, 开始获取 crow"
+# 检查 fmt 是否已存在
+if ! ls /usr/local/include | grep -q jwt-cpp; then
+  echo "third_party 中不存在 crow, 开始获取 cr"
 
   # 优先使用 yay 安装 crow（如存在）
   if command -v yay >/dev/null 2>&1; then
@@ -15,11 +14,11 @@ if ! ls ./ | grep -q crow; then
 
     cd /tmp
     # 克隆仓库并构建安装
-    git clone https://github.com/CrowCpp/Crow.git
-    cd Crow
+    git clone https://github.com/Thalhammer/jwt-cpp.git
+    cd jwt-cpp
     mkdir build && cd build
-    cmake .. -DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF
-    make install
+    cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DJWT_CPP_BUILD_EXAMPLES=OFF -DJWT_CPP_BUILD_TESTS=OFF
+    sudo make install
     cd -
   fi
 else
