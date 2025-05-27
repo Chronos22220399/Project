@@ -48,4 +48,6 @@ $RECYCLE.BIN/
 
 # Windows shortcuts
 *.lnk
->>>>>>> 50fe34e2967564128056421aa21510f4e92efafb
+
+# clion
+cmake_build-*/

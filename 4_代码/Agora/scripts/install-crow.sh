@@ -1,6 +1,6 @@
 #!/bin/bash
 
-cd /app/SuperMarketManagementSystem/third_party/
+cd /tmp
 
 # 检查 crow 是否已存在
 if ! ls ./ | grep -q crow; then
@@ -13,12 +13,14 @@ if ! ls ./ | grep -q crow; then
   else
     echo "未检测到 yay，使用 git clone 构建 crow"
 
+    cd /tmp
     # 克隆仓库并构建安装
     git clone https://github.com/CrowCpp/Crow.git
     cd Crow
     mkdir build && cd build
     cmake .. -DCROW_BUILD_EXAMPLES=OFF -DCROW_BUILD_TESTS=OFF
     make install
+    cd -
   fi
 else
   echo "crow 已存在，跳过安装"

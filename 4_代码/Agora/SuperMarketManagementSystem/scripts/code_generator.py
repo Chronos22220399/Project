@@ -270,8 +270,8 @@ public:
     // CRUD Operations
     static insert_ret_type create(const {self.dto_name_camel}& {self.dto_name_camel});
     static select_ret_type<{self.dto_name_camel}> get(const std::string &{self.table_name_snake}_name);
-    static update_ret_type update(const {self.dto_name_camel}& {self.dto_name_snake});
-    static delete_ret_type remove(const std::string &{self.table_name_snake}_id);
+    static update_ret_type updateById(const in_id_type id, const {self.dto_name_camel}& {self.dto_name_snake});
+    static delete_ret_type removeById(const in_id_type id);
     
     // Custom Queries
     static select_ret_type<{self.dto_name_camel}> getAll();

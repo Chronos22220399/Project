@@ -10,21 +10,23 @@
 // DTO for employee table
 struct EmployeeDTO : public CacheFuncGetter {
   inline static const std::vector<std::string> required_fields = {
-    "employee_id",    //
-    "user_id",        //
-    "employee_name",  //
-    "gender",         //
-    "birthday",       //
-    "id_number",      //
-    "hire_date",      //
-    "position_id",    //
-    "status",         //
-    "address"         //
+    "employee_id",//
+    "user_id",//
+    "employee_name",//
+    "gender",//
+    "birthday",//
+    "id_number",//
+    "hire_date",//
+    "position_id",//
+    "status",//
+    "address"//
+
   };
   inline static const std::vector<std::string> status_domain = {
-    "active",    //
-    "inactive",  //
-    "on_leave"   //
+    "active",//
+    "inactive",//
+    "on_leave"//
+
   };
 
   in_id_type id = 0;
@@ -32,7 +34,7 @@ struct EmployeeDTO : public CacheFuncGetter {
   in_id_type user_rk_id = 0;
   std::string employee_name = "";
   std::string gender = "";
-  date_type birthday = {};
+  datetime_type birthday = {};
   std::string id_number = "";
   datetime_type hire_date = {};
   in_id_type position_rk_id = 0;
@@ -48,7 +50,8 @@ struct EmployeeDTO : public CacheFuncGetter {
         .user_rk_id = getInternalId("user", j.at("user_id").get<ex_id_type>()),
         .employee_name = j.at("employee_name").get<std::string>(),
         .gender = j.at("gender").get<std::string>(),
-        .birthday = utils::string_to_date(j.at("birthday").get<std::string>()),
+        .birthday =
+          utils::string_to_datetime(j.at("birthday").get<std::string>()),
         .id_number = j.at("id_number").get<std::string>(),
         .hire_date =
           utils::string_to_datetime(j.at("hire_date").get<std::string>()),
@@ -69,12 +72,12 @@ struct EmployeeDTO : public CacheFuncGetter {
 inline void to_json(nlohmann::json& j, const EmployeeDTO& employee_dto)
 {
   j = nlohmann::json{
+    {"id", employee_dto.id},
     {"employee_id", employee_dto.employee_id},
-    {"user_id",
-     EmployeeDTO::getExternalId("employee", employee_dto.user_rk_id)},
+    {"user_id", EmployeeDTO::getExternalId("user", employee_dto.user_rk_id)},
     {"employee_name", employee_dto.employee_name},
     {"gender", employee_dto.gender},
-    {"birthday", utils::date_to_string(employee_dto.birthday)},
+    {"birthday", utils::datetime_to_string(employee_dto.birthday)},
     {"id_number", employee_dto.id_number},
     {"hire_date", utils::datetime_to_string(employee_dto.hire_date)},
     {"position_id",

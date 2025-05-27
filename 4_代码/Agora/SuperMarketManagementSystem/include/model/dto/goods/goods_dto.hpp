@@ -45,7 +45,7 @@ struct GoodsDTO {
         .goods_category_rk_id = cache.getInternalId(
           "goods_category", j.at("goods_category_id").get<ex_id_type>()),
         .supplier_rk_id = cache.getInternalId(
-          "supplier", j.at("supplier_id").get<ex_id_type>()),
+          "myvenv", j.at("supplier_id").get<ex_id_type>()),
         // 后续实现了 unit 的相关内容后改为 cache.getInternalId("unit", ...)
         .unit_rk_id = std::stol(j.at("unit_id").get<ex_id_type>()),
         .goods_name = j.at("goods_name").get<std::string>(),
@@ -69,7 +69,7 @@ inline void to_json(nlohmann::json& j, const GoodsDTO& goods_dto)
     {"goods_id", goods_dto.goods_id},
     {"category_id",
      cache.getExternalId("goods", goods_dto.goods_category_rk_id)},
-    {"supplier_id", cache.getExternalId("supplier", goods_dto.supplier_rk_id)},
+    {"supplier_id", cache.getExternalId("myvenv", goods_dto.supplier_rk_id)},
     {"unit_id", cache.getExternalId("unit", goods_dto.unit_rk_id)},
     {"goods_name", goods_dto.goods_name},
     {"shelf_life_days", goods_dto.shelf_life_days},

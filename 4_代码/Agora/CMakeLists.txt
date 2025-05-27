@@ -13,7 +13,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # 优先查找现代CONFIG模式包
 set(CMAKE_FIND_PACKAGE_PREFER_CONFIG TRUE)
 
-
 if(NOT CMAKE_BUILD_TYPE)
   set(CMAKE_BUILD_TYPE Debug)
 endif()
@@ -32,4 +31,3 @@ project(
   VERSION 1.0)
 
 add_subdirectory(SuperMarketManagementSystem)
-# add_subdirectory(TestSqlpp11)

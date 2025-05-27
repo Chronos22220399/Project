@@ -19,7 +19,7 @@ struct MemberDTO : public CacheFuncGetter {
     "birthday",           //
     "status"              //
   };
-  inline static const std::vector<std::string> _domain = {
+  inline static const std::vector<std::string> status_domain = {
     "active",   // 活跃
     "inactive"  // 不活跃
   };
