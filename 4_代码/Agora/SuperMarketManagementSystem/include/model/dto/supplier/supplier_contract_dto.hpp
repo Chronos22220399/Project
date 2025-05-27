@@ -10,7 +10,7 @@
 struct SupplierContractDTO {
   inline static const std::vector<std::string> required_fields = {
     "contract_id",    "supplier_id", "start_date", "end_date",
-    "ontract_amount", "status",     "file_path"};
+    "contract_amount", "status",     "file_path"};
 
   inline static const std::vector<std::string> status_domain = {"active", "expired",
                                                           "terminated"};
@@ -30,7 +30,7 @@ struct SupplierContractDTO {
     try {
             return SupplierContractDTO{
                 .contract_id = j.at("contract_id").get<std::string>(),
-                .supplier_rk_id = getInternalId("myvenv",j.at("supplier_id").get<ex_id_type>(),
+                .supplier_rk_id = getInternalId("supplier",j.at("supplier_id").get<ex_id_type>(),
                 .start_date = utils::string_to_datetime(j.at("start_date").get<std::string>()),
                 .end_date = utils::string_to_datetime(j.at("end_date").get<std::string>()),
                 .contract_amount = j.at("contract_amount").get<double>(),
@@ -53,7 +53,7 @@ inline void to_json(nlohmann::json& j,
     {"id", supplier_contract_dto.id},
     {"contract_id", supplier_contract_dto.contract_id},
     {"supplier_id", SupplierContractDTO::getExternalId(
-                      "myvenv", supplier_contract_dto.supplier_rk_id)},
+                      "supplier", supplier_contract_dto.supplier_rk_id)},
     {"start_date", utils::datetime_to_string(supplier_contract_dto.start_date)},
     {"end_date", utils::datetime_to_string(supplier_contract_dto.end_date)},
     {"contract_amount", supplier_contract_dto.contract_amount},
