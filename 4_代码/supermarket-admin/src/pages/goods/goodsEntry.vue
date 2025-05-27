@@ -9,9 +9,11 @@
             <el-table-column prop="goods_name" label="名称" />
             <el-table-column prop="category_name" label="分类" />
             <el-table-column prop="stock" label="库存" width="100" />
-            <el-table-column label="操作" width="160">
+
+            <el-table-column label="操作" width="220">
                 <template #default="scope">
                     <el-button size="small" @click="getDetail(scope.row.goods_id)">详情</el-button>
+                    <el-button size="small" type="danger" @click="deleteGoods(scope.row.goods_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -179,6 +181,22 @@ const getDetail = async (goods_id: string) => {
         ElMessage.error('网络请求失败')
     }
 }
+
+const deleteGoods = async (goods_id: string) => {
+    try {
+        const res = await axios.post(`${API_BASE}/remove`, { goods_id })
+        const data = res.data
+        if (data.code === 200) {
+            ElMessage.success('删除成功')
+            fetchGoods()
+        } else {
+            ElMessage.error(data.error || '删除失败')
+        }
+    } catch (error) {
+        ElMessage.error('网络请求失败')
+    }
+}
+
 
 const openDialog = () => {
     Object.assign(form, {
